@@ -1,0 +1,6 @@
+.idea
+express/node_modules
+express/package-lock.json
+vue/package-lock.json
+vue/node_modules
+node_modules

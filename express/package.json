@@ -1,0 +1,22 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "debug": "^4.1.0",
+    "express": "^4.16.4",
+    "finalhandler": "^1.1.1",
+    "mongoose": "^5.3.9",
+    "mongoose-unique-validator": "^2.0.2",
+    "uuid": "^3.3.2"
+  },
+  "scripts": {
+    "dev": "nodemon index.js",
+    "prod": "npm install && node index.js",
+    "start": "nodemon index.js"
+  },
+  "devDependencies": {
+    "mongoose-dummy": "^1.0.8",
+    "nodemon": "^1.18.10"
+  }
+}

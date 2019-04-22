@@ -1,0 +1,454 @@
+{
+	"info": {
+		"_postman_id": "016f2e3e-f5ae-4507-9072-0f850f2f5686",
+		"name": "SMRPO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "[POST] add user",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\" : \"admin\",\n\t\"password\" :\"admin\",\n\t\"firstName\" : \"admin\",\n\t\"lastName\" : \"admin\",\n\t\"email\"  : \"admin@admin.com\",\n\t\"isAdmin\" : true\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/user/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] user list get",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "query",
+						"value": "{\"isAdmin\" : false}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/user/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[POST] User login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"admin\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/user/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] get user by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/user/5c8659ba871c6e5ad803af4b",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"5c8659ba871c6e5ad803af4b"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[POST] use story",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userStoryName\": \"userStoryName\",\n\t\"textContent\": \"opis \",\n\t\"acceptanceTests\": \"sprejemni test\",\n    \"priority\": \"velik\",\n    \"businessValue\": \"še večji\",\n    \"sprintId\": null,\n    \"projectId\": \"dasklnda\",\n    \"inSprint\": false,\n    \"done\": false\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/story/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"story",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[POST] dodajanje projektov",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"test\",\n\t\"users\": [\n\t\t{\n\t\t\t\"role\": \"Developer\",\n\t\t\t\"user\": \"5c8659ba871c6e5ad803af4b\"\n\t\t},\n\t\t{\n\t\t\t\"role\": \"Develpoer\",\n\t\t\t\"user\": \"5c8663d42a2833607468c852\"\n\t\t}\n\t\t]\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/project/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"project",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] get all projects",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/project/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"project",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] get project based on user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/project/user/5c8663d42a2833607468c852",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"project",
+						"user",
+						"5c8663d42a2833607468c852"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] get one projectc based on id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/project/5c89649f95a8ab20f8f6f04a",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"project",
+						"5c89649f95a8ab20f8f6f04a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[POST] eding new sprint",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"startDate\": 1234,\n\t\"name\": \"name\",\n\t\"projectId\": \"5c8758cf563bbb6c843448c3\",\n\t\"endDate\": 12345,\n\t\"speed\": 10\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/sprint/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sprint",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] geting all sprints",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/sprint/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sprint",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET]  story based on id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/story/5c87558f62acc71d30af4a1a",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"story",
+						"5c87558f62acc71d30af4a1a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[PUT] update, project",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"drug naslov\",\n\t\"users\": [\n\t\t{\n\t\t\t\"role\": \"Developer\",\n\t\t\t\"user\": \"5c8659ba871c6e5ad803af4b\"\n\t\t},\n\t\t{\n\t\t\t\"role\": \"Develpoer\",\n\t\t\t\"user\": \"5c8663d42a2833607468c852\"\n\t\t}\n\t\t]\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/project/5c87ed0cd49c58057407a944",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"project",
+						"5c87ed0cd49c58057407a944"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] inbacklog",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/story/inbacklog/5c88291ddbfa2a5dfcce2541",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"story",
+						"inbacklog",
+						"5c88291ddbfa2a5dfcce2541"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] get active sprint",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/sprint/active/5c89649f95a8ab20f8f6f04a",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"sprint",
+						"active",
+						"5c89649f95a8ab20f8f6f04a"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] get done stories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/story/done/5c88291ddbfa2a5dfcce2541",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"story",
+						"done",
+						"5c88291ddbfa2a5dfcce2541"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "[GET] get stories inside current sprint",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:8080/story/sprint/5c88291ddbfa2a5dfcce2541/5c8928d271c832295ced8f1c",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"story",
+						"sprint",
+						"5c88291ddbfa2a5dfcce2541",
+						"5c8928d271c832295ced8f1c"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
