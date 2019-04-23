@@ -17,7 +17,8 @@ let db_uri = process.env.DB_URI || "localhost:27017";
     useNewUrlParser: true
 });*/
 
-mongoose.connect('mongodb+srv://smrpo_2_db:UtJqMRXyRMfH2hu3@b-cluster-forts.mongodb.net/test?retryWrites=true')
+//TODO: provide your ownn mongo connection
+mongoose.connect('')
 
 const port = process.env.PORT || 8080;
 let app = express();
