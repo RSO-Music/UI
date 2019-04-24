@@ -69,7 +69,7 @@
 						return u.user._id === vm.task.asignee;
 					});
 
-					return `${assignedUser.user.firstName} ${assignedUser.user.lastName}`;
+					if ( assignedUser ) return `${assignedUser.user.firstName} ${assignedUser.user.lastName}`;
 				}
 			}
 		}

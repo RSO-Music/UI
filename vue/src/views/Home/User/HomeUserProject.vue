@@ -140,6 +140,9 @@
                         this.isSuccess = 1;
                         this.msg = 'project updated: ';
                         this.selectedProject = editProjectObj;
+
+						this.$store.commit('editProject', editProjectObj);
+
                         if (!this.selectedProject.users.find(x => x.user._id === this.$store.getters.currentUser._id)) {
                             return this.$router.push({name: 'userMain'});
                         } else {
