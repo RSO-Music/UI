@@ -10,7 +10,7 @@
                 </div>
                 <MyAlert class="smaller" :msg="napakaTekst" :is-success="napaka" @closeAlert="closeAlert"/>
                 <v-layout align-center justify-end row class="mb-2">
-                    <ButtonOutline v-if="storiesInBacklog.length !== 0" msg="Dodeli zgodbe trenutnemu sprintu" @clicked="addStoryToSprint"></ButtonOutline>
+                    <ButtonOutline v-if="storiesInBacklog.length !== 0" msg="Dodeli zgodbe trenutnemu sprintu" @clicked="addStoryToSprint" :isDisabled="!currentSprint"></ButtonOutline>
                 </v-layout>
                 <v-layout align-center justify-end row class="align-right">
                     <EditUserStoryDialog :story="{}" v-on:refresh="refreshData" :full-edit="false" :customBtn="true"></EditUserStoryDialog>
