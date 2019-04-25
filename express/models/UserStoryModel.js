@@ -10,16 +10,7 @@ var UserStorySchema = new Schema({
     'priority': {type: String, required: true},
     'timeEstimation': {type: Number},
     'businessValue': {type: String, required: true},
-    'done': {type: Boolean, required: true, default: false},
-    'tasks': [
-        {
-           'id': {type: String},
-            'description': {type: String},
-            'time': {type: Number},
-            'asignee': {type: mongoose.Schema.Types.ObjectId, ref: "User"},
-            'status': {type: String}
-        }
-    ]
+    'done': {type: Boolean, required: true, default: false}
 });
 
 module.exports = mongoose.model('UserStory', UserStorySchema);

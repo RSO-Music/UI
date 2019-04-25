@@ -53,7 +53,7 @@
 									<v-checkbox color="#3093A0"
 												@change=""
 												v-model="storyFinished"
-												label="Naloga zaključena"
+												label="Zgodba zaključena"
 												:disabled="!editExisting"
 									></v-checkbox>
 								</v-flex>
@@ -128,6 +128,8 @@
                                     ></v-textarea>
                                 </v-flex>
                             </v-layout>
+							<ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
+							<ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
                         </v-tab-item>
                         <v-tab-item key="2">
                             <v-flex x12>
@@ -137,7 +139,6 @@
                                         rows="1"
                                         label="Opis naloge"
                                         v-model="editTask.description"
-										:rules="[v => !!v || 'Opis naloge ne sme biti prazen']"
 										:disabled="!editExisting || isProductOwner"
                                 ></v-textarea>
                             </v-flex>
@@ -150,7 +151,6 @@
                                             label="Časovna ocena"
                                             type="number"
                                             v-model="editTask.time"
-											:rules="[v => !!v || 'Časovna ocena ne sme biti prazna']"
 											:disabled="!editExisting || isProductOwner"
 											min="1"
                                             flat
@@ -167,7 +167,6 @@
 											item-text="user.firstName"
 											item-value="user._id"
 											hide-details
-											required
 											flat
 									></v-select>
                                 </v-flex>
@@ -175,36 +174,33 @@
                                     <v-select
                                             color="#3093A0"
                                             v-model="editTask.status"
-											:disabled="!editExisting || isProductOwner"
+											:disabled="!editingTask || !editExisting || isProductOwner"
                                             :items="taskStatus"
                                             item-text="name"
                                             item-value="value"
                                             label="Status naloge"
                                             hide-details
-                                            required
                                             flat
                                     ></v-select>
                                 </v-flex>
-                                <v-flex xs2>
-                                    <ButtonOutline msg="Dodaj nalogo" @clicked="addTask" :isDisabled="!editExisting || isProductOwner" v-if="!editingTask"></ButtonOutline>
-                                    <ButtonOutline msg="Prekliči" @clicked="clearEdit" :isDisabled="!editExisting || isProductOwner" v-else></ButtonOutline>
-                                </v-flex>
                             </v-layout>
+							<v-layout align-center justify-end row fill-height class="mb-4">
+								<ButtonOutline msg="Prekliči" @clicked="clearEdit" :isDisabled="!editExisting || isProductOwner" class="mr-3"></ButtonOutline>
+								<ButtonOutline msg="Shrani nalogo" @clicked="addTask" :isDisabled="!isEditTaskValid || !editExisting || isProductOwner"></ButtonOutline>
+							</v-layout>
                             <div class="taskBox mb-4">
                                 <separator title="Nedodeljene naloge"></separator>
-                                	<task-card v-for="(task, index) in unassignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task.id" :disabled="!editExisting || isProductOwner"/>
+                                	<task-card v-for="(task, index) in unassignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
                                 <separator title="Dodeljene naloge"></separator>
-                                	<task-card v-for="(task, index) in assignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task.id" :disabled="!editExisting || isProductOwner"/>
+                                	<task-card v-for="(task, index) in assignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
                                 <separator title="Aktivne naloge"></separator>
-                                	<task-card v-for="(task, index) in activeTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task.id" :disabled="!editExisting || isProductOwner"/>
+                                	<task-card v-for="(task, index) in activeTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
                                 <separator title="Zaključene naloge"></separator>
-                                	<task-card v-for="(task, index) in finishedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask()" :key="task.id" :disabled="!editExisting || isProductOwner"/>
+                                	<task-card v-for="(task, index) in finishedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
                             </div>
                         </v-tab-item>
                     </v-tabs>
                     <MyAlert class="smaller" :msg="errorText" :is-success="error"/>
-                    <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
-                    <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
                 </v-form>
             </v-card>
         </v-dialog>
@@ -263,15 +259,14 @@
 				}
 			],
 			editTask: {
-				id: '',
 				description: '',
-				time: ''
+				time: '',
+				status: 'new'
 			},
 			editingTask: false
 		}),
 		methods: {
 			updateStory: function () {
-				console.log(this.story._id);
 				if (this.story._id) {
 					//update existing story
 					APICalls.updateUserStory({
@@ -280,7 +275,7 @@
 						timeEstimation: this.timeEstimation, businessValue: this.selectBussinessValue, done: this.storyFinished, tasks: this.tasks
 					}, this.story._id).then(
 						(rs) => {
-							this.dialog = false;
+							this.closeDialog();
 							this.$emit("refresh", true);
 							this.error = 0;
 							this.errorText = ""
@@ -306,7 +301,7 @@
 						}
 					).then(
 						(rs) => {
-							this.dialog = false;
+							this.closeDialog();
 							this.$emit("refresh", true);
 							this.error = 0;
 							this.errorText = ""
@@ -322,39 +317,83 @@
 				this.dialog = false;
 			},
 			addTask () {
-				if (this.editTask.description !== '' && this.editTask.time > 0) {
-					this.editTask.id = this.generateRandom();
-					if (!this.tasks) this.tasks = [];
+				let editTask = this.editTask;
+				let currentStory = this.story;
+				let vm = this;
 
-					if(!this.editTask.status) this.editTask.status = 'new';
-					this.tasks.push(this.editTask);
-
-					this.clearEdit();
-				}
-				else {
+				//check if all required fields are present
+				if (!editTask.description || !editTask.time) {
 					this.error = 2;
 					this.errorText = "Če želite dodati nalogo, vpišite opis naloge in določite čas"
+					return;
+				}
+
+
+				if (!editTask._id) {
+					//add new task to story
+					APICalls.addNewUserTask(
+						{
+							storyId: currentStory._id,
+							description: editTask.description,
+							time: editTask.time,
+							assignee: editTask.asignee,
+							status: editTask.status,
+							accepted: false
+						}
+					).then(
+						(rs) => {
+							vm.tasks.push(rs.data);
+							vm.clearEdit();
+						},
+						(error) => {
+							console.log(error);
+						})
+
+				}
+				else {
+					//update existing task
+					APICalls.updateUserTask(
+						{
+							storyId: currentStory._id,
+							description: editTask.description,
+							time: editTask.time,
+							assignee: editTask.asignee,
+							status: editTask.status,
+							accepted: false
+						}, editTask._id
+					).then(
+						(rs) => {
+							vm.clearEdit();
+						},
+						(error) => {
+							console.log(error);
+						})
+
 				}
 			},
 			clearEdit () {
 				this.editTask = {
-					id: '',
 					description: '',
 					time: '',
+					status: 'new'
 				};
 
 				this.editingTask = false;
 			},
 			changeTask (task) {
-				console.log(task);
-
 				this.editTask = task;
 				this.editingTask = true;
 			},
 			deleteTask (deleteTask) {
-				this.tasks = this.tasks.filter(function (task) {
-					return task.id !== deleteTask.id
-				});
+				APICalls.deleteUserStory(deleteTask._id).then(
+					(rs) => {
+						this.tasks = this.tasks.filter(function (task) {
+							return task._id !== deleteTask._id
+						});
+					},
+					(error) => {
+						console.log(error);
+					})
 
 				this.clearEdit();
 
@@ -415,6 +454,24 @@
 				});
 
 				return userInProject.role === 'Product Owner';
+			},
+			isEditTaskValid: function () {
+				if (this.editTask) {
+					return this.editTask.description && this.editTask.description.trim() !== '' && this.editTask.time;
+				}
+			}
+		},
+		watch: {
+			dialog (val) {
+				if (!val) {
+					this.error = 0;
+
+					this.clearEdit();
+
+					if (!this.story._id) {
+						this.resetForm();
+					}
+				}
 			}
 		},
 		created() {
@@ -427,7 +484,15 @@
 				this.selectBussinessValue = this.story.businessValue;
 				this.storyFinished = this.story.done;
 				this.editExisting = this.fullEdit;
-				this.tasks = this.story.tasks;
+				if (this.story._id) {
+					APICalls.getTasksInsideCurrentStory(this.story._id).then(
+						(rs) => {
+							this.tasks = rs.data;
+						},
+						(error) => {
+							console.log(error);
+						})
+				}
 			}
 		}
 	}

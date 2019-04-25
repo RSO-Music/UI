@@ -39,12 +39,11 @@
             <v-layout align-center justify-end row class="userStoryButtons">
                 <v-flex xs5 align-self-center>
                     <v-toolbar color="white" flat dense>
-                        <v-btn flat icon>
                             <v-checkbox color="#3093A0"
                                         @change="changedCheckbox($event)"
                                         v-model="parentData"
+                                        :disabled="hasNoTimeEstimation"
                             ></v-checkbox>
-                        </v-btn>
                         <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
                         <v-btn flat icon color="red" v-on:click="deleteStory">
                             <v-icon>clear</v-icon>
@@ -118,6 +117,11 @@
             refreshStory: function () {
                 this.$emit("refresh", true);
             }
+        },
+        computed: {
+        	hasNoTimeEstimation: function () {
+                return !this.story.timeEstimation || this.story.timeEstimation === '';
+			}
         }
     }
 </script>

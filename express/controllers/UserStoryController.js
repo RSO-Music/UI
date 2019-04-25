@@ -77,6 +77,9 @@ module.exports = {
     update: function (req, res) {
         console.log("REQ PARAMS: ", req.params);
         var id = req.params.id;
+
+        //TODO: check if
+
         UserStoryModel.findOneAndUpdate({_id: id}, {$set: req.body}, function (err, UserStory) {
             if (err) {
                 console.log("ERR: ", err);
@@ -91,16 +94,8 @@ module.exports = {
                 });
             }
 
-            UserStory.save(function (err, UserStory) {
-                if (err) {
-                    return res.status(500).json({
-                        message: 'Error when updating UserStory.',
-                        error: err
-                    });
-                }
+			return res.json(UserStory);
 
-                return res.json(UserStory);
-            });
         });
     },
 

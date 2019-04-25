@@ -134,7 +134,7 @@
 					<separator title="Aktivne naloge"></separator>
 					<task-card v-for="(task, index) in activeTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="id"/>
 					<separator title="Zaključene naloge"></separator>
-					<task-card v-for="(task, index) in finishedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="id"/>
+					<task-card v-for="(task, index) in finishedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask()" :key="id"/>
 					<v-divider class="mb-3"></v-divider>
 				</v-tab-item>
 			</v-tabs>

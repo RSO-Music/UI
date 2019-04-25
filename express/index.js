@@ -5,6 +5,7 @@ const userRoutes = require("./routes/UserRoutes");
 const userStoryRoutes = require("./routes/UserStoryRoutes");
 const ProjectRoutes = require("./routes/ProjectRoutes");
 const sprintRoutes = require("./routes/SprintRoutes");
+const userTaskRoutes = require("./routes/UserTaskRoutes");
 let user = process.env.DB_USER || "borrowland";
 let password = process.env.DB_PASSWORD || "password";
 let db_uri = process.env.DB_URI || "localhost:27017";
@@ -18,7 +19,7 @@ let db_uri = process.env.DB_URI || "localhost:27017";
 });*/
 
 //TODO: provide your ownn mongo connection
-mongoose.connect('')
+mongoose.connect('');
 
 const port = process.env.PORT || 8080;
 let app = express();
@@ -43,6 +44,7 @@ app.use("/user/", userRoutes);
 app.use('/story/', userStoryRoutes);
 app.use("/project/", ProjectRoutes);
 app.use("/sprint/", sprintRoutes);
+app.use("/task/", userTaskRoutes);
 
 
 app.listen(port, function () {

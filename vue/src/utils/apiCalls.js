@@ -140,12 +140,34 @@ export class APICalls {
         });
     }
 
-    static addNewUserTaskToProject(newUserTaskObj){
+    static addNewUserTask (newUserTaskObj) {
         return axios({
             method: "post",
             url: URL + '/task/',
             data: newUserTaskObj
         });
     }
+
+    static updateUserTask (updatedUserTaskObj, taskId) {
+        return axios({
+            method: "put",
+            url: URL + '/task/' + taskId,
+            data: updatedUserTaskObj
+        });
+    }
+
+	static getTasksInsideCurrentStory (storyId) {
+		return axios({
+			method: "get",
+			url: URL + '/task/story/' + storyId
+		});
+	}
+
+	static deleteUserTask (taskId) {
+		return axios({
+			method: "delete",
+			url: URL + '/task/' + taskId
+		});
+	}
 
 }
