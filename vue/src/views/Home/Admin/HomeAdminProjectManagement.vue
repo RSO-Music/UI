@@ -1,12 +1,14 @@
 <template>
-    <div class="contentWrapper adminProjects">
-        <div class="adminProjectList">
+    <div class="contentWrapper list-wrapper">
+        <div class="list">
             <h1>Seznam projektov</h1>
-            <ButtonBase id="adminAddProject" msg="Dodaj projekt" @clicked="addNewProjectForm"></ButtonBase>
+            
+            <ButtonBase classes="full-width" msg="Ustvari nov projekt" @clicked="addNewProjectForm"></ButtonBase>
+            
             <ProjectCard :is-admin="true" @editProject="editProject" :insertedProjectList="projectsList"/>
         </div>
-        <div class="adminFormContainer">
-            <MyAlert class="smaller" :msg="msg" :isSuccess="isSuccess" @closeAlert="closeAlert"/>
+
+        <div class="form-container">
             <ProjectForm :projectId="projectId"
                          :insertedProjectName="projectName"
                          :insertedAssignedUsersToProject="insertedAssignedUsersToProject"
@@ -21,9 +23,8 @@
 
 <script>
     import ProjectForm from "../../../components/Custom/ProjectForm";
-    import MyAlert from "../../../components/Generic/AlertBox";
     import ProjectCard from "../../../components/Generic/ProjectCard";
-    import {APICalls} from "../../../utils/apiCalls";
+    import { APICalls } from "../../../utils/apiCalls";
     import ButtonBase from "../../../components/Generic/ButtonBase";
 
     export default {
@@ -31,7 +32,6 @@
         components: {
             ButtonBase,
             ProjectCard,
-            MyAlert,
             ProjectForm
         },
         created() {
@@ -40,16 +40,14 @@
         },
         data() {
             return {
-                isSuccess: 0, // 0 -> nothing has happened(neutral), 1 -> success addgin, 2-> error adding
                 users: [],
                 formUsers: [],
                 projectsList: [],
                 isNewProject: true,
                 insertedAssignedUsersToProject: [],
-                formName: 'DODAJ PROJEKT',
+                formName: 'Ustvari projekt',
                 projectName: '',
                 projectId: '',
-                msg: ''
             }
         },
         methods: {
@@ -77,15 +75,20 @@
                         this.projectsList.push(objProjectAdd);
                         this.insertedAssignedUsersToProject = [];
                         this.isNewProject = true;
-                        this.formName = 'DODAJ PROJEKT';
+                        this.formName = 'Ustvari projekt';
                         this.projectName = '';
                         this.projectId = '';
                         this.formUsers = JSON.parse(JSON.stringify(this.users));
-                        this.isSuccess = 1;
+                        vm.$toasted.success('Projekt je bil uspešno ustvarjen', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
                     },
                     (error) => {
-                        this.isSuccess = 2;
-                        this.msg = 'Projekt z vpisanim imenom že obstaja'
+                        vm.$toasted.error('Pri ustvarjanju projekta je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
                     }
                 );
 
@@ -120,13 +123,13 @@
                 this.isNewProject = false;
                 this.insertedAssignedUsersToProject = JSON.parse(JSON.stringify(editProjectObj.users));
                 this.formUsers = JSON.parse(JSON.stringify(this.users));
-                this.formName = 'UREJANJE PROJEKTA';
+                this.formName = 'Uredi projekt';
                 this.projectName = editProjectObj.name;
                 this.projectId = editProjectObj._id;
 
             },
             projectEditUpdate(editProjectObj) {
-            	let vm = this;
+                let vm = this;
 
                 let objForApi = JSON.parse(JSON.stringify(editProjectObj));
                 let usersAssigned = [];
@@ -154,12 +157,17 @@
                         });
 
                         this.projectsList.splice(index, 0, editProjectObj);
-                        this.isSuccess = 1;
-                        this.msg = 'Projekt je bil uspešno posodobljen'
+
+                        vm.$toasted.success('Projekt je bil uspešno posodobljen', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
                     },
                     (error) => {
-                        this.isSuccess = 2;
-                        this.msg = 'Projekt z vpisanim imenom že obstaja'
+                        vm.$toasted.error('Pri posodabljanju projekta je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
                     }
                 );
 
@@ -168,7 +176,7 @@
                 //reset all the variables
                 this.insertedAssignedUsersToProject = [];
                 this.isNewProject = true;
-                this.formName = 'DODAJ PROJEKT';
+                this.formName = 'Ustvari projekt';
                 this.projectName = '';
                 this.projectId = '';
                 this.formUsers = JSON.parse(JSON.stringify(this.users));
@@ -179,28 +187,5 @@
 </script>
 
 <style scoped>
-    .adminProjects {
-        display: flex;
-    }
 
-    .adminProjectList {
-        flex-basis: 30%;
-        background-color: white;
-        border-radius: 4px;
-        padding: 20px 30px;
-    }
-
-    .adminProjectList h1 {
-        text-align: center;
-
-    }
-
-    .adminFormContainer {
-        width: 100%;
-        height: fit-content;
-    }
-
-    #adminAddProject {
-        width: 100%;
-    }
 </style>

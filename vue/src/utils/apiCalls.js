@@ -3,24 +3,31 @@ import axios from 'axios';
 const URL = 'http://localhost:8080';
 
 export class APICalls {
-    constructor(){
-    }
+    constructor() {}
 
-    static loginUser(loginParams){
+    static loginUser(loginParams) {
         return axios({
             method: "post",
             url: URL + '/user/login',
             data: loginParams
         });
     }
-    static getUser(userId){
+
+    static getUser(userId) {
         return axios({
             method: "get",
             url: URL + '/user/' + userId,
         });
     }
+    
+    static getUsersList() {
+        return axios({
+            method: 'get',
+            url: URL + '/user'
+        });
+    }
 
-    static addNewUser(newUserData){
+    static addNewUser(newUserData) {
         return axios({
             method: "post",
             url: URL + '/user/',
@@ -28,17 +35,21 @@ export class APICalls {
         });
     }
 
-    static getUsersListNoAdmin(){
+    static editUser(userData) {
+        // TODO
+    }
+
+    static getUsersListNoAdmin() {
         return axios({
             method: "get",
             url: URL + '/user/',
             headers: {
-                query: JSON.stringify({"isAdmin" : false})
+                query: JSON.stringify({ "isAdmin": false })
             }
         });
     }
 
-    static addNewUserStoryToProject(newUserStoryObj){
+    static addNewUserStoryToProject(newUserStoryObj) {
         return axios({
             method: "post",
             url: URL + '/story/',
@@ -46,14 +57,14 @@ export class APICalls {
         });
     }
 
-    static  getProjectsList() {
+    static getProjectsList() {
         return axios({
             method: "get",
             url: URL + '/project/',
         });
     }
 
-    static  getStoriesList(storyId) {
+    static getStoriesList(storyId) {
         return axios({
             method: "get",
             url: URL + '/story/' + storyId,
@@ -71,14 +82,15 @@ export class APICalls {
     static updateProject(updatedProjObj, projectId) {
         return axios({
             method: "put",
-            url: URL + '/project/'+projectId,
+            url: URL + '/project/' + projectId,
             data: updatedProjObj
         });
     }
+
     static getProjectBasedOnUserId(userId) {
         return axios({
             method: "get",
-            url: URL + '/project/user/'+userId,
+            url: URL + '/project/user/' + userId,
         });
     }
 
@@ -97,35 +109,35 @@ export class APICalls {
         });
     }
 
-    static getProjectBacklog (projectId) {
+    static getProjectBacklog(projectId) {
         return axios({
             method: "get",
             url: URL + '/story/backlog/' + projectId,
         });
     }
 
-    static getActiveSprint (projectId) {
+    static getActiveSprint(projectId) {
         return axios({
             method: "get",
             url: URL + '/sprint/active/' + projectId,
         });
     }
 
-    static getDoneStories (projectId) {
+    static getDoneStories(projectId) {
         return axios({
             method: "get",
             url: URL + '/story/done/' + projectId,
         });
     }
 
-    static getStoriesInsideCurrentSprint (projectId, sprintId) {
+    static getStoriesInsideCurrentSprint(projectId, sprintId) {
         return axios({
             method: "get",
             url: URL + '/story/sprint/' + projectId + '/' + sprintId,
         });
     }
 
-    static updateUserStory (updatedProjObj, storyId) {
+    static updateUserStory(updatedProjObj, storyId) {
         return axios({
             method: "put",
             url: URL + '/story/' + storyId,
@@ -133,14 +145,14 @@ export class APICalls {
         });
     }
 
-    static deleteUserStory (storyId) {
+    static deleteUserStory(storyId) {
         return axios({
             method: "delete",
             url: URL + '/story/' + storyId
         });
     }
 
-    static addNewUserTask (newUserTaskObj) {
+    static addNewUserTask(newUserTaskObj) {
         return axios({
             method: "post",
             url: URL + '/task/',
@@ -148,7 +160,7 @@ export class APICalls {
         });
     }
 
-    static updateUserTask (updatedUserTaskObj, taskId) {
+    static updateUserTask(updatedUserTaskObj, taskId) {
         return axios({
             method: "put",
             url: URL + '/task/' + taskId,
@@ -156,18 +168,18 @@ export class APICalls {
         });
     }
 
-	static getTasksInsideCurrentStory (storyId) {
-		return axios({
-			method: "get",
-			url: URL + '/task/story/' + storyId
-		});
-	}
+    static getTasksInsideCurrentStory(storyId) {
+        return axios({
+            method: "get",
+            url: URL + '/task/story/' + storyId
+        });
+    }
 
-	static deleteUserTask (taskId) {
-		return axios({
-			method: "delete",
-			url: URL + '/task/' + taskId
-		});
-	}
+    static deleteUserTask(taskId) {
+        return axios({
+            method: "delete",
+            url: URL + '/task/' + taskId
+        });
+    }
 
 }

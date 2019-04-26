@@ -3,16 +3,8 @@ const UserModel = require('../models/UserModel.js');
 const userRoles = require('../lib/userRoles');
 
 module.exports = {
-    list(req, res) {
-        let query = {};
-        
-        try {
-            query = JSON.parse(req.headers.query);
-        } catch (e) {
-            
-        }
-
-        UserModel.find(query, function (err, Users) {
+    findAll(req, res) {
+        UserModel.find({ role: { $ne: 'system_admin' } }, function (err, Users) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting User.',

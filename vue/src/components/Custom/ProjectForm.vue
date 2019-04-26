@@ -6,7 +6,8 @@
                 v-model="valid"
                 lazy-validation
         >
-            <h1>{{formName}}</h1>
+            <h1>{{formName.toUpperCase()}}</h1>
+
             <v-text-field
                     color="#3093A0"
                     prepend-icon="rate_review"
@@ -38,13 +39,13 @@
                             ></v-select>
                         </div>
                         <div id="usersDelete">
-                            <ButtonOutline msg="X" @clicked="removeUserFromProject(assignedUser.user._id)"></ButtonOutline>
+                            <ButtonOutline msg="X"
+                                           @clicked="removeUserFromProject(assignedUser.user._id)"></ButtonOutline>
                         </div>
                     </div>
                 </v-card>
             </div>
             <div id="formBottom">
-                <h4>Dodaj uporabnika</h4>
                 <div id="userSearch">
                     <v-autocomplete
                             color="#3093A0"
@@ -53,6 +54,7 @@
                             :items="users"
                             :filter="customFilter"
                             item-text="username"
+                            no-data-text="Ni najdenih uporabnikov"
                             item-value="_id"
                             label="Izberite uporabnika"
                             @keyup.enter.native="addUserToProject"
@@ -60,7 +62,7 @@
                     <ButtonOutline msg="+" @clicked="addUserToProject"></ButtonOutline>
                 </div>
             </div>
-            <ButtonBase msg="Shrani" :isDisabled="!valid" @clicked="addNewProject"></ButtonBase>
+            <ButtonBase msg="Shrani" @clicked="addNewProject"></ButtonBase>
         </v-form>
     </div>
 </template>
@@ -71,7 +73,7 @@
 
     export default {
         name: "ProjectForm",
-        components: {ButtonBase, ButtonOutline},
+        components: { ButtonBase, ButtonOutline },
         props: {
             formName: String,
             isNewProject: Boolean,
@@ -80,28 +82,27 @@
             projectId: String,
             insertedProjectName: String
         },
-        created(){
+        created() {
             this.users = this.insertedUsers;
             this.originalUsers = JSON.parse(JSON.stringify(this.users));
             this.assignedUsersToProject = this.insertedAssignedUsersToProject;
             this.projectName = this.insertedProjectName;
             if (this.users) {
                 this.assignedUsersToProject.forEach((assignedUser) => {
-                    this.users.splice(this.users.findIndex(user => user._id === assignedUser.user._id) , 1);
+                    this.users.splice(this.users.findIndex(user => user._id === assignedUser.user._id), 1);
                 })
             }
-
         },
         watch: {
             insertedAssignedUsersToProject(newVal, oldVal) {
                 this.assignedUsersToProject = newVal;
             },
-            insertedUsers: function(newVal, oldVal) {
+            insertedUsers: function (newVal, oldVal) {
                 if (oldVal !== newVal) {
                     this.users = newVal;
                     if (this.users) {
                         this.assignedUsersToProject.forEach((assignedUser) => {
-                            this.users.splice(this.users.findIndex(user => user._id === assignedUser.user._id) , 1);
+                            this.users.splice(this.users.findIndex(user => user._id === assignedUser.user._id), 1);
                         })
                     }
                 }
@@ -119,7 +120,7 @@
             }
         },
 
-        data () {
+        data() {
             return {
                 valid: true,
                 projectName: '',
@@ -132,7 +133,7 @@
         },
 
         methods: {
-            customFilter (item, queryText, itemText) {
+            customFilter(item, queryText, itemText) {
                 const textOne = item.username.toLowerCase();
                 const searchText = queryText.toLowerCase();
 
@@ -147,21 +148,20 @@
                         user: this.users.find(user => user._id === this.selectedUser),
                         role: 'Developer' // assigne default user project role
                     }
-
                 );
-                this.users.splice(this.users.findIndex(user => user._id === this.selectedUser) , 1);
+                this.users.splice(this.users.findIndex(user => user._id === this.selectedUser), 1);
                 this.selectedUser = null;
             },
             removeUserFromProject(userId) {
                 this.users.push(
                     this.assignedUsersToProject.find(user => user.user._id === userId).user
                 );
-                this.assignedUsersToProject.splice(this.assignedUsersToProject.findIndex(user => user.user._id === userId) , 1);
+                this.assignedUsersToProject.splice(this.assignedUsersToProject.findIndex(user => user.user._id === userId), 1);
             },
             addNewProject() {
                 if (this.$refs.form.validate()) {
                     let usersAssigned = [];
-                    this.assignedUsersToProject.forEach(function(userAssigned1){
+                    this.assignedUsersToProject.forEach(function (userAssigned1) {
                         usersAssigned.push(
                             {
                                 user: userAssigned1.user,
@@ -172,7 +172,7 @@
                     if (this.isNewProject) {
                         this.$emit('adminProjectAdd', {
                             name: this.projectName,
-                            users:usersAssigned
+                            users: usersAssigned
                         });
 
                         this.resetForm();
@@ -182,7 +182,7 @@
                         this.$emit('projectEdit', {
                             _id: this.projectId,
                             name: this.projectName,
-                            users:usersAssigned
+                            users: usersAssigned
                         });
                         //shoud not reset form...
                     }

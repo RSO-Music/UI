@@ -7,13 +7,15 @@
                 v-model="valid"
                 lazy-validation
         >
-            <h1>Dodaj uporabnika</h1>
+            <h1 v-if="isNew">Ustvari uporabnika</h1>
+            <h1 v-else>Uredi uporabnika</h1>
+            
             <div class="formDivide">
                 <div id="formLeft">
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="face"
-                            v-model="firstName"
+                            v-model="user.firstName"
                             :rules="nameRules"
                             label="Ime"
                             required
@@ -21,7 +23,7 @@
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="face"
-                            v-model="lastName"
+                            v-model="user.lastName"
                             :rules="nameRules"
                             label="Priimek"
                             required
@@ -29,7 +31,7 @@
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="mail"
-                            v-model="email"
+                            v-model="user.email"
                             label="E-pošta"
                             :rules="emailRules"
                             required
@@ -39,7 +41,7 @@
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="person"
-                            v-model="username"
+                            v-model="user.username"
                             label="Uporabniško ime"
                             :rules="nameRules"
                             required
@@ -47,18 +49,18 @@
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="lock"
-                            v-model="password"
+                            v-model="user.password"
                             label="Geslo"
-                            :rules="[v => !!v || 'Password is required']"
+                            :rules="[v => !!v || 'Geslo je obvezno']"
                             :type="'password'"
                             required
                     ></v-text-field>
                     <v-select
                             color="#3093A0"
                             prepend-icon="star"
-                            v-model="select"
-                            :items="items"
-                            :rules="[v => !!v || 'Status selection is required']"
+                            v-model="user.role"
+                            :items="userRoleSelectObjects"
+                            :rules="[v => !!v || 'Izberite sistemsko vlogo']"
                             label="Sistemska vloga"
                             item-text="label"
                             item-value="value"
@@ -67,67 +69,111 @@
                     ></v-select>
                 </div>
             </div>
-            <ButtonBase msg="Shrani" :isDisabled="!valid" @clicked = addUser></ButtonBase>
+            <ButtonBase msg="Shrani" @clicked=addUser></ButtonBase>
         </v-form>
     </div>
 </template>
 
 <script>
     import ButtonBase from "../Generic/ButtonBase";
+    import { APICalls } from "../../utils/apiCalls";
+
     export default {
         name: "UserManagementForm",
-        components: {ButtonBase},
-        data: () => ({
-            valid: true,
-            username: '',
-            nameRules: [
-                v => !!v || 'Field is required',
-                v => (v && v.length <= 10) || 'Name must be less than 10 characters'
-            ],
-            password: '',
-            select: null,
-            items: [
-                {
-                    label: 'admin',
-                    value: 1
-                },
-                {
-                    label: 'user',
-                    value: 2
-                }
-            ],
-            firstName: '',
-            lastName: '',
-            email: '',
-            emailRules: [
-                v => !!v || 'E-mail is required',
-                v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail must be valid'
-            ]
-        }),
-        methods: {
-            addUser () {
-                if (this.$refs.form.validate()) {
-                    this.$emit("adminAddUser", {
-                        isAdmin: this.select === 1,
-                        password: this.password,
-                        username: this.username,
-                        firstName: this.firstName,
-                        lastName: this.lastName,
-                        email: this.email
 
-                    });
-                    this.resetForm();
+        components: { ButtonBase },
+
+        data() {
+            return {
+                user: {},
+                isNew: true,
+                valid: true,
+                nameRules: [
+                    v => !!v || 'Ime je obvezno'
+                ],
+                userRoleSelectObjects: [
+                    {
+                        label: 'Administrator',
+                        value: 'system_admin'
+                    },
+                    {
+                        label: 'Uporabnik',
+                        value: 'system_user'
+                    }
+                ],
+                emailRules: [
+                    v => !!v || 'E-pošta je obvezna',
+                    v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-pošta ni ustrezna'
+                ]
+            }
+        },
+
+        methods: {
+            addUser() {
+                const vm = this;
+
+                if (vm.$refs.form.validate()) {
+                    if (vm.isNew) {
+                        APICalls.addNewUser(vm.user).then(
+                            (res) => {
+                                vm.$toasted.success('Uporabnik je bil uspešno dodan', {
+                                    duration: 3000,
+                                    position: "bottom-center",
+                                });
+
+                                vm.resetForm();
+
+                                vm.$emit('userEdited');
+                            },
+                            (error) => {
+                                vm.$toasted.error('Pri dodajanju uporabnika je prišlo do napake', {
+                                    duration: 3000,
+                                    position: "bottom-center",
+                                });
+                            }
+                        );
+                    } else {
+                        vm.$toasted.error('Funkcionalnost posodabljanja uporabnikov še ni implementirana', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                        
+                        // APICalls.editUser(vm.user).then(
+                        //     (res) => {
+                        //         vm.$toasted.success('Uporabnik je bil uspešno posodobljen', {
+                        //             duration: 3000,
+                        //             position: "bottom-center",
+                        //         });
+                        //
+                        //         vm.$emit('userEdited');
+                        //     },
+                        //     (error) => {
+                        //         vm.$toasted.error('Pri posodabljanju uporabnika je prišlo do napake', {
+                        //             duration: 3000,
+                        //             position: "bottom-center",
+                        //         });
+                        //     }
+                        // );
+                    }
                 } else {
                     this.valid = false;
                 }
             },
+            
+            setUserToEdit(userData) {
+                this.user = userData;
+                this.isNew = false;
+            },
+            
             resetForm() {
                 this.$refs.form.reset();
                 this.$refs.form.resetValidation();
+                this.isNew = true;
+                this.user = {};
             }
         },
-        computed: {
-        }
+
+        computed: {}
     }
 </script>
 
@@ -135,6 +181,7 @@
     h1 {
         text-transform: uppercase;
     }
+
     .formDivide {
         padding: 10px 0;
         display: flex;

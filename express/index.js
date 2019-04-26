@@ -7,7 +7,7 @@ const ProjectRoutes = require("./routes/ProjectRoutes");
 const sprintRoutes = require("./routes/SprintRoutes");
 const userTaskRoutes = require("./routes/UserTaskRoutes");
 
-mongoose.connect(`mongodb+srv://admin:admin123@smrpo-1diaf.mongodb.net/test?retryWrites=tru`, {
+mongoose.connect(`mongodb+srv://admin:admin@smrpo-1diaf.mongodb.net/test?retryWrites=true`, {
     useNewUrlParser: true
 });
 

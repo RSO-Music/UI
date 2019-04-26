@@ -4,7 +4,10 @@ module.exports = {
     findAll(req, res) {
         return async function () {
             try {
-                const Projects = await ProjectModel.find({}).populate().exec();
+                const Projects = await ProjectModel.find({}).populate({
+                    path: "users.user",
+                    model: "User"
+                }).exec();
 
                 return res.json(Projects);
             } catch (err) {

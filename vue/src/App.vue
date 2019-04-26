@@ -1,29 +1,36 @@
 <template>
     <v-app>
-        <v-content>
+        <v-content v-if="!isLoggedIn || isNotAllowed">
             <login v-if="!isLoggedIn"></login>
             <not-allowed v-else-if="isNotAllowed"></not-allowed>
-            <router-view v-else/>
+        </v-content>
+
+        <v-content v-else>
+            <NavBar/>
+
+            <router-view/>
         </v-content>
     </v-app>
 </template>
 
 <script>
-  import Login from './views/Login.vue'
-  import NotAllowed from './views/NotAllowed.vue'
+    import Login from './views/Login.vue';
+    import NotAllowed from './views/NotAllowed.vue';
+    import NavBar from './components/Generic/NavBar';
 
-  export default {
-    name: 'App',
-    components: {Login, NotAllowed},
-    computed: {
-		isLoggedIn() {
-			return this.$store.getters.currentUser.loggedIn;
-		},
-        isNotAllowed: function() {
-			return !this.$store.getters.isAllowedRoute;
+    export default {
+        name: 'App',
+        components: { Login, NotAllowed, NavBar },
+        computed: {
+            isLoggedIn() {
+                return this.$store.getters.currentUser.loggedIn;
+            },
+
+            isNotAllowed() {
+                return !this.$store.getters.isAllowedRoute;
+            }
         }
     }
-  }
 </script>
 
 <style>
@@ -118,5 +125,8 @@
         width: 60%;
         margin: 0 auto;
     }
-
+    
+    .full-width {
+        width: 100% !important;
+    }
 </style>

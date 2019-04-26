@@ -3,6 +3,7 @@
             ref="form"
             v-model="valid"
             lazy-validation
+            @submit.prevent="login"
     >
         <v-text-field
                 color="#3093A0"
@@ -22,11 +23,10 @@
                 v-model="password"
                 label="Geslo"
                 :type="'password'"
-                v-on:keyup.enter="login"
                 required
         ></v-text-field>
 
-        <ButtonBase class="btnFloat" msg="Prijava" :disabled="!valid" @clicked="login"></ButtonBase>
+        <ButtonBase class="btnFloat" msg="Prijava" type="submit" :disabled="!valid"></ButtonBase>
     </v-form>
 </template>
 
@@ -34,7 +34,7 @@
     import ButtonBase from "../Generic/ButtonBase";
 
     export default {
-        components: {ButtonBase},
+        components: { ButtonBase },
         data: () => ({
             valid: true,
             username: '',
@@ -46,9 +46,9 @@
         }),
 
         methods: {
-            login () {
+            login() {
                 if (this.$refs.form.validate()) {
-                    this.$emit("loginSubmit", {
+                    this.$emit('loginSubmit', {
                         password: this.password,
                         username: this.username
                     });

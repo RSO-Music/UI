@@ -1,9 +1,13 @@
 <template>
     <div id="wrapper">
         <div class="loginContainer">
-            <h1>Prijava v sistem</h1>
-            <MyAlert class="smaller" :msg="msg" :isSuccess="isSuccess" @closeAlert="closeAlert"></MyAlert>
-            <UserMainForm id="mainLogin" @loginSubmit="loginSubmit"/>
+                <v-layout column>
+                <h1>Prijava v sistem</h1>
+
+                <UserMainForm id="mainLogin" @loginSubmit="loginSubmit"/>
+            </v-layout>
+
+            <AlertBox :message="alert.message" :type="alert.type" @close="closeAlert"></AlertBox>
         </div>
     </div>
 </template>
@@ -11,41 +15,45 @@
 <script>
     import { APICalls } from "../utils/apiCalls.js";
     import UserMainForm from "../components/Custom/UserMainForm";
-    import MyAlert from "../components/Generic/AlertBox";
+    import AlertBox from "../components/Generic/AlertBox";
 
     export default {
         name: 'userLogin',
-        created(){
+        created() {
         },
         components: {
-            MyAlert,
+            AlertBox,
             UserMainForm
         },
-        data: () => ({
-            isSuccess: 0,
-            msg: ''
-        }),
+        data() {
+            return {
+                alert: {
+                    type: '',
+                    message: ''
+                }
+            };
+        },
         methods: {
-
             loginSubmit(objLogin) {
-            	let vm = this;
+                const vm = this;
 
                 APICalls.loginUser(objLogin).then(
                     (res) => {
-                        this.msg = 'Prijava uspešna';
-                        this.isSuccess = 1;
-
-						vm.$store.commit('login', res.data);
-						vm.$router.push('/');
+                        vm.$store.commit('login', res.data);
+                        
+                        vm.$router.push('/');
                     },
                     (error) => {
-                        this.msg = 'Prijava neuspešna';
-                        this.isSuccess = 2;
+                        vm.alert = {
+                            type: 'error',
+                            message: 'Prijava je bila neuspešna'
+                        }
                     }
                 );
             },
+            
             closeAlert() {
-                this.isSuccess = 1;
+                this.alert = {};
             }
         }
     }

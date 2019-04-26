@@ -1,47 +1,42 @@
 <template>
-    <div class="contentWrapper">
-        <MyAlert class="smaller" :msg="msg" :isSuccess="isSuccess" @closeAlert="closeAlert"/>
-        <div class="formContainer">
-            <UserManagementForm @adminAddUser = adminAddUser />
+    <div class="contentWrapper list-wrapper">
+        <div class="list">
+            <h1>Seznam uporabnikov</h1>
+
+            <ButtonBase classes="full-width" msg="Ustvari novega uporabnika" @clicked="addNewUser"></ButtonBase>
+            
+            <UsersList ref="usersList" @editUser="setUserToEdit"/>
+        </div>
+        
+        <div class="form-container">
+            <UserManagementForm ref="userForm" @userEdited="onUserEdited"/>
         </div>
     </div>
 </template>
 
 <script>
     import UserManagementForm from "../../../components/Custom/UserManagementForm";
-    import MyAlert from "../../../components/Generic/AlertBox";
-    import {APICalls} from "../../../utils/apiCalls";
+    import UsersList from "../../../components/Generic/UsersList";
+    import ButtonBase from "../../../components/Generic/ButtonBase";
 
     export default {
         name: 'homeAdminUserManagement',
         components: {
-            MyAlert,
+            UsersList,
+            ButtonBase,
             UserManagementForm
         },
-        data () {
-            return {
-                isSuccess: 0, // 0 -> nothing has happened(neutral), 1 -> success adding, 2-> error adding
-                msg: ''
-            }
-        },
         methods: {
-            adminAddUser(newUserObj) {
-            	let vm = this;
-
-                APICalls.addNewUser(newUserObj).then(
-                    (rs) => {
-                        this.isSuccess = 1;
-                        this.msg = 'Uporabnik je bil uspešno dodan';
-                    },
-                    (error) => {
-                        this.isSuccess = 2;
-                        this.msg = 'Uporabnik že obstaja';
-                    }
-                );
+            onUserEdited() {
+                this.$refs.usersList.reloadData();
             },
-            closeAlert() {
-                this.isSuccess = 0;
-                this.msg = '';
+            
+            addNewUser() {
+                this.$refs.userForm.resetForm();
+            },
+            
+            setUserToEdit(userData) {
+                this.$refs.userForm.setUserToEdit(JSON.parse(JSON.stringify(userData)));
             }
         }
     }

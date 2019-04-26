@@ -49,7 +49,7 @@
                 this.isNewProject = false;
                 this.insertedAssignedUsersToProject = JSON.parse(JSON.stringify(this.selectedProject.users));
                 this.formUsers = JSON.parse(JSON.stringify(this.users));
-                this.formName = 'UREJANJE PROJEKTA';
+                this.formName = 'Uredi projekt';
                 this.projectName = this.selectedProject.name;
                 this.projectId = this.selectedProject._id;
             },

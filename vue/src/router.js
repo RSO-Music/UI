@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Dashboard from './views/Dashboard/Dashboard'
+import Users from './views/Users/Users'
 import Home from './views/Home/Home'
 import NotFound from './views/NotFound'
 import HomeAdmin from "./views/Home/Admin/HomeAdmin";
@@ -17,111 +19,70 @@ import store from "@/utils/store";
 Vue.use(Router);
 
 const createRouter = () => new Router({
-	mode: "history",
-	routes: [
-		{
-			path: '/',
-			name: 'home',
-			component: Home,
-			children: [
-				{
-					path: 'overview',
-					name: 'overview',
-					component: SystemOverview
-				},
-				{
-					path: 'admin',
-					name: 'homeAdmin',
-					component: HomeAdmin,
-					meta: {
-						allowedRoles: ['Administrator']
-					},
-					children: [
-						{
-							path: 'userManagement',
-							name: 'homeAdminUserManagement',
-							component: HomeAdminUserManagement
-						},
-						{
-							path: 'projectManagement',
-							name: 'homeAdminProjectManagement',
-							component: HomeAdminProjectManagement
-						},
-					]
-				},
-				{
-					path: 'user',
-					name: 'homeUser',
-					component: HomeUser,
-					meta: {
-						allowedRoles: ['User']
-					}
-				},
-				{
-					path: 'user/project/:projectId',
-					name: 'homeUserProject',
-					component: HomeUserProject,
-					meta: {
-						allowedRoles: ['User'],
-					},
-					children: [
-						{
-							path: 'edit',
-							name: 'homeUserProjectEdit',
-							component: HomeUserProjectEdit
-						},
-						{
-							path: 'sprintManagement',
-							name: 'homeUserSprintManagemnet',
-							component: HomeUserSprint
-						},
-						{
-							path: 'userProductBackLog',
-							name: 'homeUserProductBackLog',
-							component: HomeUserProductBacklog
-						}
-					]
-				}
-			]
-		},
-		// THIS MUST BE AT THE BOTTOM, not found page...
-		{
-			path: '*',
-			name: 'notFound',
-			component: NotFound
-		},
-	]
+    mode: "history",
+    routes: [
+        {
+            path: '/',
+            name: 'dashboard',
+            component: Dashboard
+        },
+        {
+            path: '/projects/:projectId',
+            meta: {
+                allowedRoles: ['system_user'],
+                name: 'homeUserProject'
+            },
+            name: 'projectPage',
+            component: HomeUserProject,
+            children: [
+                {
+                    path: 'edit',
+                    name: 'homeUserProjectEdit',
+                    component: HomeUserProjectEdit
+                },
+                {
+                    path: 'sprint',
+                    name: 'homeUserSprintManagemnet',
+                    component: HomeUserSprint
+                },
+                {
+                    path: 'backlog',
+                    name: 'homeUserProductBackLog',
+                    component: HomeUserProductBacklog
+                }
+            ]
+        },
+        {
+            path: '*',
+            name: 'notFound',
+            component: NotFound
+        }
+    ]
 });
 
 const router = createRouter();
 
 router.beforeEach((to, from, next) => {
-	if (to.path === '/') next('/overview');
+    const currentUserRole = store.getters.currentUser.role;
 
-	else {
+    let isAllowed = true;
 
-		// check if user has permission to view this page
-		let currentUserRole = store.getters.currentUser.isAdmin ? 'Administrator' : 'User';
-		let isAllowed = true;
+    if (to.meta.allowedRoles) {
+        isAllowed = to.meta.allowedRoles.indexOf(currentUserRole) > -1;
+    } else {
+        //find the last matched (parent) route with roles restrictions
+        let lastRestrictedRoute = to.matched.slice().reverse().find((match) => {
+            return match.meta.allowedRoles;
+        });
 
-		if (to.meta.allowedRoles) {
-			isAllowed = to.meta.allowedRoles.indexOf(currentUserRole) > -1;
-		}
-		else {
-			//find the last matched (parent) route with roles restrictions
-			let lastRestrictedRoute = to.matched.slice().reverse().find((match) => {
-				return match.meta.allowedRoles;
-			});
+        if (lastRestrictedRoute) {
+            isAllowed = lastRestrictedRoute.meta.allowedRoles.indexOf(currentUserRole) > -1;
+        }
+    }
 
-			if (lastRestrictedRoute) {
-				isAllowed = lastRestrictedRoute.meta.allowedRoles.indexOf(currentUserRole) > -1;
-			}
-		}
+    store.commit('isAllowedRoute', isAllowed);
 
-		store.commit('isAllowedRoute', isAllowed);
-	}
-
-	next();
+    next();
 });
 
 export default router;

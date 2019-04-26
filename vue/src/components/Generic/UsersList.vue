@@ -1,54 +1,51 @@
 <template>
     <div id="projectWrapper">
-        <v-card class="userProjectCard" v-if="!isAdmin" v-for="project in projectsList" :key="project._id">
-            <div class="pName">
-                <v-icon>developer_board</v-icon>
-                <p>{{project.name}}</p>
-            </div>
-            <ButtonBase v-if="!isAdmin" msg="Odpri" @clicked="goInsideProject(project)"></ButtonBase>
-        </v-card>
-        
-        <v-card class="adminProjectCard" v-if="isAdmin" v-for="project in projectsList" :key="project._id">
+        <v-card class="adminProjectCard" v-for="user in usersList" :key="user._id">
             <div class="adminpName">
-                <p>{{project.name}}</p>
-                <ButtonOutline msg="Uredi" @clicked="editSelectedProject(project)"></ButtonOutline>
+                <p>{{`${user.firstName} ${user.lastName ? user.lastName : ''}`}}</p>
+                <ButtonOutline msg="Uredi" @clicked="editUser(user)"></ButtonOutline>
             </div>
         </v-card>
     </div>
-
 </template>
 
 <script>
     import MyButton from "./Button";
     import ButtonBase from "./ButtonBase";
     import ButtonOutline from "./ButtonOutline";
+    import { APICalls } from "../../utils/apiCalls";
 
     export default {
-        name: "ProjectCard",
+        name: "UsersList",
         components: { ButtonOutline, ButtonBase, MyButton },
-        props: {
-            insertedProjectList: Array,
-            isAdmin: Boolean
-        },
-        created() {
-            this.projectsList = this.insertedProjectList;
-        },
-        watch: {
-            insertedProjectList(newVal, oldVal) {
-                this.projectsList = newVal
-            }
-        },
-        data: function () {
+        data() {
             return {
-                projectsList: []
+                usersList: []
             }
+        },
+        mounted() {
+            const vm = this;
+            
+            vm.reloadData();
         },
         methods: {
-            editSelectedProject(projectToEdit) {
-                this.$emit('editProject', projectToEdit);
+            editUser(user) {
+                this.$emit('editUser', user);
             },
-            goInsideProject(projectToEdit) {
-                this.$emit('goInsideProject', projectToEdit);
+            
+            reloadData() {
+                const vm = this;
+                
+                console.log('Reload data');
+
+                APICalls.getUsersList().then(
+                    (res) => {
+                        vm.usersList = res.data;
+                    },
+                    (error) => {
+                        console.log('An error occured while fetching users');
+                    }
+                );
             }
         }
     }

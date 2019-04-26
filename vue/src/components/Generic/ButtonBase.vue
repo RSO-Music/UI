@@ -1,11 +1,12 @@
 <template>
     <v-btn
-            class="main-button"
+            :class="`main-button ${classes}`"
             :disabled="isDisabled"
             @click="buttonClicked"
             color="#3093A0"
             depressed
             dark
+            :type="type"
     >
         {{msg}}
     </v-btn>
@@ -16,7 +17,9 @@
         name: "ButtonBase",
         props: {
             msg: String,
-            isDisabled: Boolean
+            isDisabled: Boolean,
+            type: String,
+            classes: String
         },
         methods: {
             buttonClicked() {
