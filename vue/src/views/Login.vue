@@ -36,7 +36,7 @@
                         this.isSuccess = 1;
 
 						vm.$store.commit('login', res.data);
-						vm.$router.push('/overview');
+						vm.$router.push('/');
                     },
                     (error) => {
                         this.msg = 'Prijava neuspešna';

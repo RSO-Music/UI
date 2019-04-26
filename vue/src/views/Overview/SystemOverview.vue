@@ -29,10 +29,10 @@
 			this.currentUser = this.$store.getters.currentUser;
 		},
 		computed: {
-			isAdmin: function () {
+			isAdmin() {
 				return this.$store.getters.currentUser.isAdmin;
 			},
-			getUserRole: function () {
+			getUserRole() {
 				return this.$store.getters.currentUser.isAdmin ? 'Admin' : 'User';
 			}
 		}

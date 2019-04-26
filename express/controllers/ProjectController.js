@@ -1,39 +1,47 @@
-var ProjectModel = require('../models/ProjectModel.js');
+const ProjectModel = require('../models/ProjectModel.js');
 
 module.exports = {
-
-    list: function (req, res) {
+    findAll(req, res) {
         return async function () {
-            let query = {};
-            if (req.params) {
-                query = {
-                    'users.user': req.params._id
-                }
-            }
             try {
-            let Projects = await ProjectModel.find(query['users.user'] === undefined ? {} : query ).populate({
-                path: "users.user",
-                model: "User"
-            }).exec();
+                const Projects = await ProjectModel.find({}).populate().exec();
 
-            return res.json(Projects);
-            }
-            catch (err) {
-                if (err) {
-                    return res.status(500).json({
-                        message: 'Error when getting Project.',
-                        error: err
-                    });
-                }
+                return res.json(Projects);
+            } catch (err) {
+                return res.status(500).json({
+                    message: 'An error occured while fetching project',
+                    error: err
+                });
             }
         }();
     },
 
-    show: function (req, res) {
+    findForUser(req, res) {
         return async function () {
-            var id = req.params.id;
+            const userId = req.params.userId;
+
             try {
-                let Project = await ProjectModel.findOne({_id: id}).populate({
+                let Projects = await ProjectModel.find({ 'users.user': userId }).populate({
+                    path: "users.user",
+                    model: "User"
+                }).exec();
+
+                return res.json(Projects);
+            } catch (err) {
+                return res.status(500).json({
+                    message: 'An error occured while fetching project',
+                    error: err
+                });
+            }
+        }();
+    },
+
+    findOne(req, res) {
+        return async function () {
+            const id = req.params.id;
+            
+            try {
+                let Project = await ProjectModel.findOne({ _id: id }).populate({
                     path: "users.user",
                     model: "User"
                 }).exec();
@@ -43,8 +51,8 @@ module.exports = {
                         message: 'No such Project'
                     });
                 }
+                
                 return res.json(Project);
-
             } catch (err) {
                 return res.status(500).json({
                     message: 'Error when getting Project.',
@@ -54,8 +62,9 @@ module.exports = {
         }();
     },
 
-    create: function (req, res) {
-        var Project = new ProjectModel(req.body);
+    create(req, res) {
+        const Project = new ProjectModel(req.body);
+        
         Project.save(function (err, Project) {
             if (err) {
                 return res.status(500).json({
@@ -63,26 +72,33 @@ module.exports = {
                     error: err
                 });
             }
+            
             return res.status(201).json(Project);
         });
     },
 
-    update: function (req, res) {
-        var id = req.params.id;
-        ProjectModel.findOne({_id: id}, function (err, Project) {
+    update(req, res) {
+        const id = req.params.id;
+        
+        ProjectModel.findOne({ _id: id }, function (err, Project) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Project',
                     error: err
                 });
             }
+            
             if (!Project) {
                 return res.status(404).json({
                     message: 'No such Project'
                 });
             }
 
-            ProjectModel.findOneAndUpdate({_id: id}, req.body, {upsert: true, new: true, runValidators: true},  function (err, UpdatedProject) {
+            ProjectModel.findOneAndUpdate({ _id: id }, req.body, {
+                upsert: true,
+                new: true,
+                runValidators: true
+            }, function (err, UpdatedProject) {
                 if (err) {
                     return res.status(500).json({
                         message: 'Error when updating Project.',
@@ -95,8 +111,9 @@ module.exports = {
         });
     },
 
-    remove: function (req, res) {
-        var id = req.params.id;
+    delete(req, res) {
+        const id = req.params.id;
+        
         ProjectModel.findByIdAndRemove(id, function (err, Project) {
             if (err) {
                 return res.status(500).json({
@@ -104,6 +121,7 @@ module.exports = {
                     error: err
                 });
             }
+            
             return res.status(204).json();
         });
     }

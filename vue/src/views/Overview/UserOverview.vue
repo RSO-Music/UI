@@ -25,7 +25,7 @@
 			);
 		},
 		computed: {
-			countProjects: function () {
+			countProjects() {
 				let projectLabel = 'projektov';
 
 				switch (this.nbOfProjects) {

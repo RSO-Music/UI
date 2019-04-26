@@ -19,7 +19,7 @@
 			}
 		},
 		methods: {
-			goBack: function () {
+			goBack() {
 				this.$router.back();
 			}
 		}

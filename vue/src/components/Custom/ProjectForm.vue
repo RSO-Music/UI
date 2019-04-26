@@ -93,7 +93,7 @@
 
         },
         watch: {
-            insertedAssignedUsersToProject: function (newVal, oldVal) {
+            insertedAssignedUsersToProject(newVal, oldVal) {
                 this.assignedUsersToProject = newVal;
             },
             insertedUsers: function(newVal, oldVal) {
@@ -106,13 +106,13 @@
                     }
                 }
             },
-            isNewProject: function (newVal, oldVal) {
+            isNewProject(newVal, oldVal) {
                 if (newVal) { // if we are edding project
                     this.originalUsers = JSON.parse(JSON.stringify(this.users));
                 }
             },
 
-            insertedProjectName: function (newVal, oldVal) {
+            insertedProjectName(newVal, oldVal) {
                 if (newVal !== oldVal) {
                     this.projectName = newVal;
                 }

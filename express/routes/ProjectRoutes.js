@@ -1,32 +1,41 @@
-var express = require('express');
-var router = express.Router();
-var ProjectController = require('../controllers/ProjectController.js');
-var UserController = require('../controllers/UserController.js');
+const express = require('express');
+const router = express.Router();
+const ProjectController = require('../controllers/ProjectController.js');
 
-/*
- * GET
+/**
+ * Fetch all the projects
  */
-router.get('/', ProjectController.list);
-router.get('/user/:_id', ProjectController.list);
+router.get('/', ProjectController.findAll);
 
-/*
- * GET
+
+/**
+ * Fetch all the projects that are related to the current user
  */
-router.get('/:id', ProjectController.show);
+router.get('/user/:userId', ProjectController.findForUser);
 
-/*
- * POST
+
+/**
+ * Fetch project by id
+ */
+router.get('/:id', ProjectController.findOne);
+
+
+/**
+ * Create new project
  */
 router.post('/', ProjectController.create);
 
-/*
- * PUT
+
+/**
+ * Update a project
  */
 router.put('/:id', ProjectController.update);
 
-/*
- * DELETE
+
+/**
+ * Delete a project
  */
-router.delete('/:id', ProjectController.remove);
+router.delete('/:id', ProjectController.delete);
+
 
 module.exports = router;

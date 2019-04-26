@@ -62,7 +62,7 @@
             this.getCurrentSprint();
         },
         watch: {
-            active: function (newVal, oldVal) {
+            active(newVal, oldVal) {
                 if (newVal !== oldVal) {
                     if (this.userProjectRole === 'Scrum Master') {
                         if (this.active === 0) {
@@ -158,7 +158,7 @@
                     }
                 );
             },
-            getCurrentSprint: function () {
+            getCurrentSprint() {
                 APICalls.getActiveSprint(this.$route.params.projectId).then(
                     (rs) => {
                         this.currentSprint = rs.data;

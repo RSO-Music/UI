@@ -1,118 +1,138 @@
-var UserTaskModel = require('../models/UserTaskModel');
+const UserTaskModel = require('../models/UserTaskModel');
 
 module.exports = {
+    findAll(req, res) {
+        return async function () {
+            try {
+                let UserTasks = await UserTaskModel.find({}).exec();
+                return res.json(UserTasks);
+            }
+            catch (err) {
+                return res.status(500).json({
+                    message: 'Error when getting UserTask.',
+                    error: err
+                });
+            }
+        }();
+    },
 
-	list: function (req, res) {
-		return async function () {
-			let query = {};
-			if (req.headers.query)
-				query = req.headers.query;
+    findAllForStory(req, res) {
+        return async function () {
+            let query = {};
 
-			try {
-				let UserTasks = await UserTaskModel.find(query).exec();
-				return res.json(UserTasks);
-			}
-			catch (err) {
-				if (err) {
-					return res.status(500).json({
-						message: 'Error when getting UserTask.',
-						error: err
-					});
-				}
-			}
-		}();
-	},
+            if (req.headers.query)
+                query = req.headers.query;
 
-	show: function (req, res) {
-		console.log(req.params);
-		var id = req.params.id;
-		UserTaskModel.findOne({_id: id}, function (err, UserStory) {
-			if (err) {
-				return res.status(500).json({
-					message: 'Error when getting UserTask.',
-					error: err
-				});
-			}
-			if (!UserStory) {
-				return res.status(404).json({
-					message: 'No such UserTask.'
-				});
-			}
-			return res.json(UserStory);
-		});
-	},
+            try {
+                let UserTasks = await UserTaskModel.find({ storyId: req.params.storyId }).exec();
+                return res.json(UserTasks);
+            }
+            catch (err) {
+                return res.status(500).json({
+                    message: 'Error when getting UserTask.',
+                    error: err
+                });
+            }
+        }();
+    },
 
-	create: function (req, res) {
-		var UserTaskG = new UserTaskModel(req.body);
-		let description = req.body.description;
-		let sId = req.body.storyId;
-		UserTaskModel.findOne({description: description, storyId: sId}, function (err, UserTask) {
-			if (err) {
-				return res.status(500).json({
-					message: 'Error when getting UserTask.',
-					error: err
-				});
-			}
-			if (UserTask) {
-				return res.status(404).json({
-					message: 'This user task already exists'
-				});
-			} else {
-				UserTaskG.save(function (err, UserTask) {
-					if (err) {
-						return res.status(500).json({
-							message: 'Error when creating UserTask',
-							error: err
-						});
-					}
-					return res.status(201).json(UserTask);
-				});
-			}
-		});
+    findOne(req, res) {
+        const id = req.params.id;
+
+        UserTaskModel.findOne({ _id: id }, function (err, UserStory) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting UserTask.',
+                    error: err
+                });
+            }
+
+            if (!UserStory) {
+                return res.status(404).json({
+                    message: 'No such UserTask.'
+                });
+            }
+
+            return res.json(UserStory);
+        });
+    },
+
+    create(req, res) {
+        const UserTaskG = new UserTaskModel(req.body);
+        let description = req.body.description;
+        let sId = req.body.storyId;
+
+        UserTaskModel.findOne({ description: description, storyId: sId }, function (err, UserTask) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting UserTask.',
+                    error: err
+                });
+            }
+
+            if (UserTask) {
+                return res.status(404).json({
+                    message: 'This user task already exists'
+                });
+            } else {
+                UserTaskG.save(function (err, UserTask) {
+                    if (err) {
+                        return res.status(500).json({
+                            message: 'Error when creating UserTask',
+                            error: err
+                        });
+                    }
+
+                    return res.status(201).json(UserTask);
+                });
+            }
+        });
 
 
+    },
 
-	},
+    update(req, res) {
+        const id = req.params.id;
 
-	update: function (req, res) {
-		var id = req.params.id;
-		UserTaskModel.findOneAndUpdate({_id: id}, {$set: req.body}, function (err, UserTask) {
-			if (err) {
-				console.log("ERR: ", err);
-				return res.status(500).json({
-					message: 'Error when getting UserTask',
-					error: err
-				});
-			}
-			if (!UserTask) {
-				return res.status(404).json({
-					message: 'No such UserTask'
-				});
-			}
+        UserTaskModel.findOneAndUpdate({ _id: id }, { $set: req.body }, function (err, UserTask) {
+            if (err) {
+                console.log("ERR: ", err);
+                return res.status(500).json({
+                    message: 'Error when getting UserTask',
+                    error: err
+                });
+            }
 
-			UserTask.save(function (err, UserTask) {
-				if (err) {
-					return res.status(500).json({
-						message: 'Error when updating UserTask.',
-						error: err
-					});
-				}
+            if (!UserTask) {
+                return res.status(404).json({
+                    message: 'No such UserTask'
+                });
+            }
 
-				return res.json(UserTask);
-			});
-		});
-	},
+            UserTask.save(function (err, UserTask) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when updating UserTask.',
+                        error: err
+                    });
+                }
 
-	remove: function (req, res) {
-		var id = req.params.id;
-		UserTaskModel.findByIdAndRemove(id, function (err, UserStory) {
-			if (err) {
-				return res.status(500).json({
-					message: 'Error when deleting the UserTask.',
-					error: err
-				});
-			}
-			return res.status(204).json();
-		});
-	}
+                return res.json(UserTask);
+            });
+        });
+    },
+
+    remove(req, res) {
+        const id = req.params.id;
+
+        UserTaskModel.findByIdAndRemove(id, function (err, UserStory) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when deleting the UserTask.',
+                    error: err
+                });
+            }
+            return res.status(204).json();
+        });
+    }
 };

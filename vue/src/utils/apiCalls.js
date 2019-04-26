@@ -100,7 +100,7 @@ export class APICalls {
     static getProjectBacklog (projectId) {
         return axios({
             method: "get",
-            url: URL + '/story/inbacklog/' + projectId,
+            url: URL + '/story/backlog/' + projectId,
         });
     }
 

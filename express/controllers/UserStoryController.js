@@ -1,58 +1,117 @@
-var UserStoryModel = require('../models/UserStoryModel');
+const UserStoryModel = require('../models/UserStoryModel');
 
 module.exports = {
-
-    list: function (req, res) {
+    findAll(req, res) {
         return async function () {
-        let query = {};
-        if (req.headers.query)
-            query = req.headers.query;
+            try {
+                const UserStories = await UserStoryModel.find({}).exec();
 
-        try {
-            let UserStories = await UserStoryModel.find(query).exec();
-            return res.json(UserStories);
-        }
-        catch (err) {
-            if (err) {
+                return res.json(UserStories);
+            } catch (err) {
                 return res.status(500).json({
                     message: 'Error when getting UserStory.',
                     error: err
                 });
             }
-        }
         }();
     },
 
-    show: function (req, res) {
-        console.log(req.params);
-        var id = req.params.id;
-        UserStoryModel.findOne({_id: id}, function (err, UserStory) {
+    findFinishedStories(req, res) {
+        const projectId = req.params.projectId;
+
+        return async function () {
+            try {
+                const UserStories = await UserStoryModel.find({
+                    projectId,
+                    done: true
+                }).exec();
+
+                return res.json(UserStories);
+            } catch (err) {
+                return res.status(500).json({
+                    message: 'Error when getting UserStory.',
+                    error: err
+                });
+            }
+        }();
+    },
+
+    findStoriesInSprint(req, res) {
+        const sprintId = req.params.id;
+        const projectId = req.params.projectId;
+
+        return async function () {
+            try {
+                const UserStories = await UserStoryModel.find({
+                    projectId,
+                    sprintId
+                }).exec();
+
+                return res.json(UserStories);
+            } catch (err) {
+                return res.status(500).json({
+                    message: 'Error when getting UserStory.',
+                    error: err
+                });
+            }
+        }();
+    },
+
+    findStoriesInBacklog(req, res) {
+        const projectId = req.params.projectId;
+
+        return async function () {
+            try {
+                const UserStories = await UserStoryModel.find({
+                    projectId,
+                    sprintId: null,
+                    done: false
+                }).exec();
+
+                return res.json(UserStories);
+            } catch (err) {
+                return res.status(500).json({
+                    message: 'Error when getting UserStory.',
+                    error: err
+                });
+            }
+        }();
+    },
+
+    findOne(req, res) {
+        const id = req.params.id;
+
+        UserStoryModel.findOne({ _id: id }, function (err, UserStory) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting UserStory.',
                     error: err
                 });
             }
+
             if (!UserStory) {
                 return res.status(404).json({
                     message: 'No such UserStory.'
                 });
             }
+
             return res.json(UserStory);
         });
     },
 
-    create: function (req, res) {
-        var UserStoryG = new UserStoryModel(req.body);
+    create(req, res) {
+        const UserStoryG = new UserStoryModel(req.body);
         let name = req.body.name;
         let pId = req.body.projectId;
-        UserStoryModel.findOne({name: name, projectId: pId}, function (err, UserStory) {
+
+        UserStoryModel.findOne({ name: name, projectId: pId }, function (err, UserStory) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting UserStory.',
                     error: err
                 });
             }
+
             if (UserStory) {
                 return res.status(404).json({
                     message: 'This user story already exists'
@@ -65,22 +124,17 @@ module.exports = {
                             error: err
                         });
                     }
+
                     return res.status(201).json(UserStory);
                 });
             }
         });
-
-
-
     },
 
-    update: function (req, res) {
-        console.log("REQ PARAMS: ", req.params);
-        var id = req.params.id;
+    update(req, res) {
+        const id = req.params.id;
 
-        //TODO: check if
-
-        UserStoryModel.findOneAndUpdate({_id: id}, {$set: req.body}, function (err, UserStory) {
+        UserStoryModel.findOneAndUpdate({ _id: id }, { $set: req.body }, function (err, UserStory) {
             if (err) {
                 console.log("ERR: ", err);
                 return res.status(500).json({
@@ -88,19 +142,20 @@ module.exports = {
                     error: err
                 });
             }
+
             if (!UserStory) {
                 return res.status(404).json({
                     message: 'No such UserStory'
                 });
             }
 
-			return res.json(UserStory);
-
+            return res.json(UserStory);
         });
     },
 
-    remove: function (req, res) {
-        var id = req.params.id;
+    delete(req, res) {
+        const id = req.params.id;
+
         UserStoryModel.findByIdAndRemove(id, function (err, UserStory) {
             if (err) {
                 return res.status(500).json({
@@ -108,6 +163,7 @@ module.exports = {
                     error: err
                 });
             }
+
             return res.status(204).json();
         });
     }

@@ -354,7 +354,7 @@
 			"response": []
 		},
 		{
-			"name": "[GET] inbacklog",
+			"name": "[GET] backlog",
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -363,14 +363,14 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "localhost:8080/story/inbacklog/5c88291ddbfa2a5dfcce2541",
+					"raw": "localhost:8080/story/backlog/5c88291ddbfa2a5dfcce2541",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"story",
-						"inbacklog",
+						"backlog",
 						"5c88291ddbfa2a5dfcce2541"
 					]
 				}

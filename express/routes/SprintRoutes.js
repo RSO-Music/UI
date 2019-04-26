@@ -1,31 +1,23 @@
-var express = require('express');
-var router = express.Router();
-var SprintController = require('../controllers/SprintController');
+const express = require('express');
+const router = express.Router();
+const SprintController = require('../controllers/SprintController');
 
-/*
- * GET
- */
-router.get('/', SprintController.list);
+router.get('/', SprintController.findAll);
 
-/*
- * GET
- */
-router.get('/active/:projectId', SprintController.active);
-router.get('/:id', SprintController.show);
 
-/*
- * POST
- */
+router.get('/active/:projectId', SprintController.findActiveForProject);
+
+
+router.get('/:id', SprintController.findOne);
+
+
 router.post('/', SprintController.create);
 
-/*
- * PUT
- */
+
 router.put('/:id', SprintController.update);
 
-/*
- * DELETE
- */
-router.delete('/:id', SprintController.remove);
+
+router.delete('/:id', SprintController.delete);
+
 
 module.exports = router;

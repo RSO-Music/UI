@@ -22,7 +22,7 @@
             msg: ''
         }),
         methods: {
-            addNewSprint: function (sprintObj) {
+            addNewSprint(sprintObj) {
             	let vm = this;
 
                 sprintObj['projectId'] = vm.$route.params.projectId;
@@ -37,7 +37,7 @@
                     }
                 );
             },
-            closeAlert: function () {
+            closeAlert() {
                 this.isSuccess = 0;
             }
         }

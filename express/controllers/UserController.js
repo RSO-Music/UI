@@ -1,20 +1,15 @@
-var UserModel = require('../models/UserModel.js');
+const UserModel = require('../models/UserModel.js');
 
-/**
- * UserController.js
- *
- * @description :: Server-side logic for managing Users.
- */
+const userRoles = require('../lib/userRoles');
+
 module.exports = {
-
-    /**
-     * UserController.list()
-     */
-    list: function (req, res) {
+    list(req, res) {
         let query = {};
-        try{
+        
+        try {
             query = JSON.parse(req.headers.query);
-        }catch (e) {
+        } catch (e) {
+            
         }
 
         UserModel.find(query, function (err, Users) {
@@ -27,10 +22,12 @@ module.exports = {
             return res.json(Users);
         });
     },
-    login: function (req, res) {
+
+    login(req, res) {
         let username = req.body.username;
         let password = req.body.password;
-        UserModel.findOne({username: username}, function (err, User) {
+
+        UserModel.findOne({ username: username }, function (err, User) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting User.',
@@ -49,12 +46,10 @@ module.exports = {
         });
     },
 
-    /**
-     * UserController.show()
-     */
-    show: function (req, res) {
-        var id = req.params.id;
-        UserModel.findOne({_id: id}, function (err, User) {
+    show(req, res) {
+        const id = req.params.id;
+        
+        UserModel.findOne({ _id: id }, function (err, User) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting User.',
@@ -70,11 +65,9 @@ module.exports = {
         });
     },
 
-    /**
-     * UserController.create()
-     */
-    create: function (req, res) {
-        var User = new UserModel(req.body);
+    create(req, res) {
+        const User = new UserModel(req.body);
+
         User.save(function (err, User) {
             if (err) {
                 return res.status(500).json({
@@ -86,12 +79,10 @@ module.exports = {
         });
     },
 
-    /**
-     * UserController.update()
-     */
-    update: function (req, res) {
-        var id = req.params.id;
-        UserModel.findOne({_id: id}, function (err, User) {
+    update(req, res) {
+        const id = req.params.id;
+
+        UserModel.findOne({ _id: id }, function (err, User) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting User',
@@ -105,12 +96,12 @@ module.exports = {
             }
 
             User.username = req.body.username ? req.body.username : User.username;
-			User.password = req.body.password ? req.body.password : User.password;
-			User.firstName = req.body.firstName ? req.body.firstName : User.firstName;
-			User.lastName = req.body.lastName ? req.body.lastName : User.lastName;
-			User.email = req.body.email ? req.body.email : User.email;
-			User.admin = req.body.admin ? req.body.admin : User.admin;
-			
+            User.password = req.body.password ? req.body.password : User.password;
+            User.firstName = req.body.firstName ? req.body.firstName : User.firstName;
+            User.lastName = req.body.lastName ? req.body.lastName : User.lastName;
+            User.email = req.body.email ? req.body.email : User.email;
+            User.admin = req.body.admin ? req.body.admin : User.admin;
+
             User.save(function (err, User) {
                 if (err) {
                     return res.status(500).json({
@@ -123,12 +114,10 @@ module.exports = {
             });
         });
     },
+    
+    remove(req, res) {
+        const id = req.params.id;
 
-    /**
-     * UserController.remove()
-     */
-    remove: function (req, res) {
-        var id = req.params.id;
         UserModel.findByIdAndRemove(id, function (err, User) {
             if (err) {
                 return res.status(500).json({
@@ -138,5 +127,31 @@ module.exports = {
             }
             return res.status(204).json();
         });
+    },
+    
+    createAdminIfItDoesNotExist() {
+        UserModel.findOne({ role: userRoles.systemAdmin }, function (err, User) {
+            if (err) {
+                console.log(err);
+            }
+            
+            if (!User) {
+                User = new UserModel({
+                    username: 'admin',
+                    password: 'admin',
+                    firstName: 'Administrator',
+                    email: 'admin@scrummy',
+                    role: userRoles.systemAdmin
+                });
+                
+                User.save(function (err, SavedUser) {
+                    if (err) {
+                        console.log('Error while creating admin', err);
+                    } else {
+                        console.log('Admin was successfuly created');
+                    }
+                });
+            }
+        }); 
     }
 };

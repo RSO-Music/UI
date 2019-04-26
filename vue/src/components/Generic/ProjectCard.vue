@@ -33,7 +33,7 @@
             this.projectsList = this.insertedProjectList;
         },
         watch: {
-            insertedProjectList: function (newVal, oldVal) {
+            insertedProjectList(newVal, oldVal) {
                 this.projectsList = newVal
             }
         },

@@ -266,7 +266,7 @@
 			editingTask: false
 		}),
 		methods: {
-			updateStory: function () {
+			updateStory() {
 				if (this.story._id) {
 					//update existing story
 					APICalls.updateUserStory({
@@ -313,7 +313,7 @@
 						})
 				}
 			},
-			closeDialog: function () {
+			closeDialog() {
 				this.dialog = false;
 			},
 			addTask () {
@@ -407,7 +407,7 @@
 			}
 		},
 		computed: {
-			unassignedTasks: function () {
+			unassignedTasks() {
 				//task is treated as unassigned if it has no assignee
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
@@ -415,7 +415,7 @@
 					})
 				}
 			},
-			assignedTasks: function () {
+			assignedTasks() {
 				//for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
@@ -423,7 +423,7 @@
 					})
 				}
 			},
-			activeTasks: function () {
+			activeTasks() {
 				//task is treated as active if it is assigned and is marked as 'in_progress'
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
@@ -431,7 +431,7 @@
 					})
 				}
 			},
-			finishedTasks: function () {
+			finishedTasks() {
 				//task is treated as finished if it is assigned and is marked as 'finished'
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
@@ -439,12 +439,12 @@
 					})
 				}
 			},
-			projectUsers: function () {
+			projectUsers() {
 				let projectData = this.$store.getters.editingProject;
 
 				return projectData.users;
 			},
-			isProductOwner: function () {
+			isProductOwner() {
 				let projectData = this.$store.getters.editingProject;
 
 				let currentUser = this.$store.getters.currentUser;
@@ -455,7 +455,7 @@
 
 				return userInProject.role === 'Product Owner';
 			},
-			isEditTaskValid: function () {
+			isEditTaskValid() {
 				if (this.editTask) {
 					return this.editTask.description && this.editTask.description.trim() !== '' && this.editTask.time;
 				}

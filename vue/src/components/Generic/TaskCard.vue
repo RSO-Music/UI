@@ -51,15 +51,15 @@
 			array: []
 		}),
 		methods: {
-			editTask: function () {
+			editTask() {
 				this.$emit('editTask', this.task)
 			},
-			deleteTask: function () {
+			deleteTask() {
 				this.$emit('deleteTask', this.task)
 			}
 		},
 		computed: {
-			taskAssignee: function () {
+			taskAssignee() {
 				let vm = this;
 
 				if (this.task.asignee) {

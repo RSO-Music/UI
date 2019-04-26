@@ -40,10 +40,10 @@
             }
         },
         computed: {
-            displayUser: function () {
+            displayUser() {
                 return this.loggedInUser.firstName + ' ' + this.loggedInUser.lastName;
             },
-            displayRole: function () {
+            displayRole() {
             	return this.loggedInUser.isAdmin ? 'ADMIN' : 'USER';
             }
         }

@@ -76,7 +76,7 @@
             project: Object,
         },
         methods: {
-            getStoriesInBacklog: function () {
+            getStoriesInBacklog() {
                 APICalls.getProjectBacklog(this.$route.params.projectId).then(
                     (rs) => {
                         this.storiesInBacklog = rs.data;
@@ -85,7 +85,7 @@
                     }
                 );
             },
-            getStoriesInCurrnetSprint: function () {
+            getStoriesInCurrnetSprint() {
                 APICalls.getActiveSprint(this.$route.params.projectId).then(
                     (rs) => {
                         this.currentSprint = rs.data;
@@ -105,7 +105,7 @@
                     }
                 );
             },
-            getCompletedStories: function () {
+            getCompletedStories() {
                 APICalls.getDoneStories(this.$route.params.projectId).then(
                     (rs) => {
                         this.completedStories = rs.data;
@@ -114,13 +114,13 @@
                     }
                 );
             },
-            addStory: function (obj) {
+            addStory(obj) {
                 //console.log(obj);
                 if (obj.bool === true) {
                     //console.log(obj.id);
                     this.arr.push(obj.id);
                 } else {
-                    var i = this.arr.findIndex(function (idStory) {
+                    const i = this.arr.findIndex(function (idStory) {
                         return obj.id === idStory;
                     });
                     //console.log(i)
@@ -128,7 +128,7 @@
                 }
                 console.log(this.arr)
             },
-            addStoryToSprint: function () {
+            addStoryToSprint() {
                 if (this.arr.length !== 0) {
                     //console.log(this.currentSprint._id);
                     for (let x = 0; x < this.arr.length; x++) {
@@ -163,22 +163,22 @@
             addNewStory: function() {
 
             },
-            refreshData: function () {
+            refreshData() {
 				this.getStoriesInBacklog();
 				this.getStoriesInCurrnetSprint();
 				this.getCompletedStories();
             },
-            closeAlert: function () {
+            closeAlert() {
                 this.napaka = 0;
                 this.napakaTekst = '';
             }
 
         },
         computed: {
-            startDateFormat: function () {
+            startDateFormat() {
                 return new Date(this.currentSprint.startDate * 1000).toString().substr(0, 10);
             },
-            endDateFormat: function () {
+            endDateFormat() {
                 return new Date(this.currentSprint.endDate * 1000).toString().substr(0, 10);
             }
 

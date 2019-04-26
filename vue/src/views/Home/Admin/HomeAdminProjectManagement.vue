@@ -34,7 +34,7 @@
             MyAlert,
             ProjectForm
         },
-        created: function () {
+        created() {
             this.getAllUsers();
             this.getAllProjects();
         },

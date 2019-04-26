@@ -98,12 +98,12 @@
             },
         }),
         methods: {
-            changedCheckbox: function ($event) {
+            changedCheckbox($event) {
                 let bool = $event.length === 1;
                 this.$emit('addStory', {id: this.story._id, bool: bool});
 
             },
-            deleteStory: function () {
+            deleteStory() {
                 APICalls.deleteUserStory(this.story._id).then(
                     (res) => {
                         console.log('User story deleted');
@@ -114,12 +114,12 @@
                     }
                 );
             },
-            refreshStory: function () {
+            refreshStory() {
                 this.$emit("refresh", true);
             }
         },
         computed: {
-        	hasNoTimeEstimation: function () {
+        	hasNoTimeEstimation() {
                 return !this.story.timeEstimation || this.story.timeEstimation === '';
 			}
         }

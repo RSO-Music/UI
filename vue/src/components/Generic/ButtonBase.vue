@@ -19,7 +19,7 @@
             isDisabled: Boolean
         },
         methods: {
-            buttonClicked: function () {
+            buttonClicked() {
                 this.$emit("clicked");
             }
         }

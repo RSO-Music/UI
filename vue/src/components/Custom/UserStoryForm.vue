@@ -252,22 +252,22 @@
         },
         computed: {
         	//TODO: add users logic
-            unassignedTasks: function () {
+            unassignedTasks() {
                 return this.tasks.filter(function (task) {
                     return !task.asignee && task.status === 'new'
 				})
 			},
-			assignedTasks: function () {
+			assignedTasks() {
 				return this.tasks.filter(function (task) {
 					return task.asignee && task.status === 'new'
 				})
 			},
-			activeTasks: function () {
+			activeTasks() {
 				return this.tasks.filter(function (task) {
 					return task.status === 'in_progress'
 				})
 			},
-			finishedTasks: function () {
+			finishedTasks() {
 				return this.tasks.filter(function (task) {
 					return task.status === 'finished'
 				})

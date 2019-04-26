@@ -38,7 +38,7 @@
                 this.alertType = newVal === 1 ? 'success' : 'error';
             }
         },
-        data: function () {
+        data() {
             return {
                 success: 'success',
                 error: 'error',

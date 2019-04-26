@@ -33,7 +33,7 @@
 			);
 		},
 		computed: {
-			countProjects: function () {
+			countProjects() {
 				let label = 'projektov';
 
 				switch (this.nbOfProjects) {
@@ -56,7 +56,7 @@
 
 				return `${this.nbOfProjects} ${label}`;
 			},
-			countUsers: function () {
+			countUsers() {
 				let label = 'uporabnikov';
 
 				switch (this.nbOfUsers) {

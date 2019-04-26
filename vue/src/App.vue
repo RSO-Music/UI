@@ -16,7 +16,7 @@
     name: 'App',
     components: {Login, NotAllowed},
     computed: {
-		isLoggedIn: function () {
+		isLoggedIn() {
 			return this.$store.getters.currentUser.loggedIn;
 		},
         isNotAllowed: function() {

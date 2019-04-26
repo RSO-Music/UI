@@ -6,36 +6,30 @@ const userStoryRoutes = require("./routes/UserStoryRoutes");
 const ProjectRoutes = require("./routes/ProjectRoutes");
 const sprintRoutes = require("./routes/SprintRoutes");
 const userTaskRoutes = require("./routes/UserTaskRoutes");
-let user = process.env.DB_USER || "borrowland";
-let password = process.env.DB_PASSWORD || "password";
-let db_uri = process.env.DB_URI || "localhost:27017";
 
-// mongoose.connect(`mongodb://${user}:${password}@${db_uri}/tenants?authSource=admin`, {
-//     useNewUrlParser: true
-// });
-// mongodb://admin:admin123@ds119090.mlab.com:19090/smrpo
 mongoose.connect(`mongodb+srv://admin:admin123@smrpo-1diaf.mongodb.net/test?retryWrites=tru`, {
     useNewUrlParser: true
 });
 
 const port = process.env.PORT || 8080;
-let app = express();
+
+const app = express();
 
 app.use(bodyParser.urlencoded({
     extended: false
 }));
+
 app.use(bodyParser.json());
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT,DELETE");
     res.header("Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, query");
     res.header("query", "*");
+
     next();
 });
-
-//end of uros test
 
 app.use("/user/", userRoutes);
 app.use('/story/', userStoryRoutes);
@@ -43,6 +37,8 @@ app.use("/project/", ProjectRoutes);
 app.use("/sprint/", sprintRoutes);
 app.use("/task/", userTaskRoutes);
 
+// Creates the admin if it does not exist
+require('./lib/createAdmin')();
 
 app.listen(port, function () {
     console.log(`Running server on port ${port}.`);

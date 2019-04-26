@@ -41,7 +41,7 @@
         created() {
         },
         watch: {
-            active: function (newVal, oldVal) {
+            active(newVal, oldVal) {
                 if (newVal !== oldVal) {
                     if (newVal === 0) {
                         this.$router.push({
