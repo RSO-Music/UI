@@ -14,12 +14,9 @@ let db_uri = process.env.DB_URI || "localhost:27017";
 //     useNewUrlParser: true
 // });
 // mongodb://admin:admin123@ds119090.mlab.com:19090/smrpo
-/*mongoose.connect(` mongodb://admin:admin123@ds123146.mlab.com:23146/smrpo`, {
+mongoose.connect(`mongodb+srv://admin:admin123@smrpo-1diaf.mongodb.net/test?retryWrites=tru`, {
     useNewUrlParser: true
-});*/
-
-//TODO: provide your ownn mongo connection
-mongoose.connect('');
+});
 
 const port = process.env.PORT || 8080;
 let app = express();
