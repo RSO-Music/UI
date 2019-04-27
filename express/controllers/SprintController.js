@@ -35,10 +35,29 @@ module.exports = {
         });
     },
 
-    findActiveForProject(req, res) {
-        let interval = 1000 * 60 * 60 * 24;
+    findAllForProject(req, res) {
+        SprintModel.find({
+            projectId: req.params.projectId
+        }, function (err, Sprint) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting Sprint.',
+                    error: err
+                });
+            }
 
-        let time = Math.round((Math.floor(new Date().getTime() / interval) * interval) / 1000);
+            if (!Sprint) {
+                return res.status(404).json({
+                    message: 'No such Sprint.'
+                });
+            }
+            
+            return res.json(Sprint);
+        });
+    },
+
+    findActiveForProject(req, res) {
+        const time = new Date();
 
         SprintModel.findOne({
             startDate: { $lte: time },
@@ -63,12 +82,14 @@ module.exports = {
     },
 
     create(req, res) {
+        console.log(req.body);
+        
         const SprintToInsert = new SprintModel({
             endDate: req.body.endDate,
             startDate: req.body.startDate,
             projectId: req.body.projectId,
             speed: req.body.speed,
-            name: req.body.name,
+            name: req.body.name
         });
 
         const pId = req.body.projectId;

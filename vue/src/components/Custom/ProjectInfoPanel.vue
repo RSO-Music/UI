@@ -28,10 +28,10 @@
         },
         computed: {
             startDateFormat() {
-                return new Date(this.currentSprint.startDate * 1000).toString().substr(0, 10);
+                return this.currentSprint.startDate;
             },
             endDateFormat() {
-                return new Date(this.currentSprint.endDate * 1000).toString().substr(0, 10);
+                return this.currentSprint.endDate;
             }
 
         }

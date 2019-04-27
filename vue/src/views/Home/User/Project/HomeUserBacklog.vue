@@ -1,34 +1,47 @@
 <template>
     <div class="contentWrapper">
-        <h1>Časovnica</h1>
+        <h1>Pregled</h1>
 
         <div class="backlogWrapper">
             <div id="unassigned" class="backlogSection">
                 <h2>Nedodeljene zgodbe</h2>
                 <div class="storyContainer" v-for="story of storiesInBacklog">
-                    <UserStoryCard :story="story" :parent-data="parentData" v-on:addStory="addStory" v-on:refresh="refreshData" v-on:removeStory="refreshData"/>
+                    <UserStoryCard :story="story"
+                                   v-on:addStory="addStory"
+                                   v-on:refresh="reloadData"
+                                   v-on:removeStory="reloadData"
+                    />
                 </div>
-                <MyAlert class="smaller" :msg="napakaTekst" :is-success="napaka" @closeAlert="closeAlert"/>
+
                 <v-layout align-center justify-end row class="mb-2">
-                    <ButtonOutline v-if="storiesInBacklog.length !== 0" msg="Dodeli zgodbe trenutnemu sprintu" @clicked="addStoryToSprint" :isDisabled="!currentSprint"></ButtonOutline>
+                    <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe trenutnemu sprintu"
+                                   @clicked="addStoryToSprint" :isDisabled="!currentSprint">
+                    </ButtonOutline>
                 </v-layout>
+
                 <v-layout align-center justify-end row class="align-right">
-                    <EditUserStoryDialog :story="{}" v-on:refresh="refreshData" :full-edit="false" :customBtn="true"></EditUserStoryDialog>
+                    <EditUserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
+                                         :customBtn="true"></EditUserStoryDialog>
                 </v-layout>
             </div>
+
             <div id="assigned" class="backlogSection">
                 <h2>Zgodbe trenutnega sprinta</h2>
+
                 <div v-if="currentSprint">
                     <div class="storyContainer" v-for="story of storiesInCurrentSprint">
-                        <UserStoryCard :story="story" v-on:refresh="refreshData"/>
+                        <UserStoryCard :story="story" v-on:refresh="reloadData"/>
                     </div>
                 </div>
+
                 <div v-else>
                     <h5>Ni aktivnega sprinta ...</h5>
                 </div>
             </div>
+
             <div id="completed" class="backlogSection">
                 <h2>Zaključene zgodbe</h2>
+
                 <div class="storyContainer" v-for="story in completedStories">
                     <UserStoryCard :story="story"/>
                 </div>
@@ -41,7 +54,7 @@
 
 <script>
     import UserStoryCard from "../../../../components/Generic/UserStoryCard";
-    import {APICalls} from "../../../../utils/apiCalls";
+    import { APICalls } from "../../../../utils/apiCalls";
     import ButtonBase from "../../../../components/Generic/ButtonBase";
     import ButtonOutline from "../../../../components/Generic/ButtonOutline";
     import Separator from "../../../../components/Generic/Separator";
@@ -57,7 +70,7 @@
         },
         created() {
             this.getStoriesInBacklog();
-            this.getStoriesInCurrnetSprint();
+            this.getStoriesInCurrentSprint();
             this.getCompletedStories();
         },
         data: () => ({
@@ -67,10 +80,7 @@
             currentSprint: {},
             endDate: '',
             startDate: '',
-            arr: [],
-            parentData: [],
-            napaka: 0,
-            napakaTekst: ''
+            storiesToAddToSprint: []
         }),
         props: {
             project: Object,
@@ -85,16 +95,16 @@
                     }
                 );
             },
-            getStoriesInCurrnetSprint() {
+            getStoriesInCurrentSprint() {
                 APICalls.getActiveSprint(this.$route.params.projectId).then(
                     (rs) => {
                         this.currentSprint = rs.data;
                         APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.currentSprint._id).then(
                             (rs) => {
-                            	//SHOW ONLY NOT DONE TASKS
+                                //SHOW ONLY NOT DONE TASKS
                                 this.storiesInCurrentSprint = rs.data.filter(function (d) {
                                     return !d.done;
-								});
+                                });
                             },
                             (error) => {
                             }
@@ -115,73 +125,53 @@
                 );
             },
             addStory(obj) {
-                //console.log(obj);
-                if (obj.bool === true) {
+                if (obj.checked === true) {
                     //console.log(obj.id);
-                    this.arr.push(obj.id);
+                    this.storiesToAddToSprint.push(obj.id);
                 } else {
-                    const i = this.arr.findIndex(function (idStory) {
+                    const i = this.storiesToAddToSprint.findIndex(function (idStory) {
                         return obj.id === idStory;
                     });
-                    //console.log(i)
-                    this.arr.splice(i, 1)
+                    this.storiesToAddToSprint.splice(i, 1)
                 }
-                console.log(this.arr)
             },
             addStoryToSprint() {
-                if (this.arr.length !== 0) {
-                    //console.log(this.currentSprint._id);
-                    for (let x = 0; x < this.arr.length; x++) {
-                        APICalls.getStoriesList(this.arr[0]).then(
-                            (rs) => {
-                                if (rs.status === 200) {
-                                    if (rs.data.timeEstimation !== null) {
-                                        APICalls.updateUserStory({sprintId: this.currentSprint._id}, this.arr[x]).then(
-                                            (rs) => {
-                                                this.getStoriesInCurrnetSprint();
-                                                this.getStoriesInBacklog();
-                                                this.getCompletedStories();
-                                                this.parentData = []
-                                            },
-                                            (error) => {
-                                                console.log("Napaka")
-                                            })
-                                    }
-                                    else {
-                                        this.napaka = 2;
-                                        this.napakaTekst = "Ena od izbranih uporabniških zgodb nima določene časovne ocene";
-                                    }
-                                } else console.log("Napaka");
-                            },
-                            (error) => {
-                                console.log(error)
+                const vm = this;
+
+                if (vm.storiesToAddToSprint.length !== 0) {
+                    APICalls.addStoriesToActiveSprint(vm.storiesToAddToSprint, vm.currentSprint._id)
+                        .then(function (res) {
+                            if (res.status === 200) {
+                                vm.$toasted.success('Zgodbe so bile uspešno dodane v aktivni Sprint', {
+                                    duration: 3000,
+                                    position: 'bottom-center'
+                                });
+                                
+                                vm.reloadData();
+                            } else {
+                                vm.$toasted.error('Pri dodajanju zgodb v Sprint je prišlo do napake', {
+                                    duration: 3000,
+                                    position: 'bottom-center'
+                                });
                             }
-                        );
-                    }
+                        })
+                        .catch(function (ex) {
+                            console.log(ex);
+                            
+                            vm.$toasted.error('Pri dodajanju zgodb v Sprint je prišlo do napake', {
+                                duration: 3000,
+                                position: 'bottom-center'
+                            });
+                        })
                 }
             },
-            addNewStory: function() {
-
-            },
-            refreshData() {
-				this.getStoriesInBacklog();
-				this.getStoriesInCurrnetSprint();
-				this.getCompletedStories();
-            },
-            closeAlert() {
-                this.napaka = 0;
-                this.napakaTekst = '';
+            reloadData() {
+                this.storiesToAddToSprint = [];
+                
+                this.getStoriesInBacklog();
+                this.getStoriesInCurrentSprint();
+                this.getCompletedStories();
             }
-
-        },
-        computed: {
-            startDateFormat() {
-                return new Date(this.currentSprint.startDate * 1000).toString().substr(0, 10);
-            },
-            endDateFormat() {
-                return new Date(this.currentSprint.endDate * 1000).toString().substr(0, 10);
-            }
-
         }
     }
 </script>

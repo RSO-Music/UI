@@ -109,6 +109,13 @@ export class APICalls {
         });
     }
 
+    static getProjectSprints(projectId) {
+        return axios({
+            method: "get",
+            url: URL + '/sprint/all/' + projectId
+        });
+    }
+
     static getProjectBacklog(projectId) {
         return axios({
             method: "get",
@@ -142,6 +149,16 @@ export class APICalls {
             method: "put",
             url: URL + '/story/' + storyId,
             data: updatedProjObj
+        });
+    }
+
+    static addStoriesToActiveSprint(stories, sprintId) {
+        return axios({
+            method: "put",
+            url: URL + '/story/add-to-sprint/' + sprintId,
+            data: {
+                stories
+            }
         });
     }
 

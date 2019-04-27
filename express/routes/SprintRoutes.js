@@ -5,6 +5,8 @@ const SprintController = require('../controllers/SprintController');
 router.get('/', SprintController.findAll);
 
 
+router.get('/all/:projectId', SprintController.findAllForProject);
+
 router.get('/active/:projectId', SprintController.findActiveForProject);
 
 

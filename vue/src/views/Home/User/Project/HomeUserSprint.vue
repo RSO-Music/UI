@@ -1,8 +1,15 @@
 <template>
-    <div class="contentWrapper">
-        <div class="formContainer">
-            <MyAlert class="smaller" :msg="msg" :is-success="isSuccess" @closeAlert="closeAlert"/>
-            <SprintForm @addNewSprint="addNewSprint"/>
+    <div class="contentWrapper list-wrapper">
+        <div class="list">
+            <h1>Seznam Sprintov</h1>
+
+            <ButtonBase classes="full-width" msg="Ustvari nov Sprint" @clicked="addNewSprint"></ButtonBase>
+
+            <SprintsList ref="sprintsList" @editSprint="setSprintToEdit"/>
+        </div>
+
+        <div class="form-container">
+            <SprintForm ref="sprintForm" @sprintEdited="onSprintEdited"/>
         </div>
     </div>
 </template>
@@ -10,35 +17,28 @@
 <script>
     import SprintForm from "../../../../components/Custom/SprintForm";
     import MyAlert from "../../../../components/Generic/AlertBox";
-    import {APICalls} from "../../../../utils/apiCalls";
+    import SprintsList from "../../../../components/Generic/SprintsList";
+    import ButtonBase from "../../../../components/Generic/ButtonBase";
+    
     export default {
         name: 'homeUserSprint',
         components: {
+            ButtonBase,
+            SprintsList,
             MyAlert,
             SprintForm
         },
-        data: () => ({
-            isSuccess: 0,
-            msg: ''
-        }),
         methods: {
-            addNewSprint(sprintObj) {
-            	let vm = this;
-
-                sprintObj['projectId'] = vm.$route.params.projectId;
-                APICalls.createNewSprint(sprintObj).then(
-                    (rs) => {
-                        this.msg = 'Sprint je bil uspešno ustvajen';
-                        this.isSuccess = 1
-                    },
-                    (error) => {
-                        this.isSuccess = 2;
-                        this.msg = 'V izbranem časovnem obdobju že obstaja drug sprint';
-                    }
-                );
+            onSprintEdited() {
+                this.$refs.sprintsList.reloadData();
             },
-            closeAlert() {
-                this.isSuccess = 0;
+
+            addNewSprint() {
+                this.$refs.sprintForm.resetForm();
+            },
+
+            setSprintToEdit(sprintData) {
+                this.$refs.sprintForm.setSprintToEdit(JSON.parse(JSON.stringify(sprintData)));
             }
         }
     }

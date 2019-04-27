@@ -133,7 +133,7 @@ module.exports = {
 
     update(req, res) {
         const id = req.params.id;
-
+        
         UserStoryModel.findOneAndUpdate({ _id: id }, { $set: req.body }, function (err, UserStory) {
             if (err) {
                 console.log("ERR: ", err);
@@ -151,6 +151,20 @@ module.exports = {
 
             return res.json(UserStory);
         });
+    },
+    
+    async addStoriesToSprint(req, res) {
+        const sprintId = req.params.sprintId;
+        
+        const stories = req.body.stories;
+        
+        console.log({ sprintId, stories });
+        
+        for (const storyId of stories) {
+            await UserStoryModel.findOneAndUpdate({ _id: storyId }, { $set: { sprintId } });
+        }
+
+        return res.json({ success: true });
     },
 
     delete(req, res) {

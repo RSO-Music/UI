@@ -22,6 +22,8 @@ router.post('/', UserStoryController.create);
 
 router.put('/:id', UserStoryController.update);
 
+router.put('/add-to-sprint/:sprintId', UserStoryController.addStoriesToSprint);
+
 
 router.delete('/:id', UserStoryController.delete);
 

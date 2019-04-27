@@ -39,12 +39,6 @@
 		name: "TaskCard",
 		props: {
 			task: Object,
-			parentData: {
-				type: Array,
-				default() {
-					return []
-				}
-			},
 			disabled: Boolean
 		},
 		data: () => ({

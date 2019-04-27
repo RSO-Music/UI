@@ -6,6 +6,7 @@ const userStoryRoutes = require("./routes/UserStoryRoutes");
 const ProjectRoutes = require("./routes/ProjectRoutes");
 const sprintRoutes = require("./routes/SprintRoutes");
 const userTaskRoutes = require("./routes/UserTaskRoutes");
+const overviewRoutes = require("./routes/OverviewRoutes");
 
 mongoose.connect(`mongodb+srv://admin:admin@smrpo-1diaf.mongodb.net/test?retryWrites=true`, {
     useNewUrlParser: true
@@ -36,6 +37,7 @@ app.use('/story/', userStoryRoutes);
 app.use("/project/", ProjectRoutes);
 app.use("/sprint/", sprintRoutes);
 app.use("/task/", userTaskRoutes);
+app.use("/overview/", overviewRoutes);
 
 // Creates the admin if it does not exist
 require('./lib/createAdmin')();

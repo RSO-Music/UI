@@ -1,18 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Dashboard from './views/Dashboard/Dashboard'
-import Users from './views/Users/Users'
-import Home from './views/Home/Home'
 import NotFound from './views/NotFound'
-import HomeAdmin from "./views/Home/Admin/HomeAdmin";
-import HomeUser from "./views/Home/User/HomeUser";
 import HomeUserProject from "./views/Home/User/HomeUserProject";
-import HomeAdminUserManagement from "./views/Home/Admin/HomeAdminUserManagement";
-import HomeAdminProjectManagement from "./views/Home/Admin/HomeAdminProjectManagement";
 import HomeUserProjectEdit from "./views/Home/User/Project/HomeUserProjectEdit";
 import HomeUserSprint from "./views/Home/User/Project/HomeUserSprint";
 import HomeUserProductBacklog from "./views/Home/User/Project/HomeUserBacklog";
-import SystemOverview from "./views/Overview/SystemOverview.vue";
 
 import store from "@/utils/store";
 

@@ -1,84 +1,92 @@
 <template>
     <div v-if="story" class="userStory">
-        <div id="storyTags">
-            <div class="tagDesign" v-if="this.story.priority === 'Must have'" :style="tagRed">
-                <p>{{story.priority}}</p>
+        <v-layout v-if="this.story.sprintId === null" add-to-sprint-wrapper>
+            <v-checkbox color="#3093A0"
+                        @change="changedCheckbox($event)"
+                        :disabled="hasNoTimeEstimation"
+            ></v-checkbox>
+        </v-layout>
+
+        <v-layout>
+            <div id="storyTags">
+                <div class="tagDesign" v-if="this.story.priority === 'Must have'" :style="tagRed">
+                    <p>{{story.priority}}</p>
+                </div>
+                <div class="tagDesign" v-else-if="this.story.priority === 'Should have'" :style="tagOrange">
+                    <p>{{story.priority}}</p>
+                </div>
+                <div class="tagDesign" v-else-if="this.story.priority === 'Could have'" :style="tagGreen">
+                    <p>{{story.priority}}</p>
+                </div>
+                <div class="tagDesign" v-else-if="this.story.priority === 'Wont have this time'" :style="tagBlue">
+                    <p>{{story.priority}}</p>
+                </div>
+                <div class="tagDesign" v-if="this.story.businessValue === 'Critical'" :style="tagRed">
+                    <p>{{story.businessValue}}</p>
+                </div>
+                <div class="tagDesign" v-else-if="this.story.businessValue === 'Significant'" :style="tagOrange">
+                    <p>{{story.businessValue}}</p>
+                </div>
+                <div class="tagDesign" v-else-if="this.story.businessValue === 'Moderate'" :style="tagYellow">
+                    <p>{{story.businessValue}}</p>
+                </div>
+                <div class="tagDesign" v-else-if="this.story.businessValue === 'Minor'" :style="tagGreen">
+                    <p>{{story.businessValue}}</p>
+                </div>
+                <div class="tagDesign" v-else-if="this.story.businessValue === 'Low'" :style="tagBlue">
+                    <p>{{story.businessValue}}</p>
+                </div>
             </div>
-            <div class="tagDesign" v-else-if="this.story.priority === 'Should have'" :style="tagOrange">
-                <p>{{story.priority}}</p>
+        </v-layout>
+
+        <v-layout>
+            <div id="cardName">
+                <h5>{{story.name}}</h5>
             </div>
-            <div class="tagDesign" v-else-if="this.story.priority === 'Could have'" :style="tagGreen">
-                <p>{{story.priority}}</p>
+        </v-layout>
+
+        <v-layout>
+            <div id="cardDescription">
+                <p>{{story.description}}</p>
             </div>
-            <div class="tagDesign" v-else-if="this.story.priority === 'Wont have this time'" :style="tagBlue">
-                <p>{{story.priority}}</p>
-            </div>
-            <div class="tagDesign" v-if="this.story.businessValue === 'Critical'" :style="tagRed">
-                <p>{{story.businessValue}}</p>
-            </div>
-            <div class="tagDesign" v-else-if="this.story.businessValue === 'Significant'" :style="tagOrange">
-                <p>{{story.businessValue}}</p>
-            </div>
-            <div class="tagDesign" v-else-if="this.story.businessValue === 'Moderate'" :style="tagYellow">
-                <p>{{story.businessValue}}</p>
-            </div>
-            <div class="tagDesign" v-else-if="this.story.businessValue === 'Minor'" :style="tagGreen">
-                <p>{{story.businessValue}}</p>
-            </div>
-            <div class="tagDesign" v-else-if="this.story.businessValue === 'Low'" :style="tagBlue">
-                <p>{{story.businessValue}}</p>
-            </div>
-        </div>
-        <div id="cardName">
-            <h5>{{story.name}}</h5>
-        </div>
-        <div id="cardDescription">
-            <p>{{story.description}}</p>
-        </div>
+        </v-layout>
+
         <div id="addToSprint" v-if="this.story.sprintId === null">
             <v-layout align-center justify-end row class="userStoryButtons">
                 <v-flex xs5 align-self-center>
                     <v-toolbar color="white" flat dense>
-                            <v-checkbox color="#3093A0"
-                                        @change="changedCheckbox($event)"
-                                        v-model="parentData"
-                                        :disabled="hasNoTimeEstimation"
-                            ></v-checkbox>
                         <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
                         <v-btn flat icon color="red" v-on:click="deleteStory">
-                            <v-icon>clear</v-icon>
+                            <v-icon>delete</v-icon>
                         </v-btn>
                     </v-toolbar>
                 </v-flex>
 
             </v-layout>
         </div>
+
         <div id="editTask" v-if="this.story.sprintId !== null && this.story.done === false">
             <v-layout align-center justify-end row fill-height>
-                <v-flex xs1>
-                    <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory" :fullEdit="true"></EditUserStoryDialog>
+                <v-flex xs2>
+                    <div class="v-toolbar__content">
+                        <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"
+                                             :fullEdit="true"></EditUserStoryDialog>
+                    </div>
                 </v-flex>
-
             </v-layout>
         </div>
     </div>
 </template>
 
 <script>
-    import {APICalls} from "../../utils/apiCalls"
+    import { APICalls } from "../../utils/apiCalls"
     import EditUserStoryDialog from "../Custom/EditUserStoryDialog";
 
     export default {
         name: "UserStoryCard",
-        components: {EditUserStoryDialog},
+        components: { EditUserStoryDialog },
         props: {
-            story: Object,
-            parentData: {
-                type: Array,
-                default() {
-                    return []
-                }
-            }
+            story: Object
         },
         data: () => ({
             tagRed: {
@@ -98,9 +106,8 @@
             },
         }),
         methods: {
-            changedCheckbox($event) {
-                let bool = $event.length === 1;
-                this.$emit('addStory', {id: this.story._id, bool: bool});
+            changedCheckbox(checked) {
+                this.$emit('addStory', { id: this.story._id, checked });
 
             },
             deleteStory() {
@@ -119,9 +126,9 @@
             }
         },
         computed: {
-        	hasNoTimeEstimation() {
+            hasNoTimeEstimation() {
                 return !this.story.timeEstimation || this.story.timeEstimation === '';
-			}
+            }
         }
     }
 </script>
@@ -134,6 +141,13 @@
         margin-bottom: 10px;
         border: 1px solid #A0A6B2;
         border-left: 8px solid #3093A0;
+        position: relative;
+    }
+
+    .add-to-sprint-wrapper {
+        position: absolute;
+        right: 16px;
+        top: 0;
     }
 
     #storyTags {
@@ -161,6 +175,6 @@
         color: #969DAA;
     }
 
-    .userStoryButtons{
+    .userStoryButtons {
     }
 </style>

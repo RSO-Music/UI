@@ -10,27 +10,31 @@
             <v-tab id
                    v-if="userProjectRole==='Scrum Master' || userProjectRole==='Product Owner' || userProjectRole==='Developer'"
                    :key="1" ripple>
-                Časovnica
+                Pregled
             </v-tab>
             <v-tab id v-if="userProjectRole==='Scrum Master'" :key="2" ripple>
-                Urejanje projekta
+                Uredi projekt
             </v-tab>
             <v-tab id v-if="userProjectRole==='Scrum Master'" :key="4" ripple>
-                Sprint
+                Sprinti
             </v-tab>
 
             <v-tab-item id
                         v-if="userProjectRole==='Scrum Master' || userProjectRole==='Product Owner' || userProjectRole==='Developer'"
                         :key="1">
-                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint" :userProjectRole="userProjectRole"></ProjectInfoPanel>
+                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint"
+                                  :userProjectRole="userProjectRole"></ProjectInfoPanel>
                 <HomeUserProductBacklog></HomeUserProductBacklog>
             </v-tab-item>
             <v-tab-item id v-if="userProjectRole==='Scrum Master'" :key="2">
-                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint" :userProjectRole="userProjectRole"></ProjectInfoPanel>
-                <HomeUserProjectEdit :isSuccess="isSuccess" :msg="msg" @projectEditUpdate="projectEditUpdate" :selectedProject="selectedProject"/>
+                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint"
+                                  :userProjectRole="userProjectRole"></ProjectInfoPanel>
+                <HomeUserProjectEdit :isSuccess="isSuccess" :msg="msg" @projectEditUpdate="projectEditUpdate"
+                                     :selectedProject="selectedProject"/>
             </v-tab-item>
             <v-tab-item id v-if="userProjectRole==='Scrum Master'" :key="4">
-                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint" :userProjectRole="userProjectRole"></ProjectInfoPanel>
+                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint"
+                                  :userProjectRole="userProjectRole"></ProjectInfoPanel>
                 <HomeUserSprint/>
             </v-tab-item>
 
@@ -44,7 +48,7 @@
     import ProjectForm from "../../../components/Custom/ProjectForm";
     import HomeUserProjectEdit from "./Project/HomeUserProjectEdit";
     import HomeUserProductBacklog from "./Project/HomeUserBacklog";
-    import {APICalls} from "../../../utils/apiCalls";
+    import { APICalls } from "../../../utils/apiCalls";
     import ProjectInfoPanel from "../../../components/Custom/ProjectInfoPanel";
 
     export default {
@@ -68,30 +72,30 @@
                         if (this.active === 0) {
                             this.$router.push({
                                 name: 'homeUserProductBackLog',
-                                params: {projectId: this.$route.params.projectId}
+                                params: { projectId: this.$route.params.projectId }
                             });
                         } else if (this.active === 1) {
                             this.$router.push({
                                 name: 'homeUserProjectEdit',
-                                params: {projectId: this.$route.params.projectId}
+                                params: { projectId: this.$route.params.projectId }
                             });
                         } else if (this.active === 2) {
                             this.$router.push({
                                 name: 'homeUserSprintManagemnet',
-                                params: {projectId: this.$route.params.projectId}
+                                params: { projectId: this.$route.params.projectId }
                             });
                         }
                     } else if (this.userProjectRole === 'Product Owner') {
                         if (this.active === 0) {
                             this.$router.push({
                                 name: 'homeUserProductBackLog',
-                                params: {projectId: this.$route.params.projectId}
+                                params: { projectId: this.$route.params.projectId }
                             });
                         }
                     } else if (this.userProjectRole === 'Developer') {
                         this.$router.push({
                             name: 'homeUserProductBackLog',
-                            params: {projectId: this.$route.params.projectId}
+                            params: { projectId: this.$route.params.projectId }
                         });
                     }
                 }
@@ -121,6 +125,8 @@
                 );
             },
             projectEditUpdate(editProjectObj) {
+                const vm = this;
+                
                 let objForApi = JSON.parse(JSON.stringify(editProjectObj));
                 let usersAssigned = [];
                 objForApi.users.forEach(function (userAssigned1) {
@@ -138,23 +144,29 @@
 
                 APICalls.updateProject(objForApi, projectId).then(
                     (rs) => {
-                        this.isSuccess = 1;
-                        this.msg = 'project updated: ';
                         this.selectedProject = editProjectObj;
 
                         this.$store.commit('editProject', editProjectObj);
 
                         if (!this.selectedProject.users.find(x => x.user._id === this.$store.getters.currentUser._id)) {
-                            return this.$router.push({name: 'userMain'});
+                            return this.$router.push({ name: 'userMain' });
                         } else {
                             this.$forceUpdate();
                             this.userProjectRole = this.selectedProject.users.find(x => x.user._id === this.$store.getters.currentUser._id).role;
                         }
+
+                        vm.$toasted.success('Projekt je bil uspešno posodobljen', {
+                            duration: 3000,
+                            position: 'bottom-center'
+                        });
                     },
                     (error) => {
-                        this.msg = 'project duplicate name nothing updated: ';
-                        this.isSuccess = 2;
-
+                        console.log(error);
+                        
+                        vm.$toasted.error('Pri urejanju projekta je prišlo do napake', {
+                            duration: 3000,
+                            position: 'bottom-center'
+                        });
                     }
                 );
             },

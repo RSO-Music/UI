@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const SprintSchema = new Schema({
-    endDate: Number,
-    startDate: Number,
+    endDate: Date,
+    startDate: Date,
     projectId: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: "Project" 
