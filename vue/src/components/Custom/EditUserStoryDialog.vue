@@ -24,6 +24,7 @@
 				>
 					<h1 v-if="story._id">UREJANJE UPORABNIŠKE ZGODBE</h1>
 					<h1 v-else>DODAJANJE UPORABNIŠKE ZGODBE</h1>
+                    
 					<v-tabs
 							fixed-tabs
 							slider-color="#1a2432"
@@ -128,8 +129,12 @@
                                     ></v-textarea>
                                 </v-flex>
                             </v-layout>
-							<ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
-							<ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
+							<v-layout>
+                                <v-flex xs12>
+                                    <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
+                                    <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
+                                </v-flex>
+                            </v-layout>
                         </v-tab-item>
                         <v-tab-item key="2">
                             <v-flex x12>
@@ -200,7 +205,6 @@
                             </div>
                         </v-tab-item>
                     </v-tabs>
-                    <MyAlert class="smaller" :msg="errorText" :is-success="error"/>
                 </v-form>
             </v-card>
         </v-dialog>
@@ -453,7 +457,7 @@
 					return user.user._id === currentUser._id;
 				});
 
-				return userInProject.role === 'Product Owner';
+				return userInProject.role.includes('product_owner');
 			},
 			isEditTaskValid() {
 				if (this.editTask) {
@@ -501,7 +505,6 @@
 
 <style scoped>
      .formWrapper {
-         padding: 5% 10% 10% 10%!important;
          margin: 0 !important;
          width: 100%;
          height: 80%;

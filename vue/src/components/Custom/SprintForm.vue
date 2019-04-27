@@ -6,7 +6,7 @@
                 v-model="valid"
                 lazy-validation
         >
-            <h1 v-if="isNew">Ustvari Sprint</h1>
+            <h1 class="text-uppercase" v-if="isNew">Ustvari Sprint</h1>
             <h1 v-else>Uredi Sprint</h1>
             <v-text-field
                     color="#3093A0"

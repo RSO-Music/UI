@@ -1,17 +1,16 @@
 <template>
     <div class="projectInfo">
         <div class="infoLeft">
-            <p class="textBold">PROJEKT:</p>
-            <p class="pName">{{selectedProject.name}}</p>
-            <p class="levelDown"> > </p>
+            <h5 class="project-name">{{selectedProject.name}}</h5>
+            <p class="levelDown"> - </p>
             <p class="textBold" v-if="currentSprint !== null">TRENUTNI SPRINT:</p>
             <p class="pName" v-if="currentSprint !== null">{{currentSprint.name}}</p>
             <p class="sDate" v-if="currentSprint !== null">({{startDateFormat}} - {{endDateFormat}})</p>
-            <p v-if="currentSprint === null" class="sConfirmation">no active sprint</p>
+            <p v-if="currentSprint === null" class="sConfirmation">Trenutno ni aktivnega Sprinta</p>
         </div>
-        <div class="infoRight">
-            <p class="textBold">UPORABNIŠKA VLOGA:</p>
-            <p class="roleName">{{userProjectRole}}</p>
+        <div class="info-wrapper">
+            <p class="textBold">Vaše vloge v projektu:</p>
+            <p class="roleName">{{getCurrentUserProjectRoles}}</p>
         </div>
     </div>
 </template>
@@ -22,16 +21,24 @@
         props: {
             selectedProject: Object,
             currentSprint: Object,
-            userProjectRole: String
+            userProjectRole: Array
         },
-        methods: {
-        },
+        methods: {},
         computed: {
             startDateFormat() {
                 return this.currentSprint.startDate;
             },
+            
             endDateFormat() {
                 return this.currentSprint.endDate;
+            },
+            
+            getCurrentUserProjectRoles() {
+                const vm = this;
+                
+                return vm.userProjectRole.map((currentUserRole) => {
+                    return vm.$userProjectRoles.find((role) => role.value === currentUserRole).text;
+                }).join(', ');
             }
 
         }
@@ -53,7 +60,7 @@
         align-items: center;
     }
 
-    .infoRight {
+    .info-wrapper {
         display: flex;
         padding: 10px;
         border: 1px solid #3093A0;
@@ -63,22 +70,8 @@
 
     .textBold {
         font-weight: bold;
-        font-size: 16px;
         padding-right: 10px;
         color: #969DAA;
-    }
-
-    #infoLeft .textBold {
-        font-size: 16px;
-
-    }
-
-    .pName {
-        font-size: 16px;
-    }
-
-    .roleName {
-        font-size: 16px;
     }
 
     .levelDown {
