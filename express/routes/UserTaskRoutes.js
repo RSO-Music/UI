@@ -20,4 +20,7 @@ router.put('/:id', UserTaskController.update);
 router.delete('/:id', UserTaskController.remove);
 
 
+router.put('/assign/story/:storyId', UserTaskController.assign);
+
+
 module.exports = router;

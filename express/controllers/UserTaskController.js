@@ -122,6 +122,37 @@ module.exports = {
         });
     },
 
+
+    assign(req, res) {
+        const taskId = req.query.taskId;
+        const task = req.body;
+        UserTaskModel.findOneAndUpdate({ _id: taskId, accepted: false },
+            { $set: task }, function (err, UserTask) {
+                if (err) {
+                    console.log("ERR: ", err);
+                    return res.status(500).json({
+                        message: 'Error when getting UserTask',
+                        error: err
+                    });
+                }
+                if (!UserTask) {
+                    return res.status(404).json({
+                        message: 'No such UserTask, Probably already taken'
+                    });
+                }
+                UserTask.save(function (err, UserTask) {
+                    if (err) {
+                        return res.status(500).json({
+                            message: 'Error when updating UserTask.',
+                            error: err
+                        });
+                    }
+                    return res.json(UserTask);
+                });
+            });
+    },
+
+
     remove(req, res) {
         const id = req.params.id;
 
