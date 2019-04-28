@@ -19,9 +19,8 @@
             ></v-text-field>
             <div id="sprintTime">
                 <v-menu
-                        ref="menu"
                         v-model="dateStart"
-                        :close-on-content-click="false"
+                        :close-on-content-click="true"
                         :nudge-right="40"
                         lazy
                         transition="scale-transition"
@@ -31,7 +30,9 @@
                     <template v-slot:activator="{ on }">
                         <v-text-field
                                 color="#3093A0"
-                                v-model="sprint.startDate"
+                                :value="formattedStartDate"
+                                hint="DD. MM. YYYY"
+                                persistent-hint
                                 label="Začetni datum"
                                 prepend-icon="event"
                                 readonly
@@ -44,9 +45,8 @@
                     </v-date-picker>
                 </v-menu>
                 <v-menu
-                        ref="menu"
                         v-model="dateStop"
-                        :close-on-content-click="false"
+                        :close-on-content-click="true"
                         :nudge-right="40"
                         lazy
                         transition="scale-transition"
@@ -57,7 +57,9 @@
                     <template v-slot:activator="{ on }">
                         <v-text-field
                                 color="#3093A0"
-                                v-model="sprint.endDate"
+                                :value="formattedEndDate"
+                                hint="DD. MM. YYYY"
+                                persistent-hint
                                 label="Končni datum"
                                 prepend-icon="event"
                                 readonly
@@ -145,9 +147,6 @@
             },
             
             setSprintToEdit(sprintData) {
-                sprintData.startDate = this.$moment(sprintData.startDate).format('YYYY-MM-DD');
-                sprintData.endDate = this.$moment(sprintData.endDate).format('YYYY-MM-DD');
-                
                 this.sprint = sprintData;
                 this.isNew = false;
             },
@@ -162,10 +161,20 @@
                 this.$refs.form.reset();
                 this.$refs.form.resetValidation();
                 this.isNew = true;
-                this.user = {};
+                this.sprint = {};
+            }
+        },
+        computed: {
+            formattedStartDate() {
+                if (this.sprint.startDate) return this.$moment(this.sprint.startDate).format('DD. MM. YYYY');
+                else return '';
+            },
+
+            formattedEndDate() {
+                if (this.sprint.endDate) return this.$moment(this.sprint.endDate).format('DD. MM. YYYY');
+                else return '';
             }
         }
-
     }
 </script>
 
