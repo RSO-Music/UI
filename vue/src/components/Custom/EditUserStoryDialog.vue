@@ -286,14 +286,13 @@
 <script>
     import ButtonBase from "../Generic/ButtonBase";
     import { APICalls } from "../../utils/apiCalls";
-    import MyAlert from "../Generic/AlertBox";
     import ButtonOutline from "../Generic/ButtonOutline";
     import Separator from "../Generic/Separator";
     import TaskCard from "../Generic/TaskCard";
 
     export default {
         name: "EditUserStoryDialog",
-        components: { MyAlert, ButtonBase, ButtonOutline, Separator, TaskCard },
+        components: { ButtonBase, ButtonOutline, Separator, TaskCard },
         props: ['story', 'fullEdit', 'customBtn'],
         data: () => ({
             dialog: false,

@@ -1,15 +1,14 @@
 <template>
+    <v-form
+            class="form-wrapper"
+            ref="form"
+            v-model="valid"
+            lazy-validation
+    >
+        <v-layout column>
+            <h1 class="text-uppercase text-xs-center" v-if="isNew">Ustvari uporabnika</h1>
+            <h1 class="text-uppercase text-xs-center" v-else>Uredi uporabnika</h1>
 
-    <div class="formContainer">
-        <v-form
-                class="form-wrapper"
-                ref="form"
-                v-model="valid"
-                lazy-validation
-        >
-            <h1 v-if="isNew">Ustvari uporabnika</h1>
-            <h1 v-else>Uredi uporabnika</h1>
-            
             <div class="formDivide">
                 <div id="formLeft">
                     <v-text-field
@@ -69,9 +68,12 @@
                     ></v-select>
                 </div>
             </div>
+        </v-layout>
+        
+        <v-layout justify-end>
             <ButtonBase msg="Shrani" @clicked=addUser></ButtonBase>
-        </v-form>
-    </div>
+        </v-layout>
+    </v-form>
 </template>
 
 <script>

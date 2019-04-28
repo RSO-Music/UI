@@ -1,13 +1,13 @@
 <template>
-    <div class="formContainer">
-        <v-form
-                class="form-wrapper"
-                ref="form"
-                v-model="valid"
-                lazy-validation
-        >
-            <h1 class="text-uppercase" v-if="isNew">Ustvari projekt</h1>
-            <h1 class="text-uppercase" v-else="isNew">Uredi projekt</h1>
+    <v-form
+            class="form-wrapper"
+            ref="form"
+            v-model="valid"
+            lazy-validation
+    >
+        <v-layout column>
+            <h1 class="text-uppercase text-xs-center" v-if="isNew">Ustvari projekt</h1>
+            <h1 class="text-uppercase text-xs-center" v-else="isNew">Uredi projekt</h1>
 
             <v-text-field
                     color="#3093A0"
@@ -84,9 +84,12 @@
                     <ButtonOutline msg="+" @clicked="addUserToProject"></ButtonOutline>
                 </div>
             </div>
+        </v-layout>
+        
+        <v-layout justify-end>
             <ButtonBase msg="Shrani" @clicked="addNewProject"></ButtonBase>
-        </v-form>
-    </div>
+        </v-layout>
+    </v-form>
 </template>
 
 <script>

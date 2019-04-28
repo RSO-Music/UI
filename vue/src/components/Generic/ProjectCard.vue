@@ -3,14 +3,14 @@
         <v-card class="userProjectCard" v-if="!isAdmin" v-for="project in projectsList" :key="project._id">
             <div class="pName">
                 <v-icon>developer_board</v-icon>
-                <p>{{project.name}}</p>
+                <h2 class="mb-1 black--text">{{project.name}}</h2>
             </div>
             <ButtonBase v-if="!isAdmin" msg="Odpri" @clicked="goInsideProject(project)"></ButtonBase>
         </v-card>
         
         <v-card class="adminProjectCard" v-if="isAdmin" v-for="project in projectsList" :key="project._id">
             <div class="adminpName">
-                <p>{{project.name}}</p>
+                <h2 class="mb-1 black--text">{{project.name}}</h2>
                 <ButtonOutline msg="Uredi" @clicked="editSelectedProject(project)"></ButtonOutline>
             </div>
         </v-card>

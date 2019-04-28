@@ -1,22 +1,23 @@
 <template>
     <div class="contentWrapper list-wrapper">
-        <div class="list">
-            <h1>Seznam Sprintov</h1>
+        <v-layout>
+            <v-flex xs4 list>
+                <h1 class="text-uppercase text-xs-center">Seznam Sprintov</h1>
 
-            <ButtonBase classes="full-width" msg="Ustvari nov Sprint" @clicked="addNewSprint"></ButtonBase>
+                <ButtonBase classes="full-width" msg="Ustvari nov Sprint" @clicked="addNewSprint"></ButtonBase>
 
-            <SprintsList ref="sprintsList" @editSprint="setSprintToEdit"/>
-        </div>
-
-        <div class="form-container">
-            <SprintForm ref="sprintForm" @sprintEdited="onSprintEdited"/>
-        </div>
+                <SprintsList ref="sprintsList" @editSprint="setSprintToEdit"/>
+            </v-flex>
+            
+            <v-flex xs8 ml-4>
+                <SprintForm ref="sprintForm" @sprintEdited="onSprintEdited"/>
+            </v-flex>
+        </v-layout>
     </div>
 </template>
 
 <script>
     import SprintForm from "../../../../components/Custom/SprintForm";
-    import MyAlert from "../../../../components/Generic/AlertBox";
     import SprintsList from "../../../../components/Generic/SprintsList";
     import ButtonBase from "../../../../components/Generic/ButtonBase";
     
@@ -25,7 +26,6 @@
         components: {
             ButtonBase,
             SprintsList,
-            MyAlert,
             SprintForm
         },
         methods: {

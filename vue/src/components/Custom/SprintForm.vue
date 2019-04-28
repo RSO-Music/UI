@@ -1,13 +1,14 @@
 <template>
-    <div class="formContainer">
-        <v-form
-                class="form-wrapper"
-                ref="form"
-                v-model="valid"
-                lazy-validation
-        >
-            <h1 class="text-uppercase" v-if="isNew">Ustvari Sprint</h1>
-            <h1 v-else>Uredi Sprint</h1>
+    <v-form
+            class="form-wrapper"
+            ref="form"
+            v-model="valid"
+            lazy-validation
+    >
+        <v-layout column>
+            <h1 class="text-uppercase text-xs-center" v-if="isNew">Ustvari Sprint</h1>
+            <h1 class="text-uppercase text-xs-center" v-else>Uredi Sprint</h1>
+
             <v-text-field
                     color="#3093A0"
                     prepend-icon="rate_review"
@@ -79,19 +80,24 @@
                     type="number"
                     required
             ></v-text-field>
-            <ButtonBase msg="Dodaj sprint" @clicked="addSprint"></ButtonBase>
-        </v-form>
-    </div>
+        </v-layout>
+        
+        <v-layout justify-end>
+            <ButtonBase
+                    msg="Shrani"
+                    @clicked="addSprint"
+            ></ButtonBase>
+        </v-layout>
+    </v-form>
 </template>
 
 <script>
-    import MyAlert from "../Generic/AlertBox";
     import ButtonBase from "../Generic/ButtonBase";
     import { APICalls } from "../../utils/apiCalls";
 
     export default {
         name: "SprintForm",
-        components: { ButtonBase, MyAlert },
+        components: { ButtonBase },
         data() {
             return {
                 sprint: {},

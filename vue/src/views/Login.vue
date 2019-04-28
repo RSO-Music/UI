@@ -2,7 +2,7 @@
     <div id="wrapper">
         <div class="login-background"></div>
         
-        <div class="loginContainer">
+        <v-card class="loginContainer">
             <v-layout column>
                 <h1>Prijava v sistem</h1>
 
@@ -10,7 +10,7 @@
             </v-layout>
 
             <AlertBox :message="alert.message" :type="alert.type" @close="closeAlert"></AlertBox>
-        </div>
+        </v-card>
     </div>
 </template>
 

@@ -1,23 +1,25 @@
 <template>
     <div class="contentWrapper list-wrapper">
-        <div class="list">
-            <h1>Seznam projektov</h1>
+        <v-layout>
+            <v-flex xs4 list>
+                <h1 class="text-uppercase text-xs-center">Seznam projektov</h1>
 
-            <ButtonBase classes="full-width" msg="Ustvari nov projekt" @clicked="addNewProjectForm"></ButtonBase>
+                <ButtonBase classes="full-width" msg="Ustvari nov projekt" @clicked="addNewProjectForm"></ButtonBase>
 
-            <ProjectCard :is-admin="true" @editProject="editProject" :insertedProjectList="projectsList"/>
-        </div>
+                <ProjectCard :is-admin="true" @editProject="editProject" :insertedProjectList="projectsList"/>
+            </v-flex>
 
-        <div class="form-container">
-            <ProjectForm :projectId="projectId"
-                         :insertedProjectName="projectName"
-                         :insertedAssignedUsersToProject="insertedAssignedUsersToProject"
-                         :insertedUsers="formUsers"
-                         :isNew="isNew"
-                         @adminProjectAdd="addNewProject"
-                         @projectEdit="projectEditUpdate"
-            />
-        </div>
+            <v-flex xs8 ml-4>
+                <ProjectForm :projectId="projectId"
+                             :insertedProjectName="projectName"
+                             :insertedAssignedUsersToProject="insertedAssignedUsersToProject"
+                             :insertedUsers="formUsers"
+                             :isNew="isNew"
+                             @adminProjectAdd="addNewProject"
+                             @projectEdit="projectEditUpdate"
+                />
+            </v-flex>
+        </v-layout>
     </div>
 </template>
 

@@ -1,7 +1,6 @@
 <template>
     <div class="contentWrapper">
         <div class="formContainer">
-            <MyAlert class="smaller" :msg="msg" :isSuccess="isSuccess" @closeAlert="closeAlert"/>
             <ProjectForm
                     :projectId="projectId"
                     :insertedProjectName="projectName"
@@ -16,7 +15,6 @@
 
 <script>
     import HomeUserSprint from "./HomeUserSprint";
-    import MyAlert from "../../../../components/Generic/AlertBox";
     import ProjectForm from "../../../../components/Custom/ProjectForm";
     import {APICalls} from "../../../../utils/apiCalls";
 
@@ -24,7 +22,6 @@
         name: 'homeUserProjectEdit',
         components: {
             ProjectForm,
-            MyAlert,
             HomeUserSprint,
         },
         created() {

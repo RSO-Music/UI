@@ -84,13 +84,11 @@
     import ButtonBase from "../../../../components/Generic/ButtonBase";
     import ButtonOutline from "../../../../components/Generic/ButtonOutline";
     import Separator from "../../../../components/Generic/Separator";
-    import MyAlert from "../../../../components/Generic/AlertBox";
     import EditUserStoryDialog from "../../../../components/Custom/EditUserStoryDialog"
 
     export default {
         name: 'homeUserProductBacklog',
         components: {
-            MyAlert,
             Separator, ButtonBase, ButtonOutline,
             UserStoryCard, EditUserStoryDialog
         },

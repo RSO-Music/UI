@@ -109,7 +109,7 @@
         background-color: white;
         border-radius: 2px;
         border-top: 5px solid #A2E0E0;
-        width: 95%;
+        width: 100%;
         padding: 20px 30px;
     }
 

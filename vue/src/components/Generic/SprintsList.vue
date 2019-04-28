@@ -4,13 +4,14 @@
             <div class="adminpName">
                 <v-layout>
                     <v-flex xs9>
-                        <p>{{sprint.name}}</p>
-                        <p>{{sprint.startDate}}</p>
-                        <p>{{sprint.endDate}}</p>
+                        <h2 class="mb-1 black--text">{{sprint.name}}</h2>
+                        <p>{{sprint.startDate | moment('DD. MM. YYYY')}} - {{sprint.endDate | moment('DD. MM. YYYY')}}</p>
                     </v-flex>
                     
                     <v-flex xs3>
-                        <ButtonOutline msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
+                        <v-layout justify-end>
+                            <ButtonOutline msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
+                        </v-layout>
                     </v-flex>
                 </v-layout>
             </div>

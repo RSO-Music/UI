@@ -6,31 +6,31 @@
 						<p>{{taskAssignee}}</p>
 					</div>
 				</v-flex>
-				<v-flex xs2>
+				<v-flex xs1>
 					<div id="cardDescription">
 						<p>{{task.time}} h</p>
 					</div>
 				</v-flex>
-				<v-flex xs2 >
+				<v-flex xs3>
 					<div id="cardName">
 						<p>{{task.description}}</p>
 					</div>
 				</v-flex>
-				<v-flex xs2 >
+				<v-flex xs3>
 					<v-btn flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null">
 						Assign to me
 					</v-btn>
 				</v-flex>
-				<v-flex xs1 offset-xs5>
-					<v-btn flat icon color="#3093A0" v-on:click="editTask" :disabled="disabled">
-						<v-icon>edit</v-icon>
-					</v-btn>
-				</v-flex>
-				<v-flex xs1>
-					<v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled">
-						<v-icon>delete</v-icon>
-					</v-btn>
-				</v-flex>
+				<v-flex xs3>
+                    <v-layout justify-end>
+                        <v-btn flat icon color="#3093A0" v-on:click="editTask" :disabled="disabled">
+                            <v-icon>edit</v-icon>
+                        </v-btn>
+                        <v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled">
+                            <v-icon>delete</v-icon>
+                        </v-btn>
+                    </v-layout>
+                </v-flex>
 			</v-layout>
 	</div>
 </template>

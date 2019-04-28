@@ -1,16 +1,18 @@
 <template>
     <div class="contentWrapper list-wrapper">
-        <div class="list">
-            <h1>Seznam uporabnikov</h1>
+        <v-layout>
+            <v-flex xs4 list>
+                <h1 class="text-uppercase text-xs-center">Seznam uporabnikov</h1>
 
-            <ButtonBase classes="full-width" msg="Ustvari novega uporabnika" @clicked="addNewUser"></ButtonBase>
-            
-            <UsersList ref="usersList" @editUser="setUserToEdit"/>
-        </div>
-        
-        <div class="form-container">
-            <UserManagementForm ref="userForm" @userEdited="onUserEdited"/>
-        </div>
+                <ButtonBase classes="full-width" msg="Ustvari novega uporabnika" @clicked="addNewUser"></ButtonBase>
+
+                <UsersList ref="usersList" @editUser="setUserToEdit"/>
+            </v-flex>
+
+            <v-flex xs8 ml-4>
+                <UserManagementForm ref="userForm" @userEdited="onUserEdited"/>
+            </v-flex>
+        </v-layout>
     </div>
 </template>
 

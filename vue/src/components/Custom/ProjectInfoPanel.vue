@@ -5,7 +5,7 @@
             <p class="levelDown"> - </p>
             <p class="textBold" v-if="currentSprint !== null">TRENUTNI SPRINT:</p>
             <p class="pName" v-if="currentSprint !== null">{{currentSprint.name}}</p>
-            <p class="sDate" v-if="currentSprint !== null">({{startDateFormat}} - {{endDateFormat}})</p>
+            <p class="sDate" v-if="currentSprint !== null">({{currentSprint.startDate | moment('DD. MM. YYYY')}} - {{currentSprint.endDate | moment('DD. MM. YYYY')}})</p>
             <p v-if="currentSprint === null" class="sConfirmation">Trenutno ni aktivnega Sprinta</p>
         </div>
         <div class="info-wrapper">

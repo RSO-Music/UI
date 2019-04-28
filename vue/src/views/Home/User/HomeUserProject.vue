@@ -44,7 +44,6 @@
 
 <script>
     import HomeUserSprint from "./Project/HomeUserSprint";
-    import MyAlert from "../../../components/Generic/AlertBox";
     import ProjectForm from "../../../components/Custom/ProjectForm";
     import HomeUserProjectEdit from "./Project/HomeUserProjectEdit";
     import HomeUserProductBacklog from "./Project/HomeUserBacklog";
@@ -58,7 +57,6 @@
             HomeUserProductBacklog,
             HomeUserProjectEdit,
             ProjectForm,
-            MyAlert,
             HomeUserSprint
         },
         created() {
