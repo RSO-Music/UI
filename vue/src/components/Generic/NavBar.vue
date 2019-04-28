@@ -1,7 +1,9 @@
 <template>
     <div id="toolbar">
         <div id="topBarLeft">
-            <router-link :to="{ name: 'dashboard'}" id="smrpoName">SCRUMMY</router-link>
+            <router-link :to="{ name: 'dashboard'}" id="smrpoName">
+                SCRUMMY
+            </router-link>
         </div>
         <div id="topBarRight">
             <div id="userText">
@@ -54,12 +56,13 @@
     }
 </script>
 
-<style scoped>
+<style>
     #toolbar {
         background-color: #2E354C;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        height: 72px;
     }
 
     #topBarLeft {
@@ -70,7 +73,6 @@
         font-size: 20px;
         color: white;
         text-transform: uppercase;
-        font-weight: bolder;
         text-decoration: none;
         margin: 0 auto;
         padding: 15px;

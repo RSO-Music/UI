@@ -6,8 +6,8 @@
                     :projectId="projectId"
                     :insertedProjectName="projectName"
                     :insertedAssignedUsersToProject="insertedAssignedUsersToProject"
-                    :insertedUsers="formUsers" :isNewProject="isNewProject"
-                    :formName="formName"
+                    :insertedUsers="formUsers" 
+                    :isNew="isNew"
                     @projectEdit="projectEditUpdate"
             />
         </div>
@@ -38,18 +38,16 @@
         data: () => ({
             users: [],
             formUsers: [],
-            isNewProject: false,
+            isNew: false,
             insertedAssignedUsersToProject: [],
-            formName: '',
             projectName: '',
             projectId: "",
         }),
         methods: {
             getSelectedProject() {
-                this.isNewProject = false;
+                this.isNew = false;
                 this.insertedAssignedUsersToProject = JSON.parse(JSON.stringify(this.selectedProject.users));
                 this.formUsers = JSON.parse(JSON.stringify(this.users));
-                this.formName = 'Uredi projekt';
                 this.projectName = this.selectedProject.name;
                 this.projectId = this.selectedProject._id;
             },

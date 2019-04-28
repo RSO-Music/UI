@@ -1,7 +1,7 @@
 <template>
     <div class="formContainer">
         <v-form
-                class="formWrapper"
+                class="form-wrapper"
                 ref="form"
                 v-model="valid"
                 lazy-validation
@@ -101,7 +101,7 @@
 							<v-select
 									color="#3093A0"
 									prepend-icon="person"
-									v-model="editTask.asignee"
+									v-model="editTask.assignee"
 									label="Uporabniška vloga"
 									hide-details
 									required
@@ -190,7 +190,7 @@
             	id: '',
             	description: '',
                 time: '',
-                asignee: '',
+                assignee: '',
                 status: ''
             },
             editingTask: false
@@ -226,7 +226,7 @@
 					id: '',
 					description: '',
 					time: '',
-					asignee: ''
+					assignee: ''
 				};
 
 				this.editingTask = false;
@@ -254,12 +254,12 @@
         	//TODO: add users logic
             unassignedTasks() {
                 return this.tasks.filter(function (task) {
-                    return !task.asignee && task.status === 'new'
+                    return !task.assignee && task.status === 'new'
 				})
 			},
 			assignedTasks() {
 				return this.tasks.filter(function (task) {
-					return task.asignee && task.status === 'new'
+					return task.assignee && task.status === 'new'
 				})
 			},
 			activeTasks() {

@@ -90,55 +90,55 @@
 				if (this.task.asignee) {
 					let editingProject = this.$store.getters.editingProject;
 
-					let assignedUser = editingProject.users.find(function (u) {
-						return u.user._id === vm.task.asignee;
-					});
+                    let assignedUser = editingProject.users.find(function (user) {
+                        return user.user._id === vm.task.assignee;
+                    });
 
-					if (assignedUser) return `${assignedUser.user.firstName} ${assignedUser.user.lastName}`;
-				}
-			}
-		}
-	}
+                    if (assignedUser) return `${assignedUser.user.firstName} ${assignedUser.user.lastName}`;
+                }
+            }
+        }
+    }
 </script>
 
 <style scoped>
-	.storyTask {
-		background-color: white;
-		border-radius: 4px;
-		padding: 10px 10px 10px 20px;
-		margin-bottom: 10px;
-		border: 1px solid #A0A6B2;
-		border-left: 8px solid #3093A0;
-	}
+    .storyTask {
+        background-color: white;
+        border-radius: 4px;
+        padding: 10px 10px 10px 20px;
+        margin-bottom: 10px;
+        border: 1px solid #A0A6B2;
+        border-left: 8px solid #3093A0;
+    }
 
-	#storyTags {
-		display: flex;
-		padding: 5px 0;
-	}
+    #storyTags {
+        display: flex;
+        padding: 5px 0;
+    }
 
-	.tagDesign {
-		margin-right: 5px;
-		padding: 3px 8px;
-		border-radius: 10px;
-	}
+    .tagDesign {
+        margin-right: 5px;
+        padding: 3px 8px;
+        border-radius: 10px;
+    }
 
-	#cardName {
-		padding: 5px;
-		margin-top: 10px;
-	}
+    #cardName {
+        padding: 5px;
+        margin-top: 10px;
+    }
 
-	#cardDescription {
-		padding: 10px;
-		margin-top: 5px;
-	}
+    #cardDescription {
+        padding: 10px;
+        margin-top: 5px;
+    }
 
-	#cardDescription p {
-		color: #969DAA;
-	}
+    #cardDescription p {
+        color: #969DAA;
+    }
 
-	#cardUserName {
-		padding: 5px;
-		margin-top: 10px;
-	}
+    #cardUserName {
+        padding: 5px;
+        margin-top: 10px;
+    }
 
 </style>

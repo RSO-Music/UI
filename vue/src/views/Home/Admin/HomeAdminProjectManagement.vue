@@ -2,9 +2,9 @@
     <div class="contentWrapper list-wrapper">
         <div class="list">
             <h1>Seznam projektov</h1>
-            
+
             <ButtonBase classes="full-width" msg="Ustvari nov projekt" @clicked="addNewProjectForm"></ButtonBase>
-            
+
             <ProjectCard :is-admin="true" @editProject="editProject" :insertedProjectList="projectsList"/>
         </div>
 
@@ -12,8 +12,8 @@
             <ProjectForm :projectId="projectId"
                          :insertedProjectName="projectName"
                          :insertedAssignedUsersToProject="insertedAssignedUsersToProject"
-                         :insertedUsers="formUsers" :isNewProject="isNewProject"
-                         :formName="formName"
+                         :insertedUsers="formUsers"
+                         :isNew="isNew"
                          @adminProjectAdd="addNewProject"
                          @projectEdit="projectEditUpdate"
             />
@@ -43,9 +43,8 @@
                 users: [],
                 formUsers: [],
                 projectsList: [],
-                isNewProject: true,
+                isNew: true,
                 insertedAssignedUsersToProject: [],
-                formName: 'Ustvari projekt',
                 projectName: '',
                 projectId: '',
             }
@@ -74,8 +73,7 @@
                         objProjectAdd['_id'] = rs.data._id;
                         this.projectsList.push(objProjectAdd);
                         this.insertedAssignedUsersToProject = [];
-                        this.isNewProject = true;
-                        this.formName = 'Ustvari projekt';
+                        this.isNew = true;
                         this.projectName = '';
                         this.projectId = '';
                         this.formUsers = JSON.parse(JSON.stringify(this.users));
@@ -92,9 +90,6 @@
                     }
                 );
 
-            },
-            closeAlert() {
-                this.isSuccess = 0;
             },
 
             getAllUsers() {
@@ -120,10 +115,9 @@
 
             },
             editProject(editProjectObj) {
-                this.isNewProject = false;
+                this.isNew = false;
                 this.insertedAssignedUsersToProject = JSON.parse(JSON.stringify(editProjectObj.users));
                 this.formUsers = JSON.parse(JSON.stringify(this.users));
-                this.formName = 'Uredi projekt';
                 this.projectName = editProjectObj.name;
                 this.projectId = editProjectObj._id;
 
@@ -175,8 +169,7 @@
             addNewProjectForm() {
                 //reset all the variables
                 this.insertedAssignedUsersToProject = [];
-                this.isNewProject = true;
-                this.formName = 'Ustvari projekt';
+                this.isNew = true;
                 this.projectName = '';
                 this.projectId = '';
                 this.formUsers = JSON.parse(JSON.stringify(this.users));

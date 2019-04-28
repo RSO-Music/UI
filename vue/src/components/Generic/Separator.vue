@@ -1,7 +1,9 @@
 <template>
 	<v-layout row mb-4 class="divider-wrapper">
 		<v-flex xs3>
-			<span>{{ title }}</span>
+			<v-layout align-center>
+                <p class="text-uppercase">{{ title }}</p>
+            </v-layout>
 		</v-flex>
 		<v-flex xs9 class="divider-wrapper" mt-3>
 			<v-divider></v-divider>

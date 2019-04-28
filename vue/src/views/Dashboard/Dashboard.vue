@@ -1,11 +1,9 @@
 <template>
-    <v-container fluid class="wrapper">
-        <v-content>
-            <AdminDashboard v-if="$store.getters.currentUser.isAdmin"/>
-            
-            <UserDashboard v-else/>
-        </v-content>
-    </v-container>
+    <div>
+        <AdminDashboard v-if="$store.getters.currentUser.isAdmin"/>
+
+        <UserDashboard v-else/>
+    </div>
 </template>
 
 <script>

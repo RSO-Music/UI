@@ -10,16 +10,17 @@
                 prepend-icon="person"
                 class="inputField"
                 v-model="username"
-                :counter="10"
-                :rules="nameRules"
+                :rules="rules.name"
                 label="Uporabniško ime"
                 required
+                focus
         ></v-text-field>
 
         <v-text-field
                 color="#3093A0"
                 prepend-icon="lock"
                 class="inputField"
+                :rules="rules.password"
                 v-model="password"
                 label="Geslo"
                 :type="'password'"
@@ -38,11 +39,15 @@
         data: () => ({
             valid: true,
             username: '',
-            nameRules: [
-                v => !!v || 'Uporabniško ime ne sme biti prazno',
-                v => (v && v.length <= 10) || 'Uporabniško ime mora biti dolžine najmanj 10'
-            ],
-            password: '',
+            rules: {
+                name: [
+                    v => !!v || 'Uporabniško ime ne sme biti prazno'
+                ],
+                password: [
+                    v => !!v || 'Geslo ne sme biti prazno'
+                ],
+            },
+            password: ''
         }),
 
         methods: {

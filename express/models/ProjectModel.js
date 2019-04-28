@@ -14,10 +14,7 @@ const ProjectSchema = new Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User"
             },
-            role: {
-                type: String,
-                required: true
-            }
+            role: [String]
         }
     ],
     deletable: {

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import './plugins/vuetify'
 import './plugins/toasted'
+import './plugins/userRoles'
 import App from './App.vue'
 import router from './router'
 import './registerServiceWorker'

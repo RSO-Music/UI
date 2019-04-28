@@ -59,7 +59,6 @@
         font-size: 30px;
         color: #1A616B;
         padding-bottom: 40px;
-        font-weight: bolder;
         text-transform: uppercase;
     }
 
@@ -86,11 +85,9 @@
         font-size: 18px;
         color: #161719;
         text-transform: uppercase;
-        font-weight: bolder;
     }
 
     .contentWrapper {
-        background-color: #F6F6F7;
         padding: 30px;
         height: 100%;
     }
@@ -108,7 +105,7 @@
         flex-direction: column;
     }
 
-    .formWrapper {
+    .form-wrapper {
         background-color: white;
         border-radius: 4px;
         border-top: 5px solid #A2E0E0;
@@ -116,7 +113,7 @@
         padding: 20px 30px;
     }
 
-    .formWrapper > h1 {
+    .form-wrapper > h1 {
         text-align: center;
         text-transform: capitalize;
     }
