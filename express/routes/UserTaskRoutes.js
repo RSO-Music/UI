@@ -23,4 +23,7 @@ router.delete('/:id', UserTaskController.remove);
 router.put('/assign/story/:storyId', UserTaskController.assign);
 
 
+router.put('/active/:taskId', UserTaskController.changeActiveStatus);
+
+
 module.exports = router;

@@ -122,7 +122,6 @@ module.exports = {
         });
     },
 
-
     assign(req, res) {
         const taskId = req.query.taskId;
         const task = req.body;
@@ -150,6 +149,45 @@ module.exports = {
                     return res.json(UserTask);
                 });
             });
+    },
+
+    changeActiveStatus(req, res) {
+        const taskId = req.params.taskId;
+        const data = req.body;
+        
+        console.log(req.body);
+
+        UserTaskModel.findOne({ _id: taskId }, function (err, UserTask) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'An error occured while fetching task.',
+                    error: err
+                });
+            }
+
+            if (!UserTask) {
+                return res.status(404).json({
+                    message: 'No such UserTask.'
+                });
+            }
+
+            UserTask.active = data.isActive;
+            
+            if (!data.isActive) {
+                UserTask.activeHours += 1;
+            }
+
+            UserTask.save(function (err, UserTask) {
+                if (err) {
+                    return res.status(500).json({
+                        message: 'Error when updating UserTask.',
+                        error: err
+                    });
+                }
+                
+                return res.json(UserTask);
+            });
+        });
     },
 
 

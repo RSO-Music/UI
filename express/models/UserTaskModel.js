@@ -16,6 +16,14 @@ const UserTaskSchema = new Schema({
     accepted: {
         type: Boolean,
         default: false
+    },
+    active: {
+        type: Boolean,
+        default: false
+    },
+    activeHours: {
+        type: Number,
+        default: 0
     }
 });
 

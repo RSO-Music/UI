@@ -160,7 +160,7 @@
                                             <task-card v-for="(task, index) in unassignedTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="isNotScrumMaster"/>
+                                                       :disabled="!canEditTasks"/>
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
@@ -168,12 +168,11 @@
 
                                         <separator title="Dodeljene"></separator>
 
-
                                         <template v-if="assignedTasks.length">
                                             <task-card v-for="(task, index) in assignedTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="isNotScrumMaster"/>
+                                                       :disabled="!canEditTasks"/>
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
@@ -185,7 +184,7 @@
                                             <task-card v-for="(task, index) in activeTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="isNotScrumMaster"/>
+                                                       :disabled="!canEditTasks"/>
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
@@ -196,7 +195,7 @@
                                             <task-card v-for="(task, index) in finishedTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="isNotScrumMaster"/>
+                                                       :disabled="!canEditTasks"/>
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
                                     </v-flex>
@@ -214,7 +213,7 @@
                                                         rows="1"
                                                         label="Opis naloge"
                                                         v-model="editTask.description"
-                                                        :disabled="isNotScrumMaster"
+                                                        :disabled="!canEditTasks"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -229,7 +228,7 @@
                                                         label="Ocena časa"
                                                         type="number"
                                                         v-model="editTask.time"
-                                                        :disabled="isNotScrumMaster"
+                                                        :disabled="!canEditTasks"
                                                         min="1"
                                                         flat
                                                 ></v-text-field>
@@ -239,7 +238,7 @@
                                                         color="#3093A0"
                                                         prepend-icon="person"
                                                         v-model="editTask.assignee"
-                                                        :disabled="isNotScrumMaster"
+                                                        :disabled="!canEditTasks"
                                                         label="Razvijalec"
                                                         :items="projectUsers"
                                                         :item-text="({ user }) => {
@@ -254,7 +253,7 @@
                                                 <v-select
                                                         color="#3093A0"
                                                         v-model="editTask.status"
-                                                        :disabled="!editingTask || isNotScrumMaster"
+                                                        :disabled="!editingTask || canEditTasks"
                                                         :items="taskStatus"
                                                         item-text="name"
                                                         item-value="value"
@@ -264,13 +263,40 @@
                                                 ></v-select>
                                             </v-flex>
                                         </v-layout>
+                                        
+                                        <v-layout mb-2 v-if="editTask._id">
+                                            <v-layout align-center v-if="editTask.assignee && !editTask.accepted">
+                                                <v-icon class="red--text">info_outline</v-icon> <span class="ml-2 red--text">Razvijalec naloge še ni sprejel</span>
+                                            </v-layout>
+
+                                            <v-layout align-center v-if="editTask.assignee && editTask.accepted">
+                                                <v-icon class="green--text">check_circle_outline</v-icon> <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
+                                            </v-layout>
+                                        </v-layout>
+                                        
+                                        <v-layout mb-4 mt-4 v-if="editTask.assignee && editTask.accepted">
+                                            <v-flex>
+                                                <p><span class="grey--text">Število porabljenih ur:</span> {{editTask.activeHours}}</p>    
+                                            </v-flex>
+                                            
+                                            <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
+                                                <ButtonBase 
+                                                        :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`" 
+                                                        @clicked="setTaskActiveStatus"
+                                                        :isDisabled="!canEditTasks"
+                                                        class="mr-3"
+                                                >
+                                                </ButtonBase>
+                                            </v-flex>
+                                        </v-layout>
 
                                         <v-layout align-center justify-end row>
                                             <ButtonBase msg="Prekliči" @clicked="clearEdit"
-                                                           :isDisabled="isNotScrumMaster"
+                                                           :isDisabled="!canEditTasks"
                                                            class="mr-3"></ButtonBase>
+                                            
                                             <ButtonBase msg="Shrani" @clicked="addTask"
-                                                           :isDisabled="!isEditTaskValid || isNotScrumMaster"></ButtonBase>
+                                                           :isDisabled="!isEditTaskValid || !canEditTasks"></ButtonBase>
                                         </v-layout>
                                     </v-flex>
                                 </v-layout>
@@ -403,8 +429,11 @@
 
                 //check if all required fields are present
                 if (!editTask.description || !editTask.time) {
-                    this.error = 2;
-                    this.errorText = "Če želite dodati nalogo, vpišite opis naloge in določite čas"
+                    vm.$toasted.error('Če želite dodati nalogo, vpišite opis naloge in določite čas', {
+                        duration: 3000,
+                        position: "bottom-center",
+                    });
+                    
                     return;
                 }
 
@@ -423,7 +452,13 @@
                     ).then(
                         (rs) => {
                             vm.tasks.push(rs.data);
+                            
                             vm.clearEdit();
+
+                            vm.$toasted.success('Naloga je bila uspešno dodana', {
+                                duration: 3000,
+                                position: "bottom-center",
+                            });
                         },
                         (error) => {
                             console.log(error);
@@ -443,7 +478,20 @@
                         }, editTask._id
                     ).then(
                         (rs) => {
+                            vm.tasks = vm.tasks.map((task) => {
+                                if (task._id === editTask._id) {
+                                    return editTask;
+                                }
+                                
+                                return task;
+                            });
+                            
                             vm.clearEdit();
+
+                            vm.$toasted.success('Naloga je bila uspešno posodobljena', {
+                                duration: 3000,
+                                position: "bottom-center",
+                            });
                         },
                         (error) => {
                             console.log(error);
@@ -461,7 +509,8 @@
                 this.editingTask = false;
             },
             changeTask(task) {
-                this.editTask = task;
+                this.editTask = JSON.parse(JSON.stringify(task));
+                
                 this.editingTask = true;
             },
             deleteTask(deleteTask) {
@@ -478,15 +527,37 @@
                 this.clearEdit();
 
 			},
-			assignToMe(assignedTask) {
-			},
 			resetForm() {
 				this.$refs.form.reset();
 				this.$refs.form.resetValidation();
 			},
-			generateRandom() {
-				return new Date().getTime().toString() + Math.floor(Math.random() * 1000000);
-			}
+			setTaskActiveStatus() {
+                const vm = this;
+
+                vm.editTask.active = !vm.editTask.active;
+                
+                APICalls.setActiveStatus(vm.editTask._id, vm.editTask.active)
+                    .then((res) => {
+                        vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna' : 'Naloga je sedaj neaktivna'}`, {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                        
+                        console.log(res);
+                        
+                        vm.editTask.activeHours = res.data.activeHours;
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+
+                        vm.editTask.active = !vm.editTask.active;
+
+                        vm.$toasted.error('Pri posodabljanju naloge je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    });
+            }
 		},
 		computed: {
 			unassignedTasks() {
@@ -526,7 +597,7 @@
 
                 return projectData.users;
             },
-            isNotScrumMaster() {
+            canEditTasks() {
                 let projectData = this.$store.getters.editingProject;
 
                 let currentUser = this.$store.getters.currentUser;
@@ -535,7 +606,7 @@
                     return user.user._id === currentUser._id;
                 });
 
-                return !userInProject.role.includes('scrum_master');
+                return userInProject.role.includes('scrum_master') || userInProject.role.includes('developer');
             },
             isEditTaskValid() {
                 if (this.editTask) {

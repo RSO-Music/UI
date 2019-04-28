@@ -207,4 +207,13 @@ export class APICalls {
         });
     }
 
+    static setActiveStatus(taskId, isActive) {
+        return axios({
+            method: "put",
+            url: URL + '/task/active/' + taskId,
+            data: {
+                isActive
+            }
+        });
+    }
 }

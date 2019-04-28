@@ -74,7 +74,6 @@
                             prepend-icon="label"
                             v-model="selectedUser.role"
                             :items="$userProjectRoles"
-                            :rules="[v => !!v || 'Izberite vlogo']"
                             label="Uporabniška vloga"
                             hide-details
                             multiple
