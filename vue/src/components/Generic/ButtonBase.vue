@@ -1,6 +1,6 @@
 <template>
     <v-btn
-            :class="`main-button ${classes}`"
+            :class="`main-button ${classes ? classes : ''} ${isDisabled ? 'main-button--disabled' : ''}`"
             :disabled="isDisabled"
             @click="buttonClicked"
             color="#3093A0"
@@ -37,5 +37,10 @@
         min-width: 15px;
         float: right;
         margin: 0;
+    }
+    
+    .main-button--disabled.theme--dark.v-btn:not(.v-btn--icon):not(.v-btn--flat) {
+        color: #ffffff !important;
+        background-color: #B0B0B0 !important;
     }
 </style>

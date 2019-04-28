@@ -1,10 +1,9 @@
 <template>
-	<div v-if="task" class="storyTask">
-		<div>
-			<v-layout row>
+	<div v-if="task" class="story-task">
+        <v-layout row>
 				<v-flex xs2>
 					<div id="cardUserName">
-						<p>{{ getProperName(task.assignee) }}</p>
+						<p>{{taskAssignee}}</p>
 					</div>
 				</v-flex>
 				<v-flex xs2>
@@ -29,18 +28,17 @@
 				</v-flex>
 				<v-flex xs1>
 					<v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled">
-						<v-icon>clear</v-icon>
+						<v-icon>delete</v-icon>
 					</v-btn>
 				</v-flex>
 			</v-layout>
-		</div>
 	</div>
 </template>
 
 <script>
-	import { APICalls } from "../../utils/apiCalls"
+	import { APICalls } from "../../utils/apiCalls";
 
-	export default {
+    export default {
 		name: "TaskCard",
 		props: {
 			task: Object,
@@ -53,25 +51,19 @@
 			editTask() {
 				this.$emit('editTask', this.task)
 			},
+            
 			deleteTask() {
 				this.$emit('deleteTask', this.task)
 			},
-			getProperName(id) {
-				const users = this.$store.getters.editingProject.users;
-				for (let i = 0; i < users.length; i++) {
-					let user = users[i];
-					if (user.user._id === id) {
-						return user.user.firstName + " " + user.user.lastName;
-					}
-				}
-				return "unassigned"
-			},
+			
 			assignToMe() {
 				console.log(
 						"storyId: " + this.task.storyId + " taskId: " + this.task._id
 				);
+				
 				const task = {accepted: true, storyId: this.task.storyId, assignee: this.$store.getters.currentUser._id};
 				console.log(task);
+				
 				APICalls.assignToMe(this.task.storyId, this.task._id, task).then(
 						(res) => {
 							this.$emit('assignToMe', this.task);
@@ -87,7 +79,7 @@
 			taskAssignee() {
 				let vm = this;
 
-				if (this.task.asignee) {
+				if (this.task.assignee) {
 					let editingProject = this.$store.getters.editingProject;
 
                     let assignedUser = editingProject.users.find(function (user) {
@@ -102,13 +94,14 @@
 </script>
 
 <style scoped>
-    .storyTask {
+    .story-task {
         background-color: white;
-        border-radius: 4px;
+        border-radius: 2px;
         padding: 10px 10px 10px 20px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         border: 1px solid #A0A6B2;
         border-left: 8px solid #3093A0;
+        overflow: hidden;
     }
 
     #storyTags {

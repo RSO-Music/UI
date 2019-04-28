@@ -207,7 +207,7 @@
 <style scoped>
     .backlog-section {
         padding: 15px;
-        border-radius: 4px;
+        border-radius: 2px;
         border-top: 8px solid #A2E0E0;
         background-color: white;
     }

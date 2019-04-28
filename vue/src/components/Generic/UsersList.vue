@@ -36,8 +36,6 @@
             reloadData() {
                 const vm = this;
                 
-                console.log('Reload data');
-
                 APICalls.getUsersList().then(
                     (res) => {
                         vm.usersList = res.data;
@@ -64,7 +62,7 @@
         padding: 20px;
         margin: 10px 0;
         border-top: 5px solid #A2E0E0;
-        border-radius: 4px;
+        border-radius: 2px;
     }
 
     .adminProjectCard {
@@ -72,13 +70,13 @@
         padding: 20px;
         margin: 10px 0;
         border-left: 5px solid #A2E0E0;
-        border-radius: 4px;
+        border-radius: 2px;
     }
 
     .pName {
         padding: 10px;
         border: 1px solid #A0A6B2;
-        border-radius: 4px;
+        border-radius: 2px;
         margin-top: 5px;
         margin-bottom: 20px;
         display: flex;

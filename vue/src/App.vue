@@ -58,7 +58,7 @@
     h1 {
         font-size: 30px;
         color: #1A616B;
-        padding-bottom: 40px;
+        padding-bottom: 16px;
         text-transform: uppercase;
     }
 
@@ -107,7 +107,7 @@
 
     .form-wrapper {
         background-color: white;
-        border-radius: 4px;
+        border-radius: 2px;
         border-top: 5px solid #A2E0E0;
         width: 95%;
         padding: 20px 30px;

@@ -153,94 +153,127 @@
 
                         <v-tab-item v-if="story.sprintId" key="2">
                             <v-container>
-                                <v-flex x12>
-                                    <v-textarea
-                                            color="#3093A0"
-                                            prepend-icon="assignment"
-                                            rows="1"
-                                            label="Opis naloge"
-                                            v-model="editTask.description"
-                                            :disabled="isNotScrumMaster"
-                                    ></v-textarea>
-                                </v-flex>
+                                <v-layout>
+                                    <v-flex lg6 mr-1 pr-2 class="tasks-container">
+                                        <separator title="Nedodeljene"></separator>
+                                        <template v-if="unassignedTasks.length">
+                                            <task-card v-for="(task, index) in unassignedTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       @deleteTask="deleteTask" :key="task._id"
+                                                       :disabled="isNotScrumMaster"/>
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
-                                <v-layout align-center justify-space-between row mb-5>
-                                    <v-flex xs3>
-                                        <v-text-field
-                                                id="taskSpeed"
-                                                color="#3093A0"
-                                                prepend-icon="timer"
-                                                label="Časovna ocena"
-                                                type="number"
-                                                v-model="editTask.time"
-                                                :disabled="isNotScrumMaster"
-                                                min="1"
-                                                flat
-                                        ></v-text-field>
+                                        <v-divider></v-divider>
+
+                                        <separator title="Dodeljene"></separator>
+
+
+                                        <template v-if="assignedTasks.length">
+                                            <task-card v-for="(task, index) in assignedTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       @deleteTask="deleteTask" :key="task._id"
+                                                       :disabled="isNotScrumMaster"/>
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
+
+                                        <v-divider></v-divider>
+
+                                        <separator title="Aktivne"></separator>
+
+                                        <template v-if="activeTasks.length">
+                                            <task-card v-for="(task, index) in activeTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       @deleteTask="deleteTask" :key="task._id"
+                                                       :disabled="isNotScrumMaster"/>
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
+
+                                        <v-divider></v-divider>
+                                        
+                                        <separator title="Zaključene"></separator>
+                                        <template v-if="finishedTasks.length">
+                                            <task-card v-for="(task, index) in finishedTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       @deleteTask="deleteTask" :key="task._id"
+                                                       :disabled="isNotScrumMaster"/>
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
                                     </v-flex>
-                                    <v-flex xs3>
-                                        <v-select
-                                                color="#3093A0"
-                                                prepend-icon="person"
-                                                v-model="editTask.assignee"
-                                                :disabled="isNotScrumMaster"
-                                                label="Razvijalec naloge"
-                                                :items="projectUsers"
-                                                :item-text="({ user }) => {
+
+
+                                    <v-flex lg6 ml-1 pl-2>
+                                        <h1 v-if="editTask._id">Uredi nalogo</h1>
+                                        <h1 v-else>Dodaj nalogo</h1>
+                                        
+                                        <v-layout>
+                                            <v-flex x12>
+                                                <v-textarea
+                                                        color="#3093A0"
+                                                        prepend-icon="assignment"
+                                                        rows="1"
+                                                        label="Opis naloge"
+                                                        v-model="editTask.description"
+                                                        :disabled="isNotScrumMaster"
+                                                ></v-textarea>
+                                            </v-flex>
+                                        </v-layout>
+
+                                        <v-layout align-center justify-space-between row mb-4>
+                                            <v-flex xs4 mr-2>
+                                                <v-text-field
+                                                        class="mt-4"
+                                                        id="taskSpeed"
+                                                        color="#3093A0"
+                                                        prepend-icon="timer"
+                                                        label="Ocena časa"
+                                                        type="number"
+                                                        v-model="editTask.time"
+                                                        :disabled="isNotScrumMaster"
+                                                        min="1"
+                                                        flat
+                                                ></v-text-field>
+                                            </v-flex>
+                                            <v-flex xs4>
+                                                <v-select
+                                                        color="#3093A0"
+                                                        prepend-icon="person"
+                                                        v-model="editTask.assignee"
+                                                        :disabled="isNotScrumMaster"
+                                                        label="Razvijalec"
+                                                        :items="projectUsers"
+                                                        :item-text="({ user }) => {
                                                     return `${user.firstName} ${user.lastName ? user.lastName : ''}`;
                                                 }"
-                                                item-value="user._id"
-                                                hide-details
-                                                flat
-                                        ></v-select>
-                                    </v-flex>
-                                    <v-flex xs3>
-                                        <v-select
-                                                color="#3093A0"
-                                                v-model="editTask.status"
-                                                :disabled="!editingTask || isNotScrumMaster"
-                                                :items="taskStatus"
-                                                item-text="name"
-                                                item-value="value"
-                                                label="Status naloge"
-                                                hide-details
-                                                flat
-                                        ></v-select>
+                                                        item-value="user._id"
+                                                        hide-details
+                                                        flat
+                                                ></v-select>
+                                            </v-flex>
+                                            <v-flex xs4 ml-2>
+                                                <v-select
+                                                        color="#3093A0"
+                                                        v-model="editTask.status"
+                                                        :disabled="!editingTask || isNotScrumMaster"
+                                                        :items="taskStatus"
+                                                        item-text="name"
+                                                        item-value="value"
+                                                        label="Status naloge"
+                                                        hide-details
+                                                        flat
+                                                ></v-select>
+                                            </v-flex>
+                                        </v-layout>
+
+                                        <v-layout align-center justify-end row>
+                                            <ButtonBase msg="Prekliči" @clicked="clearEdit"
+                                                           :isDisabled="isNotScrumMaster"
+                                                           class="mr-3"></ButtonBase>
+                                            <ButtonBase msg="Shrani" @clicked="addTask"
+                                                           :isDisabled="!isEditTaskValid || isNotScrumMaster"></ButtonBase>
+                                        </v-layout>
                                     </v-flex>
                                 </v-layout>
-
-                                <v-layout align-center justify-end row fill-height mb-3>
-                                    <ButtonOutline msg="Prekliči" @clicked="clearEdit"
-                                                   :isDisabled="isNotScrumMaster"
-                                                   class="mr-3"></ButtonOutline>
-                                    <ButtonOutline msg="Shrani nalogo" @clicked="addTask"
-                                                   :isDisabled="!isEditTaskValid || isNotScrumMaster"></ButtonOutline>
-                                </v-layout>
-
-                                <div class="taskBox">
-                                    <separator title="Nedodeljene naloge"></separator>
-                                    <task-card v-for="(task, index) in unassignedTasks" :task="task"
-                                               @editTask="changeTask"
-                                               @deleteTask="deleteTask" :key="task._id"
-                                               :disabled="isNotScrumMaster"/>
-
-                                    <separator title="Dodeljene naloge"></separator>
-                                    <task-card v-for="(task, index) in assignedTasks" :task="task"
-                                               @editTask="changeTask"
-                                               @deleteTask="deleteTask" :key="task._id"
-                                               :disabled="isNotScrumMaster"/>
-
-                                    <separator title="Aktivne naloge"></separator>
-                                    <task-card v-for="(task, index) in activeTasks" :task="task" @editTask="changeTask"
-                                               @deleteTask="deleteTask" :key="task._id"
-                                               :disabled="isNotScrumMaster"/>
-
-                                    <separator title="Zaključene naloge"></separator>
-                                    <task-card v-for="(task, index) in finishedTasks" :task="task"
-                                               @editTask="changeTask"
-                                               @deleteTask="deleteTask" :key="task._id"
-                                               :disabled="isNotScrumMaster"/>
-                                </div>
                             </v-container>
                         </v-tab-item>
                     </v-tabs>
@@ -577,11 +610,9 @@
         align-self: flex-end;
     }
 
-    .taskBox {
-        background-color: #F8F8F8;
-        padding: 20px 10px;
-        border-radius: 3px;
-        border-top: solid #A2E0E0 3px;
+    .tasks-container {
+        overflow-y: auto;
+        height: 500px;
     }
 
     .custom-btn {

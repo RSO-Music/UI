@@ -3,13 +3,13 @@
         <v-card class="adminProjectCard" v-for="sprint in sprintsList" :key="sprint._id">
             <div class="adminpName">
                 <v-layout>
-                    <v-flex xs10>
+                    <v-flex xs9>
                         <p>{{sprint.name}}</p>
                         <p>{{sprint.startDate}}</p>
                         <p>{{sprint.endDate}}</p>
                     </v-flex>
                     
-                    <v-flex xs2>
+                    <v-flex xs3>
                         <ButtonOutline msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
                     </v-flex>
                 </v-layout>
@@ -45,8 +45,6 @@
             reloadData() {
                 const vm = this;
 
-                console.log('Reload data');
-
                 APICalls.getProjectSprints(vm.$route.params.projectId).then(
                     (res) => {
                         vm.sprintsList = res.data;
@@ -73,7 +71,7 @@
         padding: 20px;
         margin: 10px 0;
         border-top: 5px solid #A2E0E0;
-        border-radius: 4px;
+        border-radius: 2px;
     }
 
     .adminProjectCard {
@@ -81,13 +79,13 @@
         padding: 20px;
         margin: 10px 0;
         border-left: 5px solid #A2E0E0;
-        border-radius: 4px;
+        border-radius: 2px;
     }
 
     .pName {
         padding: 10px;
         border: 1px solid #A0A6B2;
-        border-radius: 4px;
+        border-radius: 2px;
         margin-top: 5px;
         margin-bottom: 20px;
         display: flex;

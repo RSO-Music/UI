@@ -1,26 +1,18 @@
 <template>
-	<v-layout row mb-4 class="divider-wrapper">
-		<v-flex xs3>
-			<v-layout align-center>
-                <p class="text-uppercase">{{ title }}</p>
-            </v-layout>
-		</v-flex>
-		<v-flex xs9 class="divider-wrapper" mt-3>
-			<v-divider></v-divider>
-		</v-flex>
-	</v-layout>
+    <v-layout row class="v-subheader theme--light">
+        <span class="text-uppercase">{{title}}</span>
+    </v-layout>
 </template>
 <script>
-	export default {
-		name: 'Separator',
-		props: {
-			title: String
-		}
-	}
+    export default {
+        name: 'Separator',
+        props: {
+            title: String
+        }
+    }
 </script>
 <style lang="scss" scoped>
-	.divider-wrapper {
-		display: flex;
-		text-align: center;
-	}
+    .v-subheader {
+        color: #1A616B;
+    }
 </style>

@@ -236,7 +236,7 @@
     #formTop {
         margin-bottom: 10px;
         border: 1.5px solid #969DAA;
-        border-radius: 4px;
+        border-radius: 2px;
         padding: 2px;
         height: 230px;
         overflow-y: scroll;

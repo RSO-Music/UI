@@ -113,7 +113,6 @@
             deleteStory() {
                 APICalls.deleteUserStory(this.story._id).then(
                     (res) => {
-                        console.log('User story deleted');
                         this.$emit('removeStory', true);
                     },
                     (error) => {
@@ -136,7 +135,7 @@
 <style scoped>
     .userStory {
         background-color: white;
-        border-radius: 4px;
+        border-radius: 2px;
         padding: 10px 0px 0px 20px;
         margin-bottom: 10px;
         border: 2px solid #DEDEDE;

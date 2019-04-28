@@ -40,7 +40,7 @@
 	.overview-card {
 		flex-basis: 32%;
 		margin: 10px 0;
-		border-radius: 4px;
+		border-radius: 2px;
 		height: 50%;
 	}
 	.icon-card-wrapper {
