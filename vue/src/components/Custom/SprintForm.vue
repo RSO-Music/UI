@@ -1,7 +1,7 @@
 <template>
     <div class="formContainer">
         <v-form
-                class="formWrapper"
+                class="form-wrapper"
                 ref="form"
                 v-model="valid"
                 lazy-validation

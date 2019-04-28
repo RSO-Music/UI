@@ -4,22 +4,25 @@
         
         <v-layout>
             <v-flex sm12 m4 mx-2>
-                <div id="unassigned" class="backlog-section">
-                    <h2>Nedodeljene zgodbe</h2>
-                    <template v-if="storiesInBacklog.length">
-                        <div class="storyContainer" v-for="story of storiesInBacklog">
-                            <UserStoryCard :story="story"
-                                           :currentSprint="currentSprint"
-                                           v-on:addStory="addStory"
-                                           v-on:refresh="reloadData"
-                                           v-on:removeStory="reloadData"
-                            />
-                        </div>
-                    </template>
+                <v-layout column id="unassigned" class="backlog-section">
+                    <v-layout column>
+                        <h2>Nedodeljene zgodbe</h2>
+                        <template v-if="storiesInBacklog.length">
+                            <div class="storyContainer" v-for="story of storiesInBacklog" :key="story._id">
+                                <UserStoryCard :story="story"
+                                               :currentSprint="currentSprint"
+                                               v-on:addStory="addStory"
+                                               v-on:refresh="reloadData"
+                                               v-on:removeStory="reloadData"
+                                />
+                            </div>
+                        </template>
 
-                    <div v-else>
-                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni nedodeljenih zgodb</h2>
-                    </div>
+                        <div v-else>
+                            <h2 class="backlog-empty-text text-xs-center grey--text">Ni nedodeljenih zgodb</h2>
+                        </div>
+                    </v-layout>
+                    
 
                     <v-layout align-center justify-end row class="mb-2">
                         <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe trenutnemu sprintu"
@@ -31,31 +34,37 @@
                         <EditUserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
                                              :customBtn="true"></EditUserStoryDialog>
                     </v-layout>
-                </div>
+                </v-layout>
             </v-flex>
             
             <v-flex sm12 m4 mx-2>
-                <div id="assigned" class="backlog-section">
-                    <h2>Zgodbe trenutnega sprinta</h2>
+                <v-layout column id="assigned" class="backlog-section">
+                    <h2>Zgodbe trenutnega Sprinta</h2>
+                    
+                    <template v-if="currentSprint">
+                        <template v-if="storiesInCurrentSprint.length">
+                            <div class="storyContainer" v-for="story of storiesInCurrentSprint" :key="story._id">
+                                <UserStoryCard :story="story" v-on:refresh="reloadData"/>
+                            </div>
+                        </template>
 
-                    <div v-if="currentSprint">
-                        <div class="storyContainer" v-for="story of storiesInCurrentSprint">
-                            <UserStoryCard :story="story" v-on:refresh="reloadData"/>
+                        <div v-else>
+                            <h2 class="backlog-empty-text text-xs-center grey--text">Dodajte zgodbe v Sprint</h2>
                         </div>
-                    </div>
+                    </template>
 
                     <div v-else>
-                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni aktivnega sprinta</h2>
+                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni aktivnega Sprinta</h2>
                     </div>
-                </div>
+                </v-layout>
             </v-flex>
             
             <v-flex sm12 m4 mx-2>
-                <div id="completed" class="backlog-section">
+                <v-layout column id="completed" class="backlog-section">
                     <h2>Zaključene zgodbe</h2>
 
                     <template v-if="completedStories.length">
-                        <div class="storyContainer" v-for="story in completedStories">
+                        <div class="storyContainer" v-for="story in completedStories" :key="story._id">
                             <UserStoryCard :story="story"/>
                         </div>
                     </template>
@@ -63,7 +72,7 @@
                     <div v-else>
                         <h2 class="backlog-empty-text text-xs-center grey--text">Ni zaključenih zgodb</h2>
                     </div>
-                </div>
+                </v-layout>
             </v-flex>
         </v-layout>
     </div>
@@ -186,7 +195,9 @@
                 this.storiesToAddToSprint = [];
 
                 this.getStoriesInBacklog();
+                
                 this.getStoriesInCurrentSprint();
+                
                 this.getCompletedStories();
             }
         }
@@ -201,7 +212,7 @@
         background-color: white;
     }
 
-    .backlog-section > h2 {
+    .backlog-section h2 {
         color: #222;
         padding-bottom: 20px;
     }

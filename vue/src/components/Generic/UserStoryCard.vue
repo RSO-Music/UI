@@ -61,7 +61,6 @@
                         </v-btn>
                     </v-toolbar>
                 </v-flex>
-
             </v-layout>
         </div>
 

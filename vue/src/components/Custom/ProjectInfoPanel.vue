@@ -28,14 +28,14 @@
             startDateFormat() {
                 return this.currentSprint.startDate;
             },
-            
+
             endDateFormat() {
                 return this.currentSprint.endDate;
             },
-            
+
             getCurrentUserProjectRoles() {
                 const vm = this;
-                
+
                 return vm.userProjectRole.map((currentUserRole) => {
                     return vm.$userProjectRoles.find((role) => role.value === currentUserRole).text;
                 }).join(', ');
@@ -76,7 +76,6 @@
 
     .levelDown {
         padding: 0 15px;
-        font-weight: bolder;
         color: #969DAA;
     }
 
