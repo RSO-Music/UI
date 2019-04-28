@@ -1,9 +1,15 @@
 <template>
     <div class="contentWrapper">
-        <h1>Pregled</h1>
+        <v-layout mb-4>
+            <ProjectInfoPanel></ProjectInfoPanel>
+        </v-layout>
+
+        <v-layout>
+            <h2 class="section-title">Uporabniške zgodbe projekta</h2>
+        </v-layout>
         
         <v-layout>
-            <v-flex sm12 m4 mx-2>
+            <v-flex sm12 m4 mr-4>
                 <v-layout column id="unassigned" class="backlog-section">
                     <v-layout column>
                         <h2>Nedodeljene zgodbe</h2>
@@ -25,7 +31,7 @@
                     
 
                     <v-layout align-center justify-end row class="mb-2">
-                        <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe trenutnemu sprintu"
+                        <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe aktivnemu sprintu"
                                        @clicked="addStoryToSprint">
                         </ButtonOutline>
                     </v-layout>
@@ -37,9 +43,9 @@
                 </v-layout>
             </v-flex>
             
-            <v-flex sm12 m4 mx-2>
+            <v-flex sm12 m4>
                 <v-layout column id="assigned" class="backlog-section">
-                    <h2>Zgodbe trenutnega Sprinta</h2>
+                    <h2>Zgodbe aktivnega Sprinta <span v-if="currentSprint">({{currentSprint.name}})</span></h2>
                     
                     <template v-if="currentSprint">
                         <template v-if="storiesInCurrentSprint.length">
@@ -59,7 +65,7 @@
                 </v-layout>
             </v-flex>
             
-            <v-flex sm12 m4 mx-2>
+            <v-flex sm12 m4 ml-4>
                 <v-layout column id="completed" class="backlog-section">
                     <h2>Zaključene zgodbe</h2>
 
@@ -85,10 +91,12 @@
     import ButtonOutline from "../../../../components/Generic/ButtonOutline";
     import Separator from "../../../../components/Generic/Separator";
     import EditUserStoryDialog from "../../../../components/Custom/EditUserStoryDialog"
+    import ProjectInfoPanel from "../../../../components/Custom/ProjectInfoPanel";
 
     export default {
         name: 'homeUserProductBacklog',
         components: {
+            ProjectInfoPanel,
             Separator, ButtonBase, ButtonOutline,
             UserStoryCard, EditUserStoryDialog
         },
@@ -96,6 +104,9 @@
             this.getStoriesInBacklog();
             this.getStoriesInCurrentSprint();
             this.getCompletedStories();
+        },
+        props: {
+            project: Object
         },
         data: () => ({
             storiesInBacklog: [],
@@ -106,9 +117,6 @@
             startDate: '',
             storiesToAddToSprint: []
         }),
-        props: {
-            project: Object,
-        },
         methods: {
             getStoriesInBacklog() {
                 APICalls.getProjectBacklog(this.$route.params.projectId).then(
@@ -202,11 +210,17 @@
     }
 </script>
 
-<style scoped>
+<style>
+    .section-title {
+        color: #1A616B;
+        margin-bottom: 16px;
+        text-transform: uppercase;
+    }
+    
     .backlog-section {
         padding: 15px;
         border-radius: 2px;
-        border-top: 8px solid #A2E0E0;
+        border: 1px solid #eee;
         background-color: white;
     }
 

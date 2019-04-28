@@ -3,7 +3,8 @@
         <v-layout row>
 				<v-flex xs2>
 					<div id="cardUserName">
-						<p>{{taskAssignee}}</p>
+						<p v-if="taskAssignee">{{taskAssignee}}</p>
+                        <p v-else class="grey--text text-xs-center">/</p>
 					</div>
 				</v-flex>
 				<v-flex xs1>

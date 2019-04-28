@@ -108,6 +108,7 @@
     .form-wrapper {
         background-color: white;
         border-radius: 2px;
+        border: 1px solid #eee;
         border-top: 5px solid #A2E0E0;
         width: 100%;
         padding: 20px 30px;
@@ -122,8 +123,12 @@
         width: 60%;
         margin: 0 auto;
     }
-    
+
     .full-width {
         width: 100% !important;
+    }
+
+    .theme-color {
+        background-color: rgb(48, 147, 160)
     }
 </style>

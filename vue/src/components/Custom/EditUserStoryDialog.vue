@@ -152,9 +152,9 @@
                         </v-tab-item>
 
                         <v-tab-item v-if="story.sprintId" key="2">
-                            <v-container>
+                            <v-container pa-0>
                                 <v-layout>
-                                    <v-flex lg6 mr-1 pr-2 class="tasks-container">
+                                    <v-flex lg6 mr-1 pa-2 class="tasks-container">
                                         <separator title="Nedodeljene"></separator>
                                         <template v-if="unassignedTasks.length">
                                             <task-card v-for="(task, index) in unassignedTasks" :task="task"
@@ -201,7 +201,7 @@
                                     </v-flex>
 
 
-                                    <v-flex lg6 ml-1 pl-2>
+                                    <v-flex lg6 ml-1 pa-4>
                                         <h1 v-if="editTask._id">Uredi nalogo</h1>
                                         <h1 v-else>Dodaj nalogo</h1>
                                         
@@ -291,7 +291,7 @@
                                         </v-layout>
 
                                         <v-layout align-center justify-end row>
-                                            <ButtonBase msg="Prekliči" @clicked="clearEdit"
+                                            <ButtonBase msg="Ponastavi" @clicked="clearEdit"
                                                            :isDisabled="!canEditTasks"
                                                            class="mr-3"></ButtonBase>
                                             
@@ -543,8 +543,6 @@
                             position: "bottom-center",
                         });
                         
-                        console.log(res);
-                        
                         vm.editTask.activeHours = res.data.activeHours;
                     })
                     .catch((ex) => {
@@ -657,6 +655,7 @@
         margin: 0 !important;
         width: 100%;
         height: 80%;
+        border: 1px solid #eee;
     }
 
     .cancel {
@@ -681,7 +680,7 @@
     }
 
     .tasks-container {
-        overflow-y: auto;
+        overflow-y: scroll;
         height: 500px;
     }
 

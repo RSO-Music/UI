@@ -1,29 +1,96 @@
 <template>
-    <div class="projectInfo">
-        <div class="infoLeft">
-            <h5 class="project-name">{{selectedProject.name}}</h5>
-            <p class="levelDown"> - </p>
-            <p class="textBold" v-if="currentSprint !== null">TRENUTNI SPRINT:</p>
-            <p class="pName" v-if="currentSprint !== null">{{currentSprint.name}}</p>
-            <p class="sDate" v-if="currentSprint !== null">({{currentSprint.startDate | moment('DD. MM. YYYY')}} - {{currentSprint.endDate | moment('DD. MM. YYYY')}})</p>
-            <p v-if="currentSprint === null" class="sConfirmation">Trenutno ni aktivnega Sprinta</p>
-        </div>
-        <div class="info-wrapper">
-            <p class="textBold">Vaše vloge v projektu:</p>
-            <p class="roleName">{{getCurrentUserProjectRoles}}</p>
-        </div>
-    </div>
+    <v-flex xs-12 class="projectInfo">
+        <v-layout>
+            <v-flex md8>
+                <v-flex>
+                    <h1>{{currentProject.name}}</h1>
+                </v-flex>
+
+                <p class="grey--text text-uppercase mb-2">Aktivni Sprint:</p>
+
+                <v-flex class="ml-4 mb-2" v-if="currentSprint">
+                    <p>{{currentSprint.name}} ({{currentSprint.startDate | moment('DD. MM. YYYY')}} -
+                        {{currentSprint.endDate | moment('DD. MM. YYYY')}})</p>
+                </v-flex>
+                <v-flex class="ml-4 mb-2" v-else>
+                    <p>Trenutno ni aktivnega Sprinta</p>
+                </v-flex>
+
+                <p class="grey--text text-uppercase mb-2">Osebe:</p>
+
+                <v-flex class="ml-4">
+                    <v-chip disabled v-for="{ user, role } in currentProject.users">
+                        <v-avatar class="theme-color white--text">{{user.firstName[0].toUpperCase()}}</v-avatar>
+                        <span class="black--text">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}} ({{getUserProjectRoles(role)}})</span>
+                    </v-chip>
+                </v-flex>
+            </v-flex>
+            
+            <v-flex md6>
+                
+            </v-flex>
+        </v-layout>
+    </v-flex>
 </template>
 
 <script>
+    import { APICalls } from "../../utils/apiCalls";
+
     export default {
         name: 'ProjectInfoPanel',
-        props: {
-            selectedProject: Object,
-            currentSprint: Object,
-            userProjectRole: Array
+        data() {
+            return {
+                currentProject: {},
+                currentSprint: {},
+                userProjectRole: []
+            };
         },
-        methods: {},
+        mounted() {
+            const vm = this;
+
+            vm.reloadData();
+        },
+        methods: {
+            reloadData() {
+                const vm = this;
+
+                vm.getSelectedProject();
+
+                vm.getCurrentSprint();
+            },
+
+            getSelectedProject() {
+                APICalls.getProjectId(this.$route.params.projectId).then(
+                    (rs) => {
+                        console.log(rs.data);
+
+                        this.currentProject = rs.data;
+                        this.userProjectRole = this.currentProject.users.find(x => x.user._id === this.$store.getters.currentUser._id).role;
+                    },
+                    (error) => {
+                    }
+                );
+            },
+
+            getCurrentSprint() {
+                APICalls.getActiveSprint(this.$route.params.projectId).then(
+                    (rs) => {
+                        this.currentSprint = rs.data;
+                    },
+                    (error) => {
+                        this.currentSprint = null;
+                    }
+                );
+            },
+
+            getUserProjectRoles(userRoles) {
+                const vm = this;
+
+                return userRoles.map((currentUserRole) => {
+                    return vm.$userProjectRoles.find((role) => role.value === currentUserRole).text;
+                }).join(', ');
+            }
+        },
         computed: {
             startDateFormat() {
                 return this.currentSprint.startDate;
@@ -31,16 +98,7 @@
 
             endDateFormat() {
                 return this.currentSprint.endDate;
-            },
-
-            getCurrentUserProjectRoles() {
-                const vm = this;
-
-                return vm.userProjectRole.map((currentUserRole) => {
-                    return vm.$userProjectRoles.find((role) => role.value === currentUserRole).text;
-                }).join(', ');
             }
-
         }
     }
 </script>
@@ -49,9 +107,6 @@
     .projectInfo {
         display: flex;
         justify-content: space-between;
-        padding: 10px 20px;
-        background-color: #F6F6F7;
-        border-bottom: 2px solid white;
     }
 
     .infoLeft {

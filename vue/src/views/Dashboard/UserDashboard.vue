@@ -1,14 +1,35 @@
 <template>
-    <v-container fluid class="wrapper">
+    <v-container fluid>
         <v-content>
-            <h1>Pozdravljeni</h1>
+            <h1>Pozdravljeni v sistemu Scrummy!</h1>
 
-            <v-layout>
-                <v-flex xs6>
-                    <ProjectCard @goInsideProject="openProject" :insertedProjectList="projectsForUser"/>
-                </v-flex>
-                <v-flex xs6>
+            <v-card class="ma-2 pa-3">
+                <v-layout column >
+                    <h1>{{getCurrentUser.firstName}} {{getCurrentUser.lastName}}</h1>
 
+                    <p>{{getCurrentUser.username}}</p>
+                </v-layout>
+            </v-card>
+
+            <v-layout mt-4>
+                <h2 class="section-title">Vaši projekti</h2>
+            </v-layout>
+            
+            <v-layout row>
+                <v-flex xs3 v-for="project in projectsForUser" :key="project._id">
+                    <v-card class="userProjectCard ma-2">
+                        <v-card-title primary-title>
+                            <div>
+                                <div class="headline">{{project.name}}</div>
+                            </div>
+                        </v-card-title>
+
+                        <v-card-actions>
+                            <v-layout justify-end>
+                                <ButtonBase msg="Odpri" @clicked="openProject(project)"></ButtonBase>
+                            </v-layout>
+                        </v-card-actions>
+                    </v-card>
                 </v-flex>
             </v-layout>
         </v-content>
@@ -39,6 +60,8 @@
 
                 APICalls.getProjectBasedOnUserId(vm.$store.getters.currentUser._id).then(
                     (rs) => {
+                        console.log(rs.data);
+                        
                         vm.projectsForUser = rs.data;
                     },
                     (error) => {
@@ -56,6 +79,12 @@
                         }
                     }
                 );
+            }
+        },
+        
+        computed: {
+            getCurrentUser() {
+                return this.$store.getters.currentUser;
             }
         }
     }

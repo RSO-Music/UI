@@ -22,22 +22,15 @@
             <v-tab-item id
                         v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
                         :key="1">
-                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint"
-                                  :userProjectRole="userProjectRole"></ProjectInfoPanel>
-                <HomeUserProductBacklog></HomeUserProductBacklog>
+                <HomeUserProductBacklog :project="selectedProject"></HomeUserProductBacklog>
             </v-tab-item>
             <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="2">
-                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint"
-                                  :userProjectRole="userProjectRole"></ProjectInfoPanel>
                 <HomeUserProjectEdit :isSuccess="isSuccess" :msg="msg" @projectEditUpdate="projectEditUpdate"
                                      :selectedProject="selectedProject"/>
             </v-tab-item>
             <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="4">
-                <ProjectInfoPanel :selectedProject="selectedProject" :currentSprint="currentSprint"
-                                  :userProjectRole="userProjectRole"></ProjectInfoPanel>
                 <HomeUserSprint/>
             </v-tab-item>
-
         </v-tabs>
     </div>
 </template>
@@ -48,12 +41,10 @@
     import HomeUserProjectEdit from "./Project/HomeUserProjectEdit";
     import HomeUserProductBacklog from "./Project/HomeUserBacklog";
     import { APICalls } from "../../../utils/apiCalls";
-    import ProjectInfoPanel from "../../../components/Custom/ProjectInfoPanel";
 
     export default {
         name: 'homeUserProject',
         components: {
-            ProjectInfoPanel,
             HomeUserProductBacklog,
             HomeUserProjectEdit,
             ProjectForm,

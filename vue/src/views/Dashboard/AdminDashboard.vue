@@ -57,6 +57,7 @@
     .list {
         flex-basis: 30%;
         background-color: white;
+        border: 1px solid #eee;
         border-radius: 2px;
         padding: 20px 30px;
     }

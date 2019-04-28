@@ -1,80 +1,62 @@
 <template>
-    <div v-if="story" class="userStory">
-        <v-layout v-if="currentSprint && story.sprintId === null" add-to-sprint-wrapper>
-            <v-checkbox color="#3093A0"
-                        @change="changedCheckbox($event)"
-                        :disabled="hasNoTimeEstimation"
-            ></v-checkbox>
-        </v-layout>
-
+    <v-card v-if="story" :class="{ 'user-story': true, 'user-story--selected': checked }">
         <v-layout>
-            <div id="storyTags">
-                <div class="tagDesign" v-if="this.story.priority === 'Must have'" :style="tagRed">
-                    <p>{{story.priority}}</p>
-                </div>
-                <div class="tagDesign" v-else-if="this.story.priority === 'Should have'" :style="tagOrange">
-                    <p>{{story.priority}}</p>
-                </div>
-                <div class="tagDesign" v-else-if="this.story.priority === 'Could have'" :style="tagGreen">
-                    <p>{{story.priority}}</p>
-                </div>
-                <div class="tagDesign" v-else-if="this.story.priority === 'Wont have this time'" :style="tagBlue">
-                    <p>{{story.priority}}</p>
-                </div>
-                <div class="tagDesign" v-if="this.story.businessValue === 'Critical'" :style="tagRed">
-                    <p>{{story.businessValue}}</p>
-                </div>
-                <div class="tagDesign" v-else-if="this.story.businessValue === 'Significant'" :style="tagOrange">
-                    <p>{{story.businessValue}}</p>
-                </div>
-                <div class="tagDesign" v-else-if="this.story.businessValue === 'Moderate'" :style="tagYellow">
-                    <p>{{story.businessValue}}</p>
-                </div>
-                <div class="tagDesign" v-else-if="this.story.businessValue === 'Minor'" :style="tagGreen">
-                    <p>{{story.businessValue}}</p>
-                </div>
-                <div class="tagDesign" v-else-if="this.story.businessValue === 'Low'" :style="tagBlue">
-                    <p>{{story.businessValue}}</p>
-                </div>
-            </div>
-        </v-layout>
+            <v-flex>
+                <div class="user-story-priority" :style="getPriorityColor()"></div>
+            </v-flex>
+            
+            <v-flex xs11 class="user-story-content">
+                <v-layout v-if="currentSprint && story.sprintId === null" add-to-sprint-wrapper>
+                    <v-checkbox color="#3093A0"
+                                @change="changedCheckbox($event)"
+                                :disabled="hasNoTimeEstimation"
+                    ></v-checkbox>
+                </v-layout>
 
-        <v-layout>
-            <div id="cardName">
-                <h5>{{story.name}}</h5>
-            </div>
-        </v-layout>
+                <v-layout column>
+                    <v-flex xs12 id="cardName">
+                        <v-layout align-end>
+                            <h5>{{story.name}}</h5>
+                            <p class="priority-label">({{story.priority}})</p>
+                        </v-layout>
+                    </v-flex>
+                </v-layout>
 
-        <v-layout>
-            <div id="cardDescription">
-                <p>{{story.description}}</p>
-            </div>
-        </v-layout>
+                <v-layout>
+                    <div id="cardDescription">
+                        <v-flex xs12 mb-2 mt-2>
+                            <p>Poslovna vrednost: {{story.businessValue}}</p>
+                        </v-flex>
 
-        <div id="addToSprint" v-if="this.story.sprintId === null">
-            <v-layout align-center justify-end row class="userStoryButtons">
-                <v-flex xs5 align-self-center>
-                    <v-toolbar color="white" flat dense>
-                        <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
-                        <v-btn flat icon color="red" v-on:click="deleteStory">
-                            <v-icon>delete</v-icon>
-                        </v-btn>
-                    </v-toolbar>
-                </v-flex>
-            </v-layout>
-        </div>
-
-        <div id="editTask" v-if="this.story.sprintId !== null && this.story.done === false">
-            <v-layout align-center justify-end row fill-height>
-                <v-flex xs2>
-                    <div class="v-toolbar__content">
-                        <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"
-                                             :fullEdit="true"></EditUserStoryDialog>
+                        <v-flex xs12 mb-4>
+                            <p>Opis: {{story.description}}</p>
+                        </v-flex>
                     </div>
-                </v-flex>
-            </v-layout>
-        </div>
-    </div>
+                </v-layout>
+                
+                <v-divider v-if="this.story.done === false"></v-divider>
+
+                <v-layout justify-end>
+                    <div id="addToSprint" v-if="this.story.sprintId === null">
+                        <v-layout align-end justify-end row>
+                            <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
+
+                            <v-btn flat icon color="red" v-on:click="deleteStory">
+                                <v-icon>delete</v-icon>
+                            </v-btn>
+                        </v-layout>
+                    </div>
+
+                    <div id="editTask" v-if="this.story.sprintId !== null && this.story.done === false">
+                        <v-layout align-end justify-end row fill-height>
+                            <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"
+                                                 :fullEdit="true"></EditUserStoryDialog>
+                        </v-layout>
+                    </div>
+                </v-layout>
+            </v-flex>
+        </v-layout>
+    </v-card>
 </template>
 
 <script>
@@ -104,9 +86,12 @@
             tagBlue: {
                 backgroundColor: '#16B4D8'
             },
+            checked: false
         }),
         methods: {
             changedCheckbox(checked) {
+                this.checked = checked;
+                
                 this.$emit('addStory', { id: this.story._id, checked });
 
             },
@@ -122,6 +107,17 @@
             },
             refreshStory() {
                 this.$emit("refresh", true);
+            },
+            getPriorityColor() {
+                if (this.story.priority === 'Must have') {
+                    return this.tagRed;
+                } else if (this.story.priority === 'Should have') {
+                    return this.tagOrange;
+                } else if (this.story.priority === 'Could have') {
+                    return this.tagGreen;
+                } else if (this.story.priority === 'Wont have this time') {
+                    return this.tagBlue;
+                }
             }
         },
         computed: {
@@ -133,14 +129,25 @@
 </script>
 
 <style scoped>
-    .userStory {
+    .user-story {
         background-color: white;
         border-radius: 2px;
-        padding: 10px 0px 0px 20px;
         margin-bottom: 10px;
         border: 2px solid #DEDEDE;
-        border-left: 8px solid #3093A0;
         position: relative;
+    }
+    
+    .user-story--selected {
+        border: 2px solid teal;
+    }
+    
+    .user-story-priority {
+        width: 24px;
+        height: 100%;
+    }
+    
+    .user-story-content {
+        padding: 12px 12px 0;
     }
 
     .add-to-sprint-wrapper {
@@ -161,12 +168,14 @@
     }
 
     #cardName {
-        padding: 5px;
         margin-top: 5px;
+    }
+    
+    .priority-label {
+        padding-left: 8px;
     }
 
     #cardDescription {
-        padding: 10px;
         margin-top: 5px;
     }
 
