@@ -199,4 +199,12 @@ export class APICalls {
         });
     }
 
+    static assignToMe(storyId, taskId, taskObject) {
+        return axios({
+            method: "put",
+            url: URL + '/task/assign/story/' + storyId + '?taskId=' + taskId,
+            data: taskObject
+        });
+    }
+
 }
