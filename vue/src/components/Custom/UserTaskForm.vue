@@ -84,7 +84,6 @@
         components: {ButtonBase,ButtonOutline},
         props: {
             formName: String,
-            // isNewProject: Boolean,
             insertedUsers: Array,
             insertedAssignedUsersToProject: Array
             // projectId: String,

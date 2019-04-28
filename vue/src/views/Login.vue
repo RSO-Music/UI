@@ -1,7 +1,9 @@
 <template>
     <div id="wrapper">
+        <div class="login-background"></div>
+        
         <div class="loginContainer">
-                <v-layout column>
+            <v-layout column>
                 <h1>Prijava v sistem</h1>
 
                 <UserMainForm id="mainLogin" @loginSubmit="loginSubmit"/>
@@ -40,7 +42,7 @@
                 APICalls.loginUser(objLogin).then(
                     (res) => {
                         vm.$store.commit('login', res.data);
-                        
+
                         vm.$router.push('/');
                     },
                     (error) => {
@@ -51,7 +53,7 @@
                     }
                 );
             },
-            
+
             closeAlert() {
                 this.alert = {};
             }
@@ -62,22 +64,35 @@
 <style scoped>
     #wrapper {
         background-color: white;
-        background-image: url("../../public/img/icons/R-grafika.png");
         background-size: cover;
         width: 100%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
+        position: relative;
     }
+    
+    .login-background {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 50%;
+        background-color: #2E354C;
+    }
+    
 
     .loginContainer {
-        width: 30%;
+        max-width: 600px;
+        width: 100%;
+        margin: 10px;
         height: fit-content;
         background-color: #F6F6F7;
         border-radius: 3px;
         padding: 30px;
         border-top: 5px solid #A2E0E0;
+        z-index: 1;
     }
 
     h1 {

@@ -1,55 +1,72 @@
 <template>
     <div class="contentWrapper">
         <h1>Pregled</h1>
+        
+        <v-layout>
+            <v-flex sm12 m4 mx-2>
+                <div id="unassigned" class="backlog-section">
+                    <h2>Nedodeljene zgodbe</h2>
+                    <template v-if="storiesInBacklog.length">
+                        <div class="storyContainer" v-for="story of storiesInBacklog">
+                            <UserStoryCard :story="story"
+                                           :currentSprint="currentSprint"
+                                           v-on:addStory="addStory"
+                                           v-on:refresh="reloadData"
+                                           v-on:removeStory="reloadData"
+                            />
+                        </div>
+                    </template>
 
-        <div class="backlogWrapper">
-            <div id="unassigned" class="backlogSection">
-                <h2>Nedodeljene zgodbe</h2>
-                <div class="storyContainer" v-for="story of storiesInBacklog">
-                    <UserStoryCard :story="story"
-                                   v-on:addStory="addStory"
-                                   v-on:refresh="reloadData"
-                                   v-on:removeStory="reloadData"
-                    />
+                    <div v-else>
+                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni nedodeljenih zgodb</h2>
+                    </div>
+
+                    <v-layout align-center justify-end row class="mb-2">
+                        <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe trenutnemu sprintu"
+                                       @clicked="addStoryToSprint">
+                        </ButtonOutline>
+                    </v-layout>
+
+                    <v-layout class="align-right">
+                        <EditUserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
+                                             :customBtn="true"></EditUserStoryDialog>
+                    </v-layout>
                 </div>
+            </v-flex>
+            
+            <v-flex sm12 m4 mx-2>
+                <div id="assigned" class="backlog-section">
+                    <h2>Zgodbe trenutnega sprinta</h2>
 
-                <v-layout align-center justify-end row class="mb-2">
-                    <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe trenutnemu sprintu"
-                                   @clicked="addStoryToSprint" :isDisabled="!currentSprint">
-                    </ButtonOutline>
-                </v-layout>
+                    <div v-if="currentSprint">
+                        <div class="storyContainer" v-for="story of storiesInCurrentSprint">
+                            <UserStoryCard :story="story" v-on:refresh="reloadData"/>
+                        </div>
+                    </div>
 
-                <v-layout align-center justify-end row class="align-right">
-                    <EditUserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
-                                         :customBtn="true"></EditUserStoryDialog>
-                </v-layout>
-            </div>
-
-            <div id="assigned" class="backlogSection">
-                <h2>Zgodbe trenutnega sprinta</h2>
-
-                <div v-if="currentSprint">
-                    <div class="storyContainer" v-for="story of storiesInCurrentSprint">
-                        <UserStoryCard :story="story" v-on:refresh="reloadData"/>
+                    <div v-else>
+                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni aktivnega sprinta</h2>
                     </div>
                 </div>
+            </v-flex>
+            
+            <v-flex sm12 m4 mx-2>
+                <div id="completed" class="backlog-section">
+                    <h2>Zaključene zgodbe</h2>
 
-                <div v-else>
-                    <h5>Ni aktivnega sprinta ...</h5>
+                    <template v-if="completedStories.length">
+                        <div class="storyContainer" v-for="story in completedStories">
+                            <UserStoryCard :story="story"/>
+                        </div>
+                    </template>
+
+                    <div v-else>
+                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni zaključenih zgodb</h2>
+                    </div>
                 </div>
-            </div>
-
-            <div id="completed" class="backlogSection">
-                <h2>Zaključene zgodbe</h2>
-
-                <div class="storyContainer" v-for="story in completedStories">
-                    <UserStoryCard :story="story"/>
-                </div>
-            </div>
-
-        </div>
+            </v-flex>
+        </v-layout>
     </div>
-
 </template>
 
 <script>
@@ -146,7 +163,7 @@
                                     duration: 3000,
                                     position: 'bottom-center'
                                 });
-                                
+
                                 vm.reloadData();
                             } else {
                                 vm.$toasted.error('Pri dodajanju zgodb v Sprint je prišlo do napake', {
@@ -157,7 +174,7 @@
                         })
                         .catch(function (ex) {
                             console.log(ex);
-                            
+
                             vm.$toasted.error('Pri dodajanju zgodb v Sprint je prišlo do napake', {
                                 duration: 3000,
                                 position: 'bottom-center'
@@ -167,7 +184,7 @@
             },
             reloadData() {
                 this.storiesToAddToSprint = [];
-                
+
                 this.getStoriesInBacklog();
                 this.getStoriesInCurrentSprint();
                 this.getCompletedStories();
@@ -177,25 +194,19 @@
 </script>
 
 <style scoped>
-    .backlogWrapper {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-between;
-        align-items: stretch;
-    }
-
-    .backlogWrapper > * {
-        flex-basis: 30%;
-    }
-
-    .backlogSection {
+    .backlog-section {
         padding: 15px;
         border-radius: 4px;
         border-top: 8px solid #A2E0E0;
         background-color: white;
     }
 
-    .backlogSection h2 {
-        padding: 10px 0;
+    .backlog-section > h2 {
+        color: #222;
+        padding-bottom: 20px;
+    }
+    
+    .backlog-empty-text {
+        padding: 32px 0;
     }
 </style>

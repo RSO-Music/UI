@@ -1,6 +1,6 @@
 <template>
     <div v-if="story" class="userStory">
-        <v-layout v-if="this.story.sprintId === null" add-to-sprint-wrapper>
+        <v-layout v-if="currentSprint && story.sprintId === null" add-to-sprint-wrapper>
             <v-checkbox color="#3093A0"
                         @change="changedCheckbox($event)"
                         :disabled="hasNoTimeEstimation"
@@ -86,7 +86,8 @@
         name: "UserStoryCard",
         components: { EditUserStoryDialog },
         props: {
-            story: Object
+            story: Object,
+            currentSprint: Object
         },
         data: () => ({
             tagRed: {
@@ -139,7 +140,7 @@
         border-radius: 4px;
         padding: 10px 0px 0px 20px;
         margin-bottom: 10px;
-        border: 1px solid #A0A6B2;
+        border: 2px solid #DEDEDE;
         border-left: 8px solid #3093A0;
         position: relative;
     }

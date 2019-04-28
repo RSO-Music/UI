@@ -6,7 +6,8 @@
                 v-model="valid"
                 lazy-validation
         >
-            <h1>{{formName.toUpperCase()}}</h1>
+            <h1 class="text-uppercase" v-if="isNew">Ustvari projekt</h1>
+            <h1 class="text-uppercase" v-else="isNew">Uredi projekt</h1>
 
             <v-text-field
                     color="#3093A0"
@@ -96,8 +97,7 @@
         name: "ProjectForm",
         components: { ButtonBase, ButtonOutline },
         props: {
-            formName: String,
-            isNewProject: Boolean,
+            isNew: Boolean,
             insertedUsers: Array,
             insertedAssignedUsersToProject: Array,
             projectId: String,
@@ -131,7 +131,7 @@
                 }
             },
 
-            isNewProject(newVal, oldVal) {
+            isNew(newVal, oldVal) {
                 if (newVal) { // if we are edding project
                     this.originalUsers = JSON.parse(JSON.stringify(this.users));
                 }
@@ -201,7 +201,7 @@
                             }
                         );
                     });
-                    if (this.isNewProject) {
+                    if (this.isNew) {
                         this.$emit('adminProjectAdd', {
                             name: this.projectName,
                             users: usersAssigned

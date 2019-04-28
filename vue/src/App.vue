@@ -90,7 +90,6 @@
     }
 
     .contentWrapper {
-        background-color: #F6F6F7;
         padding: 30px;
         height: 100%;
     }

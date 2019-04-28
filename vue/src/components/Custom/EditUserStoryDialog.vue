@@ -1,5 +1,5 @@
 <template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
-	<v-layout row justify-center>
+	<v-layout row justify-end>
 		<v-dialog v-model="dialog" max-width="1200px">
 			<template v-slot:activator="{ on }">
 				<v-btn v-on="on"
@@ -22,189 +22,190 @@
 						v-model="valid"
 						lazy-validation
 				>
-					<h1 v-if="story._id">UREJANJE UPORABNIŠKE ZGODBE</h1>
-					<h1 v-else>DODAJANJE UPORABNIŠKE ZGODBE</h1>
-                    
-					<v-tabs
-							fixed-tabs
-							slider-color="#1a2432"
-					>
-						<v-tab key="1">
-							Osnovni podatki
+					<h1 v-if="story._id">UREDI ZGODBO</h1>
+					<h1 v-else>DODAJ NOVO ZGODBO</h1>
 
-						</v-tab>
-						<v-tab key="2">
-							Naloge
-
-						</v-tab>
-                        <v-tab-item key="1">
-							<v-layout row>
-								<v-flex xs-8>
-									<v-text-field
-											color="#3093A0"
-											prepend-icon="rate_review"
-											label="Naslov zgodbe"
-											:rules="[v => !!v || 'Naslov zgodbe ne sme biti prazen']"
-											v-model="storyName"
-											required
-											:disabled="editExisting"
-									></v-text-field>
-								</v-flex>
-								<v-flex xs-3 offset-xs1>
-									<v-checkbox color="#3093A0"
-												@change=""
-												v-model="storyFinished"
-												label="Zgodba zaključena"
-												:disabled="!editExisting"
-									></v-checkbox>
-								</v-flex>
-							</v-layout>
-                            <div id="storyWrapper">
-                                <div id="storyDropdowns">
-                                    <v-layout mb-3 row justify-space-between>
-                                        <v-flex xs4>
-                                            <v-select
-                                                    color="#3093A0"
-                                                    prepend-icon="label_important"
-                                                    v-model="selectPriority"
-                                                    :items="storyPriority"
-                                                    :rules="[v => !!v || 'Prioriteta ne sme biti prazna']"
-                                                    label="Prioriteta"
-                                                    hide-details
-                                                    required
-                                                    :disabled="editExisting"
-                                            ></v-select>
-                                        </v-flex>
-                                        <v-flex xs4>
-                                            <v-select
-                                                    color="#3093A0"
-                                                    prepend-icon="loyalty"
-                                                    v-model="selectBussinessValue"
-                                                    :items="storyValue"
-                                                    :rules="[v => !!v || 'Poslovna vrednost ne sme biti prazna']"
-                                                    label="Poslovna vrednost"
-                                                    hide-details
-                                                    required
-                                                    :disabled="editExisting"
-                                            ></v-select>
-                                        </v-flex>
-                                        <v-flex xs4>
-                                            <v-text-field
-                                                    color="#3093A0"
-                                                    prepend-icon="access_time"
-                                                    type="number"
-                                                    min="0"
-                                                    label="Časovna ocena"
-                                                    v-model="timeEstimation"
-                                                    :disabled="editExisting"
-                                            ></v-text-field>
-                                        </v-flex>
-                                    </v-layout>
-                                </div>
-                            </div>
-                            <v-layout row justify-space-between>
-                                <v-flex xs6 class="mr-4">
-                                    <v-textarea
-                                            color="#3093A0"
-                                            id="storyDesc"
-                                            label="Opis zgodbe"
-                                            v-model="storyDescription"
-                                            :rules="[v => !!v || 'Opis zgodbe ne sme biti prazen']"
-                                            rows="5"
-                                            :auto-grow="true"
-                                            required
-                                            :disabled="editExisting"
-                                    ></v-textarea>
-                                </v-flex>
-                                <v-flex xs6>
-                                    <v-textarea
-                                            color="#3093A0"
-                                            label="Sprejemni testi"
-                                            v-model="storyAcceptanceTests"
-                                            :rules="[v => !!v || 'Sprejemni testi ne smejo biti prazni']"
-                                            rows="5"
-                                            :auto-grow="true"
-                                            required
-                                            :disabled="editExisting"
-                                    ></v-textarea>
-                                </v-flex>
-                            </v-layout>
-							<v-layout>
-                                <v-flex xs12>
-                                    <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
-                                    <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
-                                </v-flex>
-                            </v-layout>
-                        </v-tab-item>
-                        <v-tab-item key="2">
-                            <v-flex x12>
-                                <v-textarea
-                                        color="#3093A0"
-                                        prepend-icon="assignment"
-                                        rows="1"
-                                        label="Opis naloge"
-                                        v-model="editTask.description"
-										:disabled="!editExisting || isProductOwner"
-                                ></v-textarea>
-                            </v-flex>
-                            <v-layout align-center justify-space-between row mb-5>
-                                <v-flex xs3>
-                                    <v-text-field
-                                            id="taskSpeed"
-                                            color="#3093A0"
-                                            prepend-icon="timer"
-                                            label="Časovna ocena"
-                                            type="number"
-                                            v-model="editTask.time"
-											:disabled="!editExisting || isProductOwner"
-											min="1"
-                                            flat
-                                    ></v-text-field>
-                                </v-flex>
-                                <v-flex xs3>
-                                    <v-select
-											color="#3093A0"
-											prepend-icon="person"
-											v-model="editTask.asignee"
-											:disabled="!editExisting || isProductOwner"
-											label="Razvijalec naloge"
-											:items="projectUsers"
-											item-text="user.firstName"
-											item-value="user._id"
-											hide-details
-											flat
-									></v-select>
-                                </v-flex>
-                                <v-flex xs3>
+                    <v-layout row>
+                        <v-flex xs-8>
+                            <v-text-field
+                                    color="#3093A0"
+                                    prepend-icon="rate_review"
+                                    label="Naslov zgodbe"
+                                    :rules="[v => !!v || 'Naslov zgodbe ne sme biti prazen']"
+                                    v-model="storyName"
+                                    required
+                                    :disabled="editExisting"
+                            ></v-text-field>
+                        </v-flex>
+                        <v-flex xs-3 offset-xs1>
+                            <v-checkbox color="#3093A0"
+                                        @change=""
+                                        v-model="storyFinished"
+                                        label="Zgodba zaključena"
+                                        :disabled="!editExisting"
+                            ></v-checkbox>
+                        </v-flex>
+                    </v-layout>
+                    <div id="storyWrapper">
+                        <div id="storyDropdowns">
+                            <v-layout mb-3 row justify-space-between>
+                                <v-flex xs4>
                                     <v-select
                                             color="#3093A0"
-                                            v-model="editTask.status"
-											:disabled="!editingTask || !editExisting || isProductOwner"
-                                            :items="taskStatus"
-                                            item-text="name"
-                                            item-value="value"
-                                            label="Status naloge"
+                                            prepend-icon="label_important"
+                                            v-model="selectPriority"
+                                            :items="storyPriority"
+                                            :rules="[v => !!v || 'Prioriteta ne sme biti prazna']"
+                                            label="Prioriteta"
                                             hide-details
-                                            flat
+                                            required
+                                            :disabled="editExisting"
                                     ></v-select>
                                 </v-flex>
+                                <v-flex xs4>
+                                    <v-select
+                                            color="#3093A0"
+                                            prepend-icon="loyalty"
+                                            v-model="selectBussinessValue"
+                                            :items="storyValue"
+                                            :rules="[v => !!v || 'Poslovna vrednost ne sme biti prazna']"
+                                            label="Poslovna vrednost"
+                                            hide-details
+                                            required
+                                            :disabled="editExisting"
+                                    ></v-select>
+                                </v-flex>
+                                <v-flex xs4>
+                                    <v-text-field
+                                            color="#3093A0"
+                                            prepend-icon="access_time"
+                                            type="number"
+                                            min="0"
+                                            label="Časovna ocena"
+                                            v-model="timeEstimation"
+                                            :disabled="editExisting"
+                                    ></v-text-field>
+                                </v-flex>
                             </v-layout>
-							<v-layout align-center justify-end row fill-height class="mb-4">
-								<ButtonOutline msg="Prekliči" @clicked="clearEdit" :isDisabled="!editExisting || isProductOwner" class="mr-3"></ButtonOutline>
-								<ButtonOutline msg="Shrani nalogo" @clicked="addTask" :isDisabled="!isEditTaskValid || !editExisting || isProductOwner"></ButtonOutline>
-							</v-layout>
-                            <div class="taskBox mb-4">
-                                <separator title="Nedodeljene naloge"></separator>
-                                	<task-card v-for="(task, index) in unassignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
-                                <separator title="Dodeljene naloge"></separator>
-                                	<task-card v-for="(task, index) in assignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
-                                <separator title="Aktivne naloge"></separator>
-                                	<task-card v-for="(task, index) in activeTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
-                                <separator title="Zaključene naloge"></separator>
-                                	<task-card v-for="(task, index) in finishedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>
-                            </div>
-                        </v-tab-item>
-                    </v-tabs>
+                        </div>
+                    </div>
+                    <v-layout row justify-space-between>
+                        <v-flex xs6 class="mr-4">
+                            <v-textarea
+                                    color="#3093A0"
+                                    id="storyDesc"
+                                    label="Opis zgodbe"
+                                    v-model="storyDescription"
+                                    :rules="[v => !!v || 'Opis zgodbe ne sme biti prazen']"
+                                    rows="5"
+                                    :auto-grow="true"
+                                    required
+                                    :disabled="editExisting"
+                            ></v-textarea>
+                        </v-flex>
+                        <v-flex xs6>
+                            <v-textarea
+                                    color="#3093A0"
+                                    label="Sprejemni testi"
+                                    v-model="storyAcceptanceTests"
+                                    :rules="[v => !!v || 'Sprejemni testi ne smejo biti prazni']"
+                                    rows="5"
+                                    :auto-grow="true"
+                                    required
+                                    :disabled="editExisting"
+                            ></v-textarea>
+                        </v-flex>
+                    </v-layout>
+                    <v-layout>
+                        <v-flex xs12>
+                            <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
+                            <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
+                        </v-flex>
+                    </v-layout>
+                    
+					<!--<v-tabs-->
+							<!--fixed-tabs-->
+							<!--slider-color="#1a2432"-->
+					<!--&gt;-->
+						<!--<v-tab key="1">-->
+							<!--Osnovni podatki-->
+
+						<!--</v-tab>-->
+						<!--<v-tab key="2">-->
+							<!--Naloge-->
+
+						<!--</v-tab>-->
+                        <!--<v-tab-item key="1">-->
+                        <!--</v-tab-item>-->
+                        <!--<v-tab-item key="2">-->
+                            <!--<v-flex x12>-->
+                                <!--<v-textarea-->
+                                        <!--color="#3093A0"-->
+                                        <!--prepend-icon="assignment"-->
+                                        <!--rows="1"-->
+                                        <!--label="Opis naloge"-->
+                                        <!--v-model="editTask.description"-->
+										<!--:disabled="!editExisting || isProductOwner"-->
+                                <!--&gt;</v-textarea>-->
+                            <!--</v-flex>-->
+                            <!--<v-layout align-center justify-space-between row mb-5>-->
+                                <!--<v-flex xs3>-->
+                                    <!--<v-text-field-->
+                                            <!--id="taskSpeed"-->
+                                            <!--color="#3093A0"-->
+                                            <!--prepend-icon="timer"-->
+                                            <!--label="Časovna ocena"-->
+                                            <!--type="number"-->
+                                            <!--v-model="editTask.time"-->
+											<!--:disabled="!editExisting || isProductOwner"-->
+											<!--min="1"-->
+                                            <!--flat-->
+                                    <!--&gt;</v-text-field>-->
+                                <!--</v-flex>-->
+                                <!--<v-flex xs3>-->
+                                    <!--<v-select-->
+											<!--color="#3093A0"-->
+											<!--prepend-icon="person"-->
+											<!--v-model="editTask.asignee"-->
+											<!--:disabled="!editExisting || isProductOwner"-->
+											<!--label="Razvijalec naloge"-->
+											<!--:items="projectUsers"-->
+											<!--item-text="user.firstName"-->
+											<!--item-value="user._id"-->
+											<!--hide-details-->
+											<!--flat-->
+									<!--&gt;</v-select>-->
+                                <!--</v-flex>-->
+                                <!--<v-flex xs3>-->
+                                    <!--<v-select-->
+                                            <!--color="#3093A0"-->
+                                            <!--v-model="editTask.status"-->
+											<!--:disabled="!editingTask || !editExisting || isProductOwner"-->
+                                            <!--:items="taskStatus"-->
+                                            <!--item-text="name"-->
+                                            <!--item-value="value"-->
+                                            <!--label="Status naloge"-->
+                                            <!--hide-details-->
+                                            <!--flat-->
+                                    <!--&gt;</v-select>-->
+                                <!--</v-flex>-->
+                            <!--</v-layout>-->
+							<!--<v-layout align-center justify-end row fill-height class="mb-4">-->
+								<!--<ButtonOutline msg="Prekliči" @clicked="clearEdit" :isDisabled="!editExisting || isProductOwner" class="mr-3"></ButtonOutline>-->
+								<!--<ButtonOutline msg="Shrani nalogo" @clicked="addTask" :isDisabled="!isEditTaskValid || !editExisting || isProductOwner"></ButtonOutline>-->
+							<!--</v-layout>-->
+                            <!--<div class="taskBox mb-4">-->
+                                <!--<separator title="Nedodeljene naloge"></separator>-->
+                                	<!--<task-card v-for="(task, index) in unassignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>-->
+                                <!--<separator title="Dodeljene naloge"></separator>-->
+                                	<!--<task-card v-for="(task, index) in assignedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>-->
+                                <!--<separator title="Aktivne naloge"></separator>-->
+                                	<!--<task-card v-for="(task, index) in activeTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>-->
+                                <!--<separator title="Zaključene naloge"></separator>-->
+                                	<!--<task-card v-for="(task, index) in finishedTasks" :task="task" @editTask="changeTask" @deleteTask="deleteTask" :key="task._id" :disabled="!editExisting || isProductOwner"/>-->
+                            <!--</div>-->
+                        <!--</v-tab-item>-->
+                    <!--</v-tabs>-->
                 </v-form>
             </v-card>
         </v-dialog>
