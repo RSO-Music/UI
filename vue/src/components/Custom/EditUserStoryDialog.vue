@@ -221,6 +221,7 @@
 		props: ['story', 'fullEdit', 'customBtn'],
 		data: () => ({
 			dialog: false,
+			componentKey: 0,
 			valid: true,
 			error: 0,
 			editExisting: false,
@@ -398,6 +399,9 @@
 				this.clearEdit();
 
 			},
+			assignToMe(assignedTask) {
+				this.componentKey += 1;
+			},
 			resetForm() {
 				this.$refs.form.reset();
 				this.$refs.form.resetValidation();
@@ -411,7 +415,7 @@
 				//task is treated as unassigned if it has no assignee
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
-						return !task.asignee;
+						return !task.accepted;
 					})
 				}
 			},
@@ -419,7 +423,7 @@
 				//for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
-						return task.asignee && task.status === 'new'
+						return task.accepted && task.status === 'new'
 					})
 				}
 			},

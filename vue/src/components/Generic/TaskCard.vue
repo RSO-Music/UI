@@ -4,7 +4,7 @@
 			<v-layout row>
 				<v-flex xs2>
 					<div id="cardUserName">
-						<p>{{ taskAssignee }}</p>
+						<p>{{ getProperName(task.assignee) }}</p>
 					</div>
 				</v-flex>
 				<v-flex xs2>
@@ -16,6 +16,11 @@
 					<div id="cardName">
 						<p>{{task.description}}</p>
 					</div>
+				</v-flex>
+				<v-flex xs2 >
+					<v-btn flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null">
+						Assign to me
+					</v-btn>
 				</v-flex>
 				<v-flex xs1 offset-xs5>
 					<v-btn flat icon color="#3093A0" v-on:click="editTask" :disabled="disabled">
@@ -50,6 +55,32 @@
 			},
 			deleteTask() {
 				this.$emit('deleteTask', this.task)
+			},
+			getProperName(id) {
+				const users = this.$store.getters.editingProject.users;
+				for (let i = 0; i < users.length; i++) {
+					let user = users[i];
+					if (user.user._id === id) {
+						return user.user.firstName + " " + user.user.lastName;
+					}
+				}
+				return "unassigned"
+			},
+			assignToMe() {
+				console.log(
+						"storyId: " + this.task.storyId + " taskId: " + this.task._id
+				);
+				const task = {accepted: true, storyId: this.task.storyId, assignee: this.$store.getters.currentUser._id};
+				console.log(task);
+				APICalls.assignToMe(this.task.storyId, this.task._id, task).then(
+						(res) => {
+							this.$emit('assignToMe', this.task);
+							this.$forceUpdate();
+						},
+						(error) => {
+							console.log("error: " + error);
+						}
+				);
 			}
 		},
 		computed: {

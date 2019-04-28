@@ -136,7 +136,7 @@ module.exports = {
                     });
                 }
                 if (!UserTask) {
-                    return res.status(404).json({
+                    return res.status(403).json({
                         message: 'No such UserTask, Probably already taken'
                     });
                 }
