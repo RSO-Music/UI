@@ -145,6 +145,9 @@
             },
             
             setSprintToEdit(sprintData) {
+                sprintData.startDate = this.$moment(sprintData.startDate).format('YYYY-MM-DD');
+                sprintData.endDate = this.$moment(sprintData.endDate).format('YYYY-MM-DD');
+                
                 this.sprint = sprintData;
                 this.isNew = false;
             },
