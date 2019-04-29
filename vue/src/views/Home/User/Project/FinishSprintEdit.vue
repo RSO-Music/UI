@@ -1,9 +1,9 @@
 <template>
     <v-layout class="form-wrapper" column>
-        <v-flex xs12 column>
+        <v-flex mb-4 xs12 column>
             <h1 class="text-uppercase text-xs-center">Zaključi Sprint</h1>
             
-            <h2 class="black--text">{{sprint.name}} ({{formattedStartDate}} {{formattedEndDate}})</h2>
+            <h2 class="black--text">{{sprint.name}} ({{formattedStartDate}} - {{formattedEndDate}})</h2>
         </v-flex>
         
         <v-divider></v-divider>

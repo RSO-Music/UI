@@ -125,8 +125,8 @@
                                 <v-layout justify-start>
                                     <v-flex xs4>
                                         <v-radio-group v-model="finished.state" row :mandatory="false">
-                                            <v-radio label="Sprejmi zgodbo" value="accept"></v-radio>
-                                            <v-radio label="Zavrni zgodbo" value="reject"></v-radio>
+                                            <v-radio color="#1A616B" label="Sprejmi zgodbo" value="accept"></v-radio>
+                                            <v-radio color="#1A616B" label="Zavrni zgodbo" value="reject"></v-radio>
                                         </v-radio-group>
                                     </v-flex>
 
