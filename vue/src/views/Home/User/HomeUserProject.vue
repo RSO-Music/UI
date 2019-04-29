@@ -19,17 +19,27 @@
                 Sprinti
             </v-tab>
 
+            <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="5" ripple>
+                Zaključi Sprinte
+            </v-tab>
+
             <v-tab-item id
                         v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
                         :key="1">
                 <HomeUserProductBacklog :project="selectedProject"></HomeUserProductBacklog>
             </v-tab-item>
+            
             <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="2">
-                <HomeUserProjectEdit :isSuccess="isSuccess" :msg="msg" @projectEditUpdate="projectEditUpdate"
+                <HomeUserProjectEdit @projectEditUpdate="projectEditUpdate"
                                      :selectedProject="selectedProject"/>
             </v-tab-item>
+            
             <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="4">
                 <HomeUserSprint/>
+            </v-tab-item>
+            
+            <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="5">
+                <FinishSprints/>
             </v-tab-item>
         </v-tabs>
     </div>
@@ -41,10 +51,12 @@
     import HomeUserProjectEdit from "./Project/HomeUserProjectEdit";
     import HomeUserProductBacklog from "./Project/HomeUserBacklog";
     import { APICalls } from "../../../utils/apiCalls";
+    import FinishSprints from "./Project/FinishSprints";
 
     export default {
         name: 'homeUserProject',
         components: {
+            FinishSprints,
             HomeUserProductBacklog,
             HomeUserProjectEdit,
             ProjectForm,
@@ -73,6 +85,11 @@
                                 name: 'homeUserSprintManagemnet',
                                 params: { projectId: this.$route.params.projectId }
                             });
+                        } else if (this.active === 3) {
+                            this.$router.push({
+                                name: 'finishSprints',
+                                params: { projectId: this.$route.params.projectId }
+                            });
                         }
                     } else if (this.userProjectRole.includes('product_owner')) {
                         if (this.active === 0) {
@@ -94,8 +111,6 @@
             active: 0,
             selectedProject: {},
             userProjectRole: '',
-            isSuccess: 0,
-            msg: '',
             currentSprint: {},
             endDate: '',
             startDate: ''
@@ -168,10 +183,7 @@
                         this.currentSprint = null;
                     }
                 );
-            },
-            closeAlert() {
-                this.isSuccess = 0;
-            },
+            }
         }
     }
 </script>

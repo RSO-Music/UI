@@ -6,6 +6,7 @@ import HomeUserProject from "./views/Home/User/HomeUserProject";
 import HomeUserProjectEdit from "./views/Home/User/Project/HomeUserProjectEdit";
 import HomeUserSprint from "./views/Home/User/Project/HomeUserSprint";
 import HomeUserProductBacklog from "./views/Home/User/Project/HomeUserBacklog";
+import FinishSprints from "./views/Home/User/Project/FinishSprints";
 
 import store from "@/utils/store";
 
@@ -42,6 +43,11 @@ const createRouter = () => new Router({
                     path: 'backlog',
                     name: 'homeUserProductBackLog',
                     component: HomeUserProductBacklog
+                },
+                {
+                    path: 'finish-sprints',
+                    name: 'finishSprints',
+                    component: FinishSprints
                 }
             ]
         },

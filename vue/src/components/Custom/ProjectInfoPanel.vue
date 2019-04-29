@@ -19,7 +19,7 @@
                 <p class="grey--text text-uppercase mb-2">Osebe:</p>
 
                 <v-flex class="ml-4">
-                    <v-chip disabled v-for="{ user, role } in currentProject.users">
+                    <v-chip disabled v-for="{ user, role } in currentProject.users" :key="user._id">
                         <v-avatar class="theme-color white--text">{{user.firstName[0].toUpperCase()}}</v-avatar>
                         <span class="black--text">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}} ({{getUserProjectRoles(role)}})</span>
                     </v-chip>
@@ -42,6 +42,7 @@
             return {
                 currentProject: {},
                 currentSprint: {},
+                unfinishedSprints: [],
                 userProjectRole: []
             };
         },
@@ -57,14 +58,16 @@
                 vm.getSelectedProject();
 
                 vm.getCurrentSprint();
+                
+                vm.getUnfinishedSprints();
             },
 
             getSelectedProject() {
                 APICalls.getProjectId(this.$route.params.projectId).then(
-                    (rs) => {
-                        console.log(rs.data);
+                    (res) => {
+                        console.log(res.data);
 
-                        this.currentProject = rs.data;
+                        this.currentProject = res.data;
                         this.userProjectRole = this.currentProject.users.find(x => x.user._id === this.$store.getters.currentUser._id).role;
                     },
                     (error) => {
@@ -74,11 +77,24 @@
 
             getCurrentSprint() {
                 APICalls.getActiveSprint(this.$route.params.projectId).then(
-                    (rs) => {
-                        this.currentSprint = rs.data;
+                    (res) => {
+                        this.currentSprint = res.data;
                     },
                     (error) => {
                         this.currentSprint = null;
+                    }
+                );
+            },
+
+            getUnfinishedSprints() {
+                APICalls.getUnfinishedSprints(this.$route.params.projectId).then(
+                    (res) => {
+                        console.log(res);
+                        
+                        this.unfinishedSprints = res.data;
+                    },
+                    (error) => {
+                        this.unfinishedSprints = [];
                     }
                 );
             },
@@ -107,41 +123,5 @@
     .projectInfo {
         display: flex;
         justify-content: space-between;
-    }
-
-    .infoLeft {
-        display: flex;
-        padding: 10px;
-        align-items: center;
-    }
-
-    .info-wrapper {
-        display: flex;
-        padding: 10px;
-        border: 1px solid #3093A0;
-        border-radius: 8px;
-        background-color: white;
-    }
-
-    .textBold {
-        font-weight: bold;
-        padding-right: 10px;
-        color: #969DAA;
-    }
-
-    .levelDown {
-        padding: 0 15px;
-        color: #969DAA;
-    }
-
-    .sDate {
-        color: #969DAA;
-        padding: 0 10px;
-        font-style: italic;
-    }
-
-    .sConfirmation {
-        color: #969DAA;
-        font-style: italic;
     }
 </style>

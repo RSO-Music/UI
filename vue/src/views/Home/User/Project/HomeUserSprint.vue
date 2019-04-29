@@ -6,7 +6,7 @@
 
                 <ButtonBase classes="full-width" msg="Ustvari nov Sprint" @clicked="addNewSprint"></ButtonBase>
 
-                <SprintsList ref="sprintsList" @editSprint="setSprintToEdit"/>
+                <SprintsList :sprints="sprintsList" @editSprint="setSprintToEdit"/>
             </v-flex>
             
             <v-flex xs8 ml-4>
@@ -20,6 +20,7 @@
     import SprintForm from "../../../../components/Custom/SprintForm";
     import SprintsList from "../../../../components/Generic/SprintsList";
     import ButtonBase from "../../../../components/Generic/ButtonBase";
+    import { APICalls } from "../../../../utils/apiCalls";
     
     export default {
         name: 'homeUserSprint',
@@ -28,13 +29,34 @@
             SprintsList,
             SprintForm
         },
+        data() {
+            return {
+                sprintsList: []
+            }
+        },
+        mounted() {
+            this.reloadSprints();
+        },
         methods: {
             onSprintEdited() {
-                this.$refs.sprintsList.reloadData();
+                this.reloadSprints();
             },
 
             addNewSprint() {
                 this.$refs.sprintForm.resetForm();
+            },
+
+            reloadSprints() {
+                const vm = this;
+
+                APICalls.getProjectSprints(vm.$route.params.projectId).then(
+                    (res) => {
+                        vm.sprintsList = res.data;
+                    },
+                    (error) => {
+                        console.log('An error occured while fetching sprints');
+                    }
+                );
             },
 
             setSprintToEdit(sprintData) {

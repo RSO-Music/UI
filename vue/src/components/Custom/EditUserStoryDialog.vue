@@ -42,7 +42,6 @@
                     >
                         <v-tab key="1">
                             Osnovni podatki
-
                         </v-tab>
 
                         <v-tab v-if="story.sprintId" key="2">
@@ -140,6 +139,11 @@
                                                 required
                                                 :disabled="editExisting"
                                         ></v-textarea>
+                                    </v-flex>
+                                </v-layout>
+                                <v-layout mt-2 mb-2 v-if="story.comment">
+                                    <v-flex xs12>
+                                        <p><v-icon class="red--text">info_outline</v-icon> <span class="ml-2 red--text">Zgodba je že bila zavrnjena z razlogom: {{story.comment}}</span></p>
                                     </v-flex>
                                 </v-layout>
                                 <v-layout>

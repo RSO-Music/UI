@@ -34,23 +34,32 @@
                     </div>
                 </v-layout>
                 
-                <v-divider v-if="this.story.done === false"></v-divider>
+                <v-divider v-if="this.story.done === false || isFinishingStory"></v-divider>
 
                 <v-layout justify-end>
-                    <div id="addToSprint" v-if="this.story.sprintId === null">
-                        <v-layout align-end justify-end row>
-                            <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
+                    <template v-if="!isFinishingStory">
+                        <div id="addToSprint" v-if="this.story.sprintId === null">
+                            <v-layout align-end justify-end row>
+                                <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
 
-                            <v-btn flat icon color="red" v-on:click="deleteStory">
-                                <v-icon>delete</v-icon>
-                            </v-btn>
-                        </v-layout>
-                    </div>
+                                <v-btn flat icon color="red" v-on:click="deleteStory">
+                                    <v-icon>delete</v-icon>
+                                </v-btn>
+                            </v-layout>
+                        </div>
 
-                    <div id="editTask" v-if="this.story.sprintId !== null && this.story.done === false">
+                        <div id="editTask" v-if="this.story.sprintId !== null && this.story.done === false">
+                            <v-layout align-end justify-end row fill-height>
+                                <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"
+                                                     :fullEdit="true"></EditUserStoryDialog>
+                            </v-layout>
+                        </div>
+                    </template>
+
+                    <div id="finishTask" v-else>
                         <v-layout align-end justify-end row fill-height>
-                            <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"
-                                                 :fullEdit="true"></EditUserStoryDialog>
+                            <FinishUserStoryDialog :story="this.story" v-on:finishedStory="finishStory"
+                                                 :fullEdit="true"></FinishUserStoryDialog>
                         </v-layout>
                     </div>
                 </v-layout>
@@ -62,12 +71,14 @@
 <script>
     import { APICalls } from "../../utils/apiCalls"
     import EditUserStoryDialog from "../Custom/EditUserStoryDialog";
+    import FinishUserStoryDialog from "../Custom/FinishUserStoryDialog";
 
     export default {
         name: "UserStoryCard",
-        components: { EditUserStoryDialog },
+        components: { FinishUserStoryDialog, EditUserStoryDialog },
         props: {
             story: Object,
+            isFinishingStory: Boolean,
             currentSprint: Object
         },
         data: () => ({
@@ -107,6 +118,9 @@
             },
             refreshStory() {
                 this.$emit("refresh", true);
+            },
+            finishStory() {
+                this.$emit("finishedStory", true);
             },
             getPriorityColor() {
                 if (this.story.priority === 'Must have') {

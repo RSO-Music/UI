@@ -1,21 +1,24 @@
 <template>
     <div id="projectWrapper">
-        <v-card class="adminProjectCard" v-for="sprint in sprintsList" :key="sprint._id">
-            <div class="adminpName">
-                <v-layout>
-                    <v-flex xs9>
-                        <h2 class="mb-1 black--text">{{sprint.name}}</h2>
-                        <p>{{sprint.startDate | moment('DD. MM. YYYY')}} - {{sprint.endDate | moment('DD. MM. YYYY')}}</p>
-                    </v-flex>
-                    
-                    <v-flex xs3>
-                        <v-layout justify-end>
-                            <ButtonOutline msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
-                        </v-layout>
-                    </v-flex>
-                </v-layout>
-            </div>
-        </v-card>
+        <template v-if="sprints && sprints.length">
+            <v-card class="adminProjectCard" v-for="sprint in sprints" :key="sprint._id">
+                <div class="adminpName">
+                    <v-layout>
+                        <v-flex xs9>
+                            <h2 class="mb-1 black--text">{{sprint.name}}</h2>
+                            <p>{{sprint.startDate | moment('DD. MM. YYYY')}} - {{sprint.endDate | moment('DD. MM. YYYY')}}</p>
+                        </v-flex>
+
+                        <v-flex xs3>
+                            <v-layout justify-end>
+                                <ButtonOutline msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
+                            </v-layout>
+                        </v-flex>
+                    </v-layout>
+                </div>
+            </v-card>
+        </template>
+        <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov</h2>
     </div>
 </template>
 
@@ -28,32 +31,12 @@
     export default {
         name: "SprintsList",
         components: { ButtonOutline, ButtonBase, MyButton },
-        data() {
-            return {
-                sprintsList: []
-            }
-        },
-        mounted() {
-            const vm = this;
-
-            vm.reloadData();
+        props: {
+            sprints: Array
         },
         methods: {
             editSprint(sprint) {
                 this.$emit('editSprint', sprint);
-            },
-
-            reloadData() {
-                const vm = this;
-
-                APICalls.getProjectSprints(vm.$route.params.projectId).then(
-                    (res) => {
-                        vm.sprintsList = res.data;
-                    },
-                    (error) => {
-                        console.log('An error occured while fetching sprints');
-                    }
-                );
             }
         }
     }

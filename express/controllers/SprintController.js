@@ -2,7 +2,7 @@ const SprintModel = require('../models/SprintModel');
 
 module.exports = {
     findAll(req, res) {
-        SprintModel.find({}, function (err, Sprint) {
+        SprintModel.find({}, function (err, Sprints) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Sprint.',
@@ -10,7 +10,7 @@ module.exports = {
                 });
             }
 
-            return res.json(Sprint);
+            return res.json(Sprints);
         });
     },
 
@@ -81,6 +81,32 @@ module.exports = {
         });
     },
 
+    findUnfinishedForProject(req, res) {
+        const time = new Date();
+
+        SprintModel.find({
+            startDate: { $lte: time },
+            endDate: { $lte: time },
+            projectId: req.params.projectId,
+            finished: { $ne: true }
+        }, function (err, Sprints) {
+            if (err) {
+                return res.status(500).json({
+                    message: 'Error when getting unfinished Sprints.',
+                    error: err
+                });
+            }
+
+            if (!Sprints) {
+                return res.status(404).json({
+                    message: 'No Sprints found'
+                });
+            }
+            
+            return res.json(Sprints);
+        });
+    },
+
     create(req, res) {
         console.log(req.body);
         
@@ -129,36 +155,25 @@ module.exports = {
 
     update(req, res) {
         const id = req.params.id;
-        SprintModel.findOne({ _id: id }, function (err, Sprint) {
+        
+        const updateObject = req.body;
+        
+        SprintModel.findOneAndUpdate({ _id: id }, updateObject, function (err, Sprint) {
             if (err) {
+                console.log("ERR: ", err);
                 return res.status(500).json({
-                    message: 'Error when getting Sprint',
+                    message: 'Error while updating Sprint',
                     error: err
                 });
             }
-            
+
             if (!Sprint) {
                 return res.status(404).json({
                     message: 'No such Sprint'
                 });
             }
 
-            Sprint.endDate = req.body.endDate ? req.body.endDate : Sprint.endDate;
-            Sprint.startDate = req.body.startDate ? req.body.startDate : Sprint.endDate;
-            Sprint.projectId = req.body.projectId ? req.body.projectId : Sprint.projectId;
-            Sprint.speed = req.body.speed ? req.body.speed : Sprint.speed;
-            Sprint.name = req.body.name ? req.body.name : Sprint.name;
-
-            Sprint.save(function (err, Sprint) {
-                if (err) {
-                    return res.status(500).json({
-                        message: 'Error when updating Sprint.',
-                        error: err
-                    });
-                }
-
-                return res.json(Sprint);
-            });
+            return res.json(Sprint);
         });
     },
 

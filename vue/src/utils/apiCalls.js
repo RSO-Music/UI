@@ -108,6 +108,14 @@ export class APICalls {
             data: createSprintObj
         });
     }
+    
+    static updateSprint(sprintId, updateObject) {
+        return axios({
+            method: "put",
+            url: URL + '/sprint/' + sprintId,
+            data: updateObject
+        });
+    }
 
     static getProjectSprints(projectId) {
         return axios({
@@ -127,6 +135,13 @@ export class APICalls {
         return axios({
             method: "get",
             url: URL + '/sprint/active/' + projectId,
+        });
+    }
+
+    static getUnfinishedSprints(projectId) {
+        return axios({
+            method: "get",
+            url: URL + '/sprint/unfinished/' + projectId,
         });
     }
 

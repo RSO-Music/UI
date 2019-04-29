@@ -9,7 +9,11 @@ const SprintSchema = new Schema({
         ref: "Project" 
     },
     speed: String,
-    name: String
+    name: String,
+    finished: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = mongoose.model('Sprint', SprintSchema);
