@@ -5,15 +5,6 @@
             
             <h2 class="black--text">{{sprint.name}} ({{formattedStartDate}} {{formattedEndDate}})</h2>
         </v-flex>
-
-        <v-flex xs12 mb-4>
-            <v-layout justify-end>
-                <ButtonBase
-                        msg="Zaključi"
-                        @clicked="finishSprint"
-                ></ButtonBase>
-            </v-layout>
-        </v-flex>
         
         <v-divider></v-divider>
 
@@ -83,7 +74,7 @@
                     .then((res) => {
                         this.$emit('sprintFinished');
 
-                        this.$toasted.success('Sprint je zaključen', {
+                        this.$toasted.success('Sprint se je samodejno zaključil, saj so bile vse zgodbe obdelane', {
                             duration: 3000,
                             position: "bottom-center",
                         });
@@ -93,7 +84,7 @@
 
                         this.$toasted.error('Napaka pri zaključevanju Sprinta', {
                             duration: 3000,
-                            position: "bottom-center",
+                            position: "bottom-center"
                         });
                     });
             },
@@ -101,10 +92,21 @@
             getAllStoriesForSprint() {
                 APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.sprint._id).then(
                     (res) => {
-                        this.stories = res.data.filter((story) => !story.realized);
+                        const unrealizedStories = res.data.filter((story) => !story.realized);
+                        
+                        if (unrealizedStories.length) {
+                            this.stories = unrealizedStories;
+                        } else {
+                            this.finishSprint();
+                        }
                     },
                     (error) => {
-                        
+                        console.log(error);
+
+                        this.$toasted.error('Napaka pri pridobivanju zgodb Sprinta', {
+                            duration: 3000,
+                            position: "bottom-center"
+                        });
                     }
                 );
             }
