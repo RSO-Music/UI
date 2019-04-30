@@ -10,14 +10,13 @@
 </template>
 
 <script>
-    import MyButton from "./Button";
     import ButtonBase from "./ButtonBase";
     import ButtonOutline from "./ButtonOutline";
     import { APICalls } from "../../utils/apiCalls";
 
     export default {
         name: "UsersList",
-        components: { ButtonOutline, ButtonBase, MyButton },
+        components: { ButtonOutline, ButtonBase },
         data() {
             return {
                 usersList: []

@@ -125,6 +125,12 @@
                         this.$store.commit('editProject', rs.data);
                     },
                     (error) => {
+                        console.log(error);
+
+                        vm.$toasted.error('Pri pridobivanju projekta je prišlo do napake', {
+                            duration: 3000,
+                            position: 'bottom-center'
+                        });
                     }
                 );
             },

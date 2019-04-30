@@ -1,18 +1,20 @@
 <template>
-    <div id="toolbar">
-        <div id="topBarLeft">
-            <router-link :to="{ name: 'dashboard'}" id="smrpoName">
-                SCRUMMY
-            </router-link>
-        </div>
-        <div id="topBarRight">
-            <div id="userText">
-                <p id="userName">{{displayName}}</p>
-                <p id="userRole">{{displayRole}}</p>
+    <header>
+        <nav id="toolbar">
+            <div id="topBarLeft">
+                <router-link :to="{ name: 'dashboard'}" id="smrpoName">
+                    SCRUMMY
+                </router-link>
             </div>
-            <ButtonBase id="logoutBtn" @clicked="logout" msg="ODJAVA"></ButtonBase>
-        </div>
-    </div>
+            <div id="topBarRight">
+                <div id="userText">
+                    <p id="userName">{{displayName}}</p>
+                    <p id="userRole">{{displayRole}}</p>
+                </div>
+                <ButtonBase id="logoutBtn" @clicked="logout" msg="ODJAVA"></ButtonBase>
+            </div>
+        </nav>
+    </header>
 </template>
 
 <script>
@@ -57,12 +59,21 @@
 </script>
 
 <style>
+    header {
+        height: 72px;
+        width: 100%;
+        z-index: 1;
+    }
+    
     #toolbar {
         background-color: #2E354C;
         display: flex;
         justify-content: space-between;
         align-items: center;
         height: 72px;
+        width: 100%;
+        position: fixed;
+        z-index: 10;
     }
 
     #topBarLeft {

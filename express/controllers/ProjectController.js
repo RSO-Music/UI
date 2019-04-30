@@ -12,7 +12,7 @@ module.exports = {
                 return res.json(Projects);
             } catch (err) {
                 return res.status(500).json({
-                    message: 'An error occured while fetching project',
+                    message: 'Pri pridobivanju projekta je prišlo do napake',
                     error: err
                 });
             }
@@ -32,7 +32,7 @@ module.exports = {
                 return res.json(Projects);
             } catch (err) {
                 return res.status(500).json({
-                    message: 'An error occured while fetching project',
+                    message: 'Pri pridobivanju projektov je prišlo do napake',
                     error: err
                 });
             }
@@ -51,14 +51,14 @@ module.exports = {
 
                 if (!Project) {
                     return res.status(404).json({
-                        message: 'No such Project'
+                        message: 'Projekt ne obstaja'
                     });
                 }
                 
                 return res.json(Project);
             } catch (err) {
                 return res.status(500).json({
-                    message: 'Error when getting Project.',
+                    message: 'Napaka pri pridobivanju projekta',
                     error: err
                 });
             }
@@ -71,7 +71,7 @@ module.exports = {
         Project.save(function (err, Project) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when creating Project',
+                    message: 'Napaka pri ustvarjanju projekta',
                     error: err
                 });
             }
@@ -86,14 +86,14 @@ module.exports = {
         ProjectModel.findOne({ _id: id }, function (err, Project) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when getting Project',
+                    message: 'Napaka pri posodabljanju projekta',
                     error: err
                 });
             }
             
             if (!Project) {
                 return res.status(404).json({
-                    message: 'No such Project'
+                    message: 'Projekt ne obstaja'
                 });
             }
 
@@ -104,7 +104,7 @@ module.exports = {
             }, function (err, UpdatedProject) {
                 if (err) {
                     return res.status(500).json({
-                        message: 'Error when updating Project.',
+                        message: 'Napaka pri posodabljanju projekta',
                         error: err
                     });
                 }
@@ -120,7 +120,7 @@ module.exports = {
         ProjectModel.findByIdAndRemove(id, function (err, Project) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when deleting the Project.',
+                    message: 'Napaka pri brisanju projekta',
                     error: err
                 });
             }

@@ -117,6 +117,15 @@ module.exports = {
             speed: req.body.speed,
             name: req.body.name
         });
+        
+        const startDate = new Date(req.body.startDate);
+        const endDate = new Date(req.body.endDate);
+        
+        if (startDate.getTime() > endDate.getTime()) {
+            return res.status(500).json({
+                message: 'Začetni datum Sprinta ne sme biti za končnim datumom'
+            });
+        }
 
         const pId = req.body.projectId;
         const sDate = req.body.startDate;

@@ -23,14 +23,13 @@
 </template>
 
 <script>
-    import MyButton from "./Button";
     import ButtonBase from "./ButtonBase";
     import ButtonOutline from "./ButtonOutline";
     import { APICalls } from "../../utils/apiCalls";
 
     export default {
         name: "SprintsList",
-        components: { ButtonOutline, ButtonBase, MyButton },
+        components: { ButtonOutline, ButtonBase },
         props: {
             sprints: Array
         },

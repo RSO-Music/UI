@@ -114,6 +114,15 @@
                 const vm = this;
 
                 if (vm.$refs.form.validate()) {
+                    if (vm.$moment(vm.sprint.startDate).valueOf() > vm.$moment(vm.sprint.endDate).valueOf()) {
+                        this.$toasted.error('Začetni datum Sprinta ne sme biti za končnim datumom', {
+                            duration: 3000,
+                            position: "bottom-center"
+                        });
+                        
+                        return;
+                    }
+                    
                     vm.sprint.projectId = vm.$route.params.projectId;
                     
                     if (vm.isNew) {
