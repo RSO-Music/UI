@@ -2,18 +2,8 @@
     <v-layout row justify-end>
         <v-dialog v-model="dialog" max-width="1200px">
             <template v-slot:activator="{ on }">
-                <v-btn v-on="on"
-                       v-if="customBtn"
-                       class="custom-btn"
-                       color="#3093A0"
-                       depressed
-                       dark
-                >
-                    DODAJ NOVO ZGODBO
-                </v-btn>
-
-                <v-btn flat icon color="#3093A0" v-on="on" v-else>
-                    <v-icon>edit</v-icon>
+                <v-btn flat icon color="#3093A0" v-on="on">
+                    <v-icon>info_outline</v-icon>
                 </v-btn>
             </template>
 
@@ -25,8 +15,7 @@
                 >
                     <div class="dialog-titlebar">
                         <v-layout>
-                            <h2 class="pl-3 pb-0 white--text" v-if="story._id">UREDI ZGODBO</h2>
-                            <h2 class="pl-3 pb-0 white--text" v-else>DODAJ NOVO ZGODBO</h2>
+                            <h2 class="pl-3 pb-0 white--text">PODATKI O ZGODBI</h2>
                         </v-layout>
                     </div>
 
@@ -55,7 +44,7 @@
                                                 :rules="[v => !!v || 'Naslov zgodbe ne sme biti prazen']"
                                                 v-model="storyName"
                                                 required
-                                                :disabled="editExisting"
+                                                :disabled="true"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs-3 offset-xs1>
@@ -63,7 +52,7 @@
                                                     @change=""
                                                     v-model="storyFinished"
                                                     label="Zgodba zaključena"
-                                                    :disabled="!editExisting"
+                                                    :disabled="true"
                                         ></v-checkbox>
                                     </v-flex>
                                 </v-layout>
@@ -80,7 +69,7 @@
                                                         label="Prioriteta"
                                                         hide-details
                                                         required
-                                                        :disabled="editExisting"
+                                                        :disabled="true"
                                                 ></v-select>
                                             </v-flex>
                                             <v-flex xs4>
@@ -93,7 +82,7 @@
                                                         label="Poslovna vrednost"
                                                         hide-details
                                                         required
-                                                        :disabled="editExisting"
+                                                        :disabled="true"
                                                 ></v-select>
                                             </v-flex>
                                             <v-flex xs4>
@@ -104,7 +93,7 @@
                                                         min="0"
                                                         label="Časovna ocena"
                                                         v-model="timeEstimation"
-                                                        :disabled="editExisting"
+                                                        :disabled="true"
                                                 ></v-text-field>
                                             </v-flex>
                                         </v-layout>
@@ -121,7 +110,7 @@
                                                 rows="5"
                                                 :auto-grow="true"
                                                 required
-                                                :disabled="editExisting"
+                                                :disabled="true"
                                         ></v-textarea>
                                     </v-flex>
                                     <v-flex xs6>
@@ -133,19 +122,13 @@
                                                 rows="5"
                                                 :auto-grow="true"
                                                 required
-                                                :disabled="editExisting"
+                                                :disabled="true"
                                         ></v-textarea>
                                     </v-flex>
                                 </v-layout>
                                 <v-layout mt-2 mb-2 v-if="story.comment">
                                     <v-flex xs12>
                                         <p><v-icon class="red--text">info_outline</v-icon> <span class="ml-2 red--text">Zgodba je že bila zavrnjena z razlogom: {{story.comment}}</span></p>
-                                    </v-flex>
-                                </v-layout>
-                                <v-layout>
-                                    <v-flex xs12>
-                                        <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
-                                        <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
                                     </v-flex>
                                 </v-layout>
                             </v-container>
@@ -159,8 +142,10 @@
                                         <template v-if="unassignedTasks.length">
                                             <task-card v-for="(task, index) in unassignedTasks" :task="task"
                                                        @editTask="changeTask"
-                                                       @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="!canEditTasks"/>
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
@@ -171,8 +156,10 @@
                                         <template v-if="assignedTasks.length">
                                             <task-card v-for="(task, index) in assignedTasks" :task="task"
                                                        @editTask="changeTask"
-                                                       @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="!canEditTasks"/>
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
@@ -183,8 +170,10 @@
                                         <template v-if="activeTasks.length">
                                             <task-card v-for="(task, index) in activeTasks" :task="task"
                                                        @editTask="changeTask"
-                                                       @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="!canEditTasks"/>
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
@@ -194,16 +183,17 @@
                                         <template v-if="finishedTasks.length">
                                             <task-card v-for="(task, index) in finishedTasks" :task="task"
                                                        @editTask="changeTask"
-                                                       @deleteTask="deleteTask" :key="task._id"
-                                                       :disabled="!canEditTasks"/>
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
                                     </v-flex>
 
 
-                                    <v-flex lg6 ml-1 pa-4>
-                                        <h1 v-if="editTask._id">Uredi nalogo</h1>
-                                        <h1 v-else>Dodaj nalogo</h1>
+                                    <v-flex v-if="editTask" lg6 ml-1 pa-4>
+                                        <h1 >Pregled naloge</h1>
                                         
                                         <v-layout>
                                             <v-flex x12>
@@ -213,7 +203,7 @@
                                                         rows="1"
                                                         label="Opis naloge"
                                                         v-model="editTask.description"
-                                                        :disabled="!canEditTasks"
+                                                        :disabled="true"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -228,7 +218,7 @@
                                                         label="Ocena časa"
                                                         type="number"
                                                         v-model="editTask.time"
-                                                        :disabled="!canEditTasks"
+                                                        :disabled="true"
                                                         min="1"
                                                         flat
                                                 ></v-text-field>
@@ -238,7 +228,7 @@
                                                         color="#3093A0"
                                                         prepend-icon="person"
                                                         v-model="editTask.assignee"
-                                                        :disabled="!canEditTasks"
+                                                        :disabled="true"
                                                         label="Razvijalec"
                                                         :items="projectUsers"
                                                         :item-text="({ user }) => {
@@ -253,7 +243,7 @@
                                                 <v-select
                                                         color="#3093A0"
                                                         v-model="editTask.status"
-                                                        :disabled="!editingTask || canEditTasks"
+                                                        :disabled="true"
                                                         :items="taskStatus"
                                                         item-text="name"
                                                         item-value="value"
@@ -278,26 +268,10 @@
                                             <v-flex>
                                                 <p><span class="grey--text">Število porabljenih ur:</span> {{editTask.activeHours}}</p>    
                                             </v-flex>
-                                            
-                                            <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
-                                                <ButtonBase 
-                                                        :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`" 
-                                                        @clicked="setTaskActiveStatus"
-                                                        :isDisabled="!canEditTasks"
-                                                        class="mr-3"
-                                                >
-                                                </ButtonBase>
-                                            </v-flex>
                                         </v-layout>
-
-                                        <v-layout align-center justify-end row>
-                                            <ButtonBase msg="Ponastavi" @clicked="clearEdit"
-                                                           :isDisabled="!canEditTasks"
-                                                           class="mr-3"></ButtonBase>
-                                            
-                                            <ButtonBase msg="Shrani" @clicked="addTask"
-                                                           :isDisabled="!isEditTaskValid || !canEditTasks"></ButtonBase>
-                                        </v-layout>
+                                    </v-flex>
+                                    <v-flex v-else lg6 ml-1 pa-4>
+                                        <h1 >Izberite nalogo</h1>
                                     </v-flex>
                                 </v-layout>
                             </v-container>
@@ -317,13 +291,12 @@
     import TaskCard from "../Generic/TaskCard";
 
     export default {
-        name: "EditUserStoryDialog",
+        name: "ViewUserStoryDialog",
         components: { ButtonBase, ButtonOutline, Separator, TaskCard },
         props: ['story', 'fullEdit', 'customBtn'],
         data: () => ({
             dialog: false,
             valid: true,
-            editExisting: false,
             errorText: '',
             storyName: '',
             storyDescription: '',
@@ -358,145 +331,12 @@
                     value: 'finished'
                 }
             ],
-            editTask: {
-                description: '',
-                time: '',
-                status: 'new'
-            },
+            editTask: null,
             editingTask: false
         }),
         methods: {
-            updateStory() {
-                if (this.story._id) {
-                    //update existing story
-                    APICalls.updateUserStory({
-                        name: this.storyName,
-                        description: this.storyDescription,
-                        acceptanceTests: this.storyAcceptanceTests,
-                        priority: this.selectPriority,
-                        timeEstimation: this.timeEstimation,
-                        businessValue: this.selectBussinessValue,
-                        done: this.storyFinished,
-                        tasks: this.tasks
-                    }, this.story._id).then(
-                        (rs) => {
-                            this.closeDialog();
-                            this.$emit("refresh", true);
-                            this.error = 0;
-                            this.errorText = ""
-                        },
-                        (error) => {
-                            console.log(error);
-                            this.error = 2;
-                            this.errorText = "Uporabniška zgodba s takim naslovom že obstaja."
-                        })
-                } else {
-                    APICalls.addNewUserStoryToProject(
-                        {
-                            name: this.storyName,
-                            description: this.storyDescription,
-                            acceptanceTests: this.storyAcceptanceTests,
-                            priority: this.selectPriority,
-                            timeEstimation: this.timeEstimation,
-                            businessValue: this.selectBussinessValue,
-                            projectId: this.$store.getters.editingProject._id,
-                            sprintId: null,
-                            done: false,
-                            tasks: this.tasks
-                        }
-                    ).then(
-                        (rs) => {
-                            this.closeDialog();
-                            this.$emit("refresh", true);
-                            this.error = 0;
-                            this.errorText = ""
-                        },
-                        (error) => {
-                            console.log(error);
-                            this.error = 2;
-                            this.errorText = "Uporabniška zgodba s takim naslovom že obstaja."
-                        })
-                }
-            },
             closeDialog() {
                 this.dialog = false;
-            },
-            addTask() {
-                let editTask = this.editTask;
-                let currentStory = this.story;
-                let vm = this;
-
-                //check if all required fields are present
-                if (!editTask.description || !editTask.time) {
-                    vm.$toasted.error('Če želite dodati nalogo, vpišite opis naloge in določite čas', {
-                        duration: 3000,
-                        position: "bottom-center",
-                    });
-                    
-                    return;
-                }
-
-
-                if (!editTask._id) {
-                    //add new task to story
-                    APICalls.addNewUserTask(
-                        {
-                            storyId: currentStory._id,
-                            description: editTask.description,
-                            time: editTask.time,
-                            assignee: editTask.assignee,
-                            status: editTask.status,
-                            accepted: false
-                        }
-                    ).then(
-                        (rs) => {
-                            vm.tasks.push(rs.data);
-                            
-                            vm.clearEdit();
-
-                            vm.$toasted.success('Naloga je bila uspešno dodana', {
-                                duration: 3000,
-                                position: "bottom-center",
-                            });
-                        },
-                        (error) => {
-                            console.log(error);
-                        })
-
-                }
-                else {
-                    //update existing task
-                    APICalls.updateUserTask(
-                        {
-                            storyId: currentStory._id,
-                            description: editTask.description,
-                            time: editTask.time,
-                            assignee: editTask.assignee,
-                            status: editTask.status,
-                            accepted: false
-                        }, editTask._id
-                    ).then(
-                        (rs) => {
-                            vm.tasks = vm.tasks.map((task) => {
-                                if (task._id === editTask._id) {
-                                    return editTask;
-                                }
-                                
-                                return task;
-                            });
-                            
-                            vm.clearEdit();
-
-                            vm.$toasted.success('Naloga je bila uspešno posodobljena', {
-                                duration: 3000,
-                                position: "bottom-center",
-                            });
-                        },
-                        (error) => {
-                            console.log(error);
-                        })
-
-                }
             },
             clearEdit() {
                 this.editTask = {
@@ -511,49 +351,6 @@
                 this.editTask = JSON.parse(JSON.stringify(task));
                 
                 this.editingTask = true;
-            },
-            deleteTask(deleteTask) {
-                APICalls.deleteUserStory(deleteTask._id).then(
-                    (rs) => {
-                        this.tasks = this.tasks.filter(function (task) {
-                            return task._id !== deleteTask._id
-                        });
-                    },
-                    (error) => {
-                        console.log(error);
-                    })
-
-                this.clearEdit();
-
-			},
-			resetForm() {
-				this.$refs.form.reset();
-				this.$refs.form.resetValidation();
-			},
-			setTaskActiveStatus() {
-                const vm = this;
-
-                vm.editTask.active = !vm.editTask.active;
-                
-                APICalls.setActiveStatus(vm.editTask._id, vm.editTask.active)
-                    .then((res) => {
-                        vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna' : 'Naloga je sedaj neaktivna'}`, {
-                            duration: 3000,
-                            position: "bottom-center",
-                        });
-                        
-                        vm.editTask.activeHours = res.data.activeHours;
-                    })
-                    .catch((ex) => {
-                        console.log(ex);
-
-                        vm.editTask.active = !vm.editTask.active;
-
-                        vm.$toasted.error('Pri posodabljanju naloge je prišlo do napake', {
-                            duration: 3000,
-                            position: "bottom-center",
-                        });
-                    });
             }
 		},
 		computed: {

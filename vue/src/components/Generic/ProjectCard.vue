@@ -19,13 +19,12 @@
 </template>
 
 <script>
-    import MyButton from "./Button";
     import ButtonBase from "./ButtonBase";
     import ButtonOutline from "./ButtonOutline";
 
     export default {
         name: "ProjectCard",
-        components: { ButtonOutline, ButtonBase, MyButton },
+        components: { ButtonOutline, ButtonBase },
         props: {
             insertedProjectList: Array,
             isAdmin: Boolean

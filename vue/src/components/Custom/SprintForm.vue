@@ -1,5 +1,6 @@
 <template>
-    <v-form
+    <div>
+        <v-form
             class="form-wrapper"
             ref="form"
             v-model="valid"
@@ -16,6 +17,7 @@
                     v-model="sprint.name"
                     :rules="[v => !!v || 'Ime sprinta ne sme biti prazno']"
                     required
+                    :disabled="!isEditable"
             ></v-text-field>
             <div id="sprintTime">
                 <v-menu
@@ -38,6 +40,7 @@
                                 readonly
                                 v-on="on"
                                 required
+                                :disabled="!isEditable"
                         ></v-text-field>
                     </template>
                     <v-date-picker v-model="sprint.startDate" no-title scrollable>
@@ -65,6 +68,7 @@
                                 readonly
                                 v-on="on"
                                 required
+                                :disabled="!isEditable"
                         ></v-text-field>
                     </template>
                     <v-date-picker v-model="sprint.endDate" no-title scrollable>
@@ -81,30 +85,63 @@
                     :rules="[ v => sprintValidation(v) || 'Vrednost hitrosti mora biti med 1 in 100']"
                     type="number"
                     required
+                    :disabled="!isEditable"
             ></v-text-field>
         </v-layout>
-        
-        <v-layout justify-end>
+
+        <v-layout v-if="isEditable" justify-end>
             <ButtonBase
                     msg="Shrani"
                     @clicked="addSprint"
             ></ButtonBase>
         </v-layout>
     </v-form>
+
+        <template v-if="!isNew">
+            <v-layout mt-4>
+                <h2 class="section-title">Uporabniške zgodbe Sprinta</h2>
+            </v-layout>
+
+            <v-flex xs12>
+                <template v-if="stories.length">
+                    <v-layout>
+                        <v-flex xs6 v-for="story of stories" :key="story._id">
+                            <div class="ma-2">
+                                <UserStoryCard :story="story"
+                                               :viewOnly="true"
+                                               :currentSprint="sprint"
+                                />
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </template>
+
+                <div v-else>
+                    <h2 class="backlog-empty-text text-xs-center grey--text">Ni zgodb</h2>
+                </div>
+            </v-flex>
+        </template>
+    </div>
 </template>
 
 <script>
     import ButtonBase from "../Generic/ButtonBase";
     import { APICalls } from "../../utils/apiCalls";
+    import UserStoryCard from "../Generic/UserStoryCard";
 
     export default {
         name: "SprintForm",
-        components: { ButtonBase },
+        components: { UserStoryCard, ButtonBase },
         data() {
             return {
                 sprint: {},
+                stories: [],
+                loaded: {
+                    stories: false
+                },
                 valid: true,
                 isNew: true,
+                isEditable: true,
                 dateStart: false,
                 dateStop: false
             }
@@ -114,6 +151,15 @@
                 const vm = this;
 
                 if (vm.$refs.form.validate()) {
+                    if (vm.$moment(vm.sprint.startDate).valueOf() > vm.$moment(vm.sprint.endDate).valueOf()) {
+                        this.$toasted.error('Začetni datum Sprinta ne sme biti za končnim datumom', {
+                            duration: 3000,
+                            position: "bottom-center"
+                        });
+                        
+                        return;
+                    }
+                    
                     vm.sprint.projectId = vm.$route.params.projectId;
                     
                     if (vm.isNew) {
@@ -148,7 +194,33 @@
             
             setSprintToEdit(sprintData) {
                 this.sprint = sprintData;
+                this.isEditable = true;
                 this.isNew = false;
+                
+                this.fetchStories();
+            },
+
+            setSprintToView(sprintData) {
+                this.sprint = sprintData;
+                this.isEditable = false;
+                this.isNew = false;
+
+                this.fetchStories();
+            },
+            
+            fetchStories() {
+                this.loaded.stories = false;
+                
+                APICalls.getAllStoriesForSprint(this.$store.getters.editingProject._id, this.sprint._id)
+                    .then((res) => {
+                        this.stories = res.data;
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+                    })
+                    .finally(() => {
+                        this.loaded.stories = true;
+                    });
             },
             
             sprintValidation(val) {
@@ -161,7 +233,9 @@
                 this.$refs.form.reset();
                 this.$refs.form.resetValidation();
                 this.isNew = true;
+                this.isEditable = true;
                 this.sprint = {};
+                this.stories = [];
             }
         },
         computed: {

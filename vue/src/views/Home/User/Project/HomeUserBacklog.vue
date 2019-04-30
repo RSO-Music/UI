@@ -7,28 +7,40 @@
         <v-layout>
             <h2 class="section-title">Uporabniške zgodbe projekta</h2>
         </v-layout>
-        
+
         <v-layout>
             <v-flex sm12 m4 mr-4>
                 <v-layout column id="unassigned" class="backlog-section">
                     <v-layout column>
                         <h2>Nedodeljene zgodbe</h2>
-                        <template v-if="storiesInBacklog.length">
-                            <div class="storyContainer" v-for="story of storiesInBacklog" :key="story._id">
-                                <UserStoryCard :story="story"
-                                               :currentSprint="currentSprint"
-                                               v-on:addStory="addStory"
-                                               v-on:refresh="reloadData"
-                                               v-on:removeStory="reloadData"
-                                />
-                            </div>
-                        </template>
+                        
+                        <v-flex v-if="loaded.storiesInBacklog" xs12>
+                            <template v-if="storiesInBacklog.length">
+                                <div class="storyContainer" v-for="story of storiesInBacklog" :key="story._id">
+                                    <UserStoryCard :story="story"
+                                                   :currentSprint="currentSprint"
+                                                   v-on:addStory="addStory"
+                                                   v-on:refresh="reloadData"
+                                                   v-on:removeStory="reloadData"
+                                    />
+                                </div>
+                            </template>
 
-                        <div v-else>
-                            <h2 class="backlog-empty-text text-xs-center grey--text">Ni nedodeljenih zgodb</h2>
-                        </div>
+                            <div v-else>
+                                <h2 class="backlog-empty-text text-xs-center grey--text">Ni nedodeljenih zgodb</h2>
+                            </div>
+                        </v-flex>
+                        <v-flex v-else>
+                            <v-layout my-4 justify-center>
+                                <v-progress-circular
+                                        :size="50"
+                                        color="primary"
+                                        indeterminate
+                                ></v-progress-circular>
+                            </v-layout>
+                        </v-flex>
                     </v-layout>
-                    
+
 
                     <v-layout align-center justify-end row class="mb-2">
                         <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe aktivnemu sprintu"
@@ -42,42 +54,70 @@
                     </v-layout>
                 </v-layout>
             </v-flex>
-            
+
             <v-flex sm12 m4>
                 <v-layout column id="assigned" class="backlog-section">
-                    <h2>Zgodbe aktivnega Sprinta <span v-if="currentSprint">({{currentSprint.name}})</span></h2>
-                    
-                    <template v-if="currentSprint">
-                        <template v-if="storiesInCurrentSprint.length">
-                            <div class="storyContainer" v-for="story of storiesInCurrentSprint" :key="story._id">
-                                <UserStoryCard :story="story" v-on:refresh="reloadData"/>
+                    <h2>Zgodbe dodeljene aktivnemu Sprintu</h2>
+
+                    <v-flex v-if="loaded.storiesInCurrentSprint" xs12>
+                        <template v-if="currentSprint">
+                            <template v-if="storiesInCurrentSprint.length">
+                                <div class="storyContainer" v-for="story of storiesInCurrentSprint" :key="story._id">
+                                    <UserStoryCard :story="story" v-on:refresh="reloadData"/>
+                                </div>
+                            </template>
+
+                            <div v-else>
+                                <h2 class="backlog-empty-text text-xs-center grey--text">Dodajte zgodbe v Sprint</h2>
                             </div>
                         </template>
 
                         <div v-else>
-                            <h2 class="backlog-empty-text text-xs-center grey--text">Dodajte zgodbe v Sprint</h2>
+                            <h2 class="backlog-empty-text text-xs-center grey--text">Ni aktivnega Sprinta</h2>
                         </div>
-                    </template>
-
-                    <div v-else>
-                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni aktivnega Sprinta</h2>
-                    </div>
+                    </v-flex>
+                    <v-flex v-else>
+                        <v-layout my-4 justify-center>
+                            <v-progress-circular
+                                    :size="50"
+                                    color="primary"
+                                    indeterminate
+                            ></v-progress-circular>
+                        </v-layout>
+                    </v-flex>
                 </v-layout>
             </v-flex>
-            
+
             <v-flex sm12 m4 ml-4>
                 <v-layout column id="completed" class="backlog-section">
-                    <h2>Zaključene zgodbe</h2>
+                    <h2>Zaključene zgodbe aktivnega Sprinta</h2>
 
-                    <template v-if="completedStories.length">
-                        <div class="storyContainer" v-for="story in completedStories" :key="story._id">
-                            <UserStoryCard :story="story"/>
+                    <v-flex v-if="loaded.completedStories" xs12>
+                        <template v-if="currentSprint">
+                            <template v-if="completedStories.length">
+                                <div class="storyContainer" v-for="story in completedStories" :key="story._id">
+                                    <UserStoryCard :story="story"/>
+                                </div>
+                            </template>
+
+                            <div v-else>
+                                <h2 class="backlog-empty-text text-xs-center grey--text">Ni zaključenih zgodb</h2>
+                            </div>
+                        </template>
+
+                        <div v-else>
+                            <h2 class="backlog-empty-text text-xs-center grey--text">Ni aktivnega Sprinta</h2>
                         </div>
-                    </template>
-
-                    <div v-else>
-                        <h2 class="backlog-empty-text text-xs-center grey--text">Ni zaključenih zgodb</h2>
-                    </div>
+                    </v-flex>
+                    <v-flex v-else>
+                        <v-layout my-4 justify-center>
+                            <v-progress-circular
+                                    :size="50"
+                                    color="primary"
+                                    indeterminate
+                            ></v-progress-circular>
+                        </v-layout>
+                    </v-flex>
                 </v-layout>
             </v-flex>
         </v-layout>
@@ -101,60 +141,104 @@
             UserStoryCard, EditUserStoryDialog
         },
         created() {
+            this.getActiveSprint();
             this.getStoriesInBacklog();
-            this.getStoriesInCurrentSprint();
-            this.getCompletedStories();
         },
         props: {
             project: Object
         },
-        data: () => ({
-            storiesInBacklog: [],
-            completedStories: [],
-            storiesInCurrentSprint: [],
-            currentSprint: {},
-            endDate: '',
-            startDate: '',
-            storiesToAddToSprint: []
-        }),
+        data() {
+            return {
+                storiesInBacklog: [],
+                completedStories: [],
+                storiesInCurrentSprint: [],
+                currentSprint: {},
+                endDate: '',
+                startDate: '',
+                storiesToAddToSprint: [],
+                loaded: {
+                    storiesInBacklog: false,
+                    completedStories: false,
+                    storiesInCurrentSprint: false
+                }
+            };
+        },
         methods: {
             getStoriesInBacklog() {
-                APICalls.getProjectBacklog(this.$route.params.projectId).then(
-                    (rs) => {
-                        this.storiesInBacklog = rs.data;
-                    },
-                    (error) => {
-                    }
-                );
+                this.loaded.storiesInBacklog = false;
+
+                APICalls.getProjectBacklog(this.$route.params.projectId)
+                    .then(
+                        (res) => {
+                            this.storiesInBacklog = res.data;
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                    )
+                    .finally(() => {
+                        this.loaded.storiesInBacklog = true;
+                    });
+            },
+            getActiveSprint() {
+                this.loaded.currentSprint = false;
+                
+                APICalls.getActiveSprint(this.$route.params.projectId)
+                    .then(
+                        (res) => {
+                            if (res.data) {
+                                this.currentSprint = res.data;
+                            } else {
+                                this.loaded.storiesInCurrentSprint = true;
+                                this.loaded.completedStories = true;
+                            }
+                        },
+                        (error) => {
+                            console.log(error);
+
+                            this.currentSprint = null;
+                            
+                            this.loaded.storiesInCurrentSprint = true;
+                            this.loaded.completedStories = true;
+                        }
+                    )
+                    .finally(() => {
+                        this.loaded.currentSprint = true;
+                    });
             },
             getStoriesInCurrentSprint() {
-                APICalls.getActiveSprint(this.$route.params.projectId).then(
-                    (rs) => {
-                        this.currentSprint = rs.data;
-                        APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.currentSprint._id).then(
-                            (rs) => {
-                                //SHOW ONLY NOT DONE TASKS
-                                this.storiesInCurrentSprint = rs.data.filter(function (d) {
-                                    return !d.done;
-                                });
-                            },
-                            (error) => {
-                            }
-                        );
-                    },
-                    (error) => {
-                        this.currentSprint = null;
-                    }
-                );
+                this.loaded.storiesInCurrentSprint = false;
+                
+                APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.currentSprint._id)
+                    .then(
+                        (res) => {
+                            this.storiesInCurrentSprint = res.data.filter(function (story) {
+                                return !story.done;
+                            });
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                    )
+                    .finally(() => {
+                        this.loaded.storiesInCurrentSprint = true;
+                    });
             },
-            getCompletedStories() {
-                APICalls.getDoneStories(this.$route.params.projectId).then(
-                    (rs) => {
-                        this.completedStories = rs.data;
-                    },
-                    (error) => {
-                    }
-                );
+            getCompletedStoriesInCurrentSprint() {
+                this.loaded.completedStories = false;
+                
+                APICalls.getCompletedStoriesInCurrentSprint(this.$route.params.projectId, this.currentSprint._id)
+                    .then(
+                        (res) => {
+                            this.completedStories = res.data;
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                    )
+                    .finally(() => {
+                        this.loaded.completedStories = true;
+                    });
             },
             addStory(obj) {
                 if (obj.checked === true) {
@@ -201,10 +285,19 @@
                 this.storiesToAddToSprint = [];
 
                 this.getStoriesInBacklog();
-                
+
                 this.getStoriesInCurrentSprint();
-                
-                this.getCompletedStories();
+
+                this.getCompletedStoriesInCurrentSprint();
+            }
+        },
+        watch: {
+            currentSprint(value) {
+                if (value) {
+                    this.getStoriesInCurrentSprint();
+
+                    this.getCompletedStoriesInCurrentSprint();
+                }
             }
         }
     }
@@ -216,7 +309,7 @@
         margin-bottom: 16px;
         text-transform: uppercase;
     }
-    
+
     .backlog-section {
         padding: 15px;
         border-radius: 2px;
@@ -228,7 +321,7 @@
         color: #222;
         padding-bottom: 20px;
     }
-    
+
     .backlog-empty-text {
         padding: 32px 0;
     }

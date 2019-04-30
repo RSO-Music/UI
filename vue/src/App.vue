@@ -131,4 +131,21 @@
     .theme-color {
         background-color: rgb(48, 147, 160)
     }
+    
+    .dialog-titlebar {
+        background-color: #2E354C;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        height: 72px;
+        width: 100%;
+    }
+
+    .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
+        color: rgb(0, 0, 0);
+    }
+
+    .theme--light.v-select .v-chip--disabled, .theme--light.v-select .v-select__selection--disabled {
+        color: rgb(0, 0, 0);
+    }
 </style>

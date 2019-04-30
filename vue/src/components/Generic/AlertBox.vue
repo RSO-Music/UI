@@ -4,6 +4,7 @@
              :type="type"
              @click="closeAlert"
              dismissible
+             class="mt-4 py-2"
     >
         <span>{{message}}</span>
     </v-alert>

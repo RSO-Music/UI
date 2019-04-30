@@ -30,9 +30,6 @@
     .main-button {
         margin: 0;
         padding: 0 10px;
-        border-width: 2px;
-        font-weight: bold;
-        width: fit-content;
         min-width: 10px;
     }
 </style>

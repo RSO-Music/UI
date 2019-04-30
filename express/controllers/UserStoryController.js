@@ -18,11 +18,13 @@ module.exports = {
 
     findFinishedStories(req, res) {
         const projectId = req.params.projectId;
+        const sprintId = req.params.sprintId;
 
         return async function () {
             try {
                 const UserStories = await UserStoryModel.find({
                     projectId,
+                    sprintId,
                     done: true
                 }).exec();
 

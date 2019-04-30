@@ -70,7 +70,7 @@
 
                 objForAPI.users = usersAssigned;
 
-                APICalls.addNewProject(objForAPI).then(
+                APICalls.createProject(objForAPI).then(
                     (rs) => {
                         objProjectAdd['_id'] = rs.data._id;
                         this.projectsList.push(objProjectAdd);

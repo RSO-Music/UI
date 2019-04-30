@@ -1,42 +1,124 @@
 <template>
     <div id="projectWrapper">
-        <template v-if="sprints && sprints.length">
-            <v-card class="adminProjectCard" v-for="sprint in sprints" :key="sprint._id">
-                <div class="adminpName">
-                    <v-layout>
-                        <v-flex xs9>
-                            <h2 class="mb-1 black--text">{{sprint.name}}</h2>
-                            <p>{{sprint.startDate | moment('DD. MM. YYYY')}} - {{sprint.endDate | moment('DD. MM. YYYY')}}</p>
-                        </v-flex>
+        <template v-if="isLoaded">
+            <template v-if="sprints && sprints.length">
+                <v-layout v-if="categorize">
+                    <v-flex xs12>
+                        <v-layout column mt-2>
+                            <separator title="Aktivni Sprint"></separator>
 
-                        <v-flex xs3>
-                            <v-layout justify-end>
-                                <ButtonOutline msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
-                            </v-layout>
-                        </v-flex>
-                    </v-layout>
-                </div>
-            </v-card>
+                            <SprintCard v-if="getActiveSprint" :sprint="getActiveSprint"
+                                        @viewSprint="viewSprint(getActiveSprint)"></SprintCard>
+                            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni aktivnega Sprinta</h2>
+
+                        </v-layout>
+
+                        <v-divider></v-divider>
+
+                        <v-layout column>
+                            <separator title="Prihodnji Sprinti"></separator>
+
+                            <template v-if="getFutureSprints.length">
+                                <SprintCard v-for="sprint in getFutureSprints" :key="sprint._id" :sprint="sprint"
+                                            :editable="true"
+                                            @editSprint="editSprint(sprint)"></SprintCard>
+                            </template>
+                            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov v prihodnosti</h2>
+                        </v-layout>
+
+                        <v-divider></v-divider>
+
+                        <v-layout column>
+                            <separator title="Pretekli Sprinti"></separator>
+
+                            <template v-if="getPastSprints.length">
+                                <SprintCard v-for="sprint in getPastSprints" :key="sprint._id" :sprint="sprint"
+                                            @viewSprint="viewSprint(sprint)"></SprintCard>
+                            </template>
+                            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni preteklih Sprintov</h2>
+                        </v-layout>
+                    </v-flex>
+                </v-layout>
+                <v-layout v-else>
+                    <v-flex xs12>
+                        <SprintCard v-for="sprint in sprints" :key="sprint._id" :sprint="sprint"
+                                    :editable="true"
+                                    @editSprint="editSprint(sprint)"></SprintCard>
+                    </v-flex>
+                </v-layout>
+            </template>
+            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov</h2>
         </template>
-        <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov</h2>
+        <v-layout v-else justify-center>
+            <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+            ></v-progress-circular>
+        </v-layout>
     </div>
 </template>
 
 <script>
-    import MyButton from "./Button";
     import ButtonBase from "./ButtonBase";
     import ButtonOutline from "./ButtonOutline";
     import { APICalls } from "../../utils/apiCalls";
+    import SprintCard from "./SprintCard";
+    import Separator from "./Separator";
 
     export default {
         name: "SprintsList",
-        components: { ButtonOutline, ButtonBase, MyButton },
+        components: { Separator, SprintCard, ButtonOutline, ButtonBase },
         props: {
-            sprints: Array
+            sprints: Array,
+            isLoaded: Boolean,
+            categorize: Boolean
         },
         methods: {
             editSprint(sprint) {
                 this.$emit('editSprint', sprint);
+            },
+            viewSprint(sprint) {
+                this.$emit('viewSprint', sprint);
+            }
+        },
+        computed: {
+            getActiveSprint() {
+                const vm = this;
+
+                if (vm.sprints && vm.sprints.length) return vm.sprints.find((sprint) => {
+                    const currentDate = vm.$moment();
+
+                    return vm.$moment(sprint.startDate).isBefore(currentDate) && vm.$moment(sprint.endDate).isAfter(currentDate);
+                });
+            },
+
+            getFutureSprints() {
+                const vm = this;
+
+                if (vm.sprints && vm.sprints.length) {
+                    return vm.sprints.filter((sprint) => {
+                        const currentDate = vm.$moment();
+
+                        return vm.$moment(sprint.startDate).isAfter(currentDate);
+                    });
+                } else {
+                    return [];
+                }
+            },
+
+            getPastSprints() {
+                const vm = this;
+
+                if (vm.sprints && vm.sprints.length) {
+                    return vm.sprints.filter((sprint) => {
+                        const currentDate = vm.$moment();
+
+                        return vm.$moment(sprint.endDate).isBefore(currentDate);
+                    });
+                } else {
+                    return [];
+                }
             }
         }
     }
@@ -48,48 +130,5 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-    }
-
-    .userProjectCard {
-        flex-basis: 32%;
-        padding: 20px;
-        margin: 10px 0;
-        border-top: 5px solid #A2E0E0;
-        border-radius: 2px;
-    }
-
-    .adminProjectCard {
-        width: 100%;
-        padding: 20px;
-        margin: 10px 0;
-        border-left: 5px solid #A2E0E0;
-        border-radius: 2px;
-    }
-
-    .pName {
-        padding: 10px;
-        border: 1px solid #A0A6B2;
-        border-radius: 2px;
-        margin-top: 5px;
-        margin-bottom: 20px;
-        display: flex;
-    }
-
-    .pName p {
-        text-transform: uppercase;
-        font-weight: bold;
-        display: inline;
-        align-self: center;
-        padding-left: 10px;
-    }
-
-    .adminpName {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .adminpName p {
-        font-weight: bold;
     }
 </style>

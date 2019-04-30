@@ -38,7 +38,7 @@ module.exports = {
     findAllForProject(req, res) {
         SprintModel.find({
             projectId: req.params.projectId
-        }, function (err, Sprint) {
+        }, function (err, Sprints) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Sprint.',
@@ -46,13 +46,13 @@ module.exports = {
                 });
             }
 
-            if (!Sprint) {
+            if (!Sprints) {
                 return res.status(404).json({
                     message: 'No such Sprint.'
                 });
             }
             
-            return res.json(Sprint);
+            return res.json(Sprints);
         });
     },
 
@@ -117,6 +117,15 @@ module.exports = {
             speed: req.body.speed,
             name: req.body.name
         });
+        
+        const startDate = new Date(req.body.startDate);
+        const endDate = new Date(req.body.endDate);
+        
+        if (startDate.getTime() > endDate.getTime()) {
+            return res.status(500).json({
+                message: 'Začetni datum Sprinta ne sme biti za končnim datumom'
+            });
+        }
 
         const pId = req.body.projectId;
         const sDate = req.body.startDate;

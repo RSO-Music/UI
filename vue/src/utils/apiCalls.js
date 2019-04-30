@@ -2,47 +2,56 @@ import axios from 'axios';
 
 const URL = 'http://localhost:8080';
 
+const instance = axios.create({
+    baseURL: 'http://localhost:8080',
+    timeout: 5000
+});
+
 export class APICalls {
     constructor() {}
 
     static loginUser(loginParams) {
-        return axios({
+        return instance({
             method: "post",
-            url: URL + '/user/login',
+            url: '/user/login',
             data: loginParams
         });
     }
 
     static getUser(userId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/user/' + userId,
+            url: '/user/' + userId,
         });
     }
     
     static getUsersList() {
-        return axios({
+        return instance({
             method: 'get',
-            url: URL + '/user'
+            url: '/user'
         });
     }
 
     static addNewUser(newUserData) {
-        return axios({
+        return instance({
             method: "post",
-            url: URL + '/user/',
+            url: '/user/',
             data: newUserData
         });
     }
 
-    static editUser(userData) {
-        // TODO
+    static editUser(userData, userId) {
+        return instance({
+            method: "put",
+            url: '/user/' + userId,
+            data: userData
+        });
     }
 
     static getUsersListNoAdmin() {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/user/',
+            url: '/user/',
             headers: {
                 query: JSON.stringify({ "isAdmin": false })
             }
@@ -50,127 +59,127 @@ export class APICalls {
     }
 
     static addNewUserStoryToProject(newUserStoryObj) {
-        return axios({
+        return instance({
             method: "post",
-            url: URL + '/story/',
+            url: '/story/',
             data: newUserStoryObj
         });
     }
 
     static getProjectsList() {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/project/',
+            url: '/project/',
         });
     }
 
-    static getStoriesList(storyId) {
-        return axios({
-            method: "get",
-            url: URL + '/story/' + storyId,
-        });
-    }
-
-    static addNewProject(newProjectObj) {
-        return axios({
+    static createProject(newProjectObj) {
+        return instance({
             method: "post",
-            url: URL + '/project/',
+            url: '/project/',
             data: newProjectObj
         });
     }
 
     static updateProject(updatedProjObj, projectId) {
-        return axios({
+        return instance({
             method: "put",
-            url: URL + '/project/' + projectId,
+            url: '/project/' + projectId,
             data: updatedProjObj
         });
     }
 
     static getProjectBasedOnUserId(userId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/project/user/' + userId,
+            url: '/project/user/' + userId,
         });
     }
 
     static getProjectId(projectId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/project/' + projectId
+            url: '/project/' + projectId
         });
     }
 
-    static createNewSprint(createSprintObj) {
-        return axios({
+    static createNewSprint(sprintData) {
+        return instance({
             method: "post",
-            url: URL + '/sprint/',
-            data: createSprintObj
+            url: '/sprint/',
+            data: sprintData
         });
     }
     
     static updateSprint(sprintId, updateObject) {
-        return axios({
+        return instance({
             method: "put",
-            url: URL + '/sprint/' + sprintId,
+            url: '/sprint/' + sprintId,
             data: updateObject
         });
     }
 
     static getProjectSprints(projectId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/sprint/all/' + projectId
+            url: '/sprint/all/' + projectId
         });
     }
 
     static getProjectBacklog(projectId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/story/backlog/' + projectId,
+            url: '/story/backlog/' + projectId,
         });
     }
 
     static getActiveSprint(projectId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/sprint/active/' + projectId,
+            url: '/sprint/active/' + projectId,
         });
     }
 
     static getUnfinishedSprints(projectId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/sprint/unfinished/' + projectId,
+            url: '/sprint/unfinished/' + projectId,
         });
     }
 
-    static getDoneStories(projectId) {
-        return axios({
+    static getAllStoriesForSprint(projectId, sprintId) {
+        return instance({
             method: "get",
-            url: URL + '/story/done/' + projectId,
+            url: '/story/sprint/' + projectId + '/' + sprintId
+        });
+    }
+
+    static getCompletedStoriesInCurrentSprint(projectId, sprintId) {
+        return instance({
+            method: "get",
+            url: '/story/done/' + projectId + '/' + sprintId
         });
     }
 
     static getStoriesInsideCurrentSprint(projectId, sprintId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/story/sprint/' + projectId + '/' + sprintId,
+            url: '/story/sprint/' + projectId + '/' + sprintId,
         });
     }
 
     static updateUserStory(updatedProjObj, storyId) {
-        return axios({
+        return instance({
             method: "put",
-            url: URL + '/story/' + storyId,
+            url: '/story/' + storyId,
             data: updatedProjObj
         });
     }
 
     static addStoriesToActiveSprint(stories, sprintId) {
-        return axios({
+        return instance({
             method: "put",
-            url: URL + '/story/add-to-sprint/' + sprintId,
+            url: '/story/add-to-sprint/' + sprintId,
             data: {
                 stories
             }
@@ -178,54 +187,54 @@ export class APICalls {
     }
 
     static deleteUserStory(storyId) {
-        return axios({
+        return instance({
             method: "delete",
-            url: URL + '/story/' + storyId
+            url: '/story/' + storyId
         });
     }
 
     static addNewUserTask(newUserTaskObj) {
-        return axios({
+        return instance({
             method: "post",
-            url: URL + '/task/',
+            url: '/task/',
             data: newUserTaskObj
         });
     }
 
     static updateUserTask(updatedUserTaskObj, taskId) {
-        return axios({
+        return instance({
             method: "put",
-            url: URL + '/task/' + taskId,
+            url: '/task/' + taskId,
             data: updatedUserTaskObj
         });
     }
 
     static getTasksInsideCurrentStory(storyId) {
-        return axios({
+        return instance({
             method: "get",
-            url: URL + '/task/story/' + storyId
+            url: '/task/story/' + storyId
         });
     }
 
     static deleteUserTask(taskId) {
-        return axios({
+        return instance({
             method: "delete",
-            url: URL + '/task/' + taskId
+            url: '/task/' + taskId
         });
     }
 
     static assignToMe(storyId, taskId, taskObject) {
-        return axios({
+        return instance({
             method: "put",
-            url: URL + '/task/assign/story/' + storyId + '?taskId=' + taskId,
+            url: '/task/assign/story/' + storyId + '?taskId=' + taskId,
             data: taskObject
         });
     }
 
     static setActiveStatus(taskId, isActive) {
-        return axios({
+        return instance({
             method: "put",
-            url: URL + '/task/active/' + taskId,
+            url: '/task/active/' + taskId,
             data: {
                 isActive
             }

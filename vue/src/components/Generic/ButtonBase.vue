@@ -1,12 +1,12 @@
 <template>
     <v-btn
             :class="`main-button ${classes ? classes : ''} ${isDisabled ? 'main-button--disabled' : ''}`"
-            :disabled="isDisabled"
+            :disabled="isDisabled ||isLoading"
             @click="buttonClicked"
             color="#3093A0"
             depressed
-            dark
             :type="type"
+            :loading="isLoading"
     >
         {{msg}}
     </v-btn>
@@ -19,7 +19,8 @@
             msg: String,
             isDisabled: Boolean,
             type: String,
-            classes: String
+            classes: String,
+            isLoading: Boolean
         },
         methods: {
             buttonClicked() {
@@ -32,11 +33,10 @@
 <style scoped>
     .main-button {
         padding: 0 20px;
-        font-weight: bold;
-        width: fit-content;
         min-width: 15px;
-        float: right;
         margin: 0;
+        float: right;
+        color: #ffffff !important;
     }
     
     .main-button--disabled.theme--dark.v-btn:not(.v-btn--icon):not(.v-btn--flat) {

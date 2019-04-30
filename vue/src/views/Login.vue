@@ -1,12 +1,46 @@
 <template>
     <div id="wrapper">
         <div class="login-background"></div>
-        
+
         <v-card class="loginContainer">
             <v-layout column>
                 <h1>Prijava v sistem</h1>
 
-                <UserMainForm id="mainLogin" @loginSubmit="loginSubmit"/>
+                <v-form
+                        ref="form"
+                        lazy-validation
+                        @submit.prevent="login"
+                >
+                    <v-text-field
+                            color="#3093A0"
+                            prepend-icon="person"
+                            class="inputField"
+                            v-model="userData.username"
+                            :rules="[v => !!v || 'Uporabniško ime ne sme biti prazno']"
+                            label="Uporabniško ime"
+                            required
+                            :disabled="isLoggingIn"
+                            focus
+                    ></v-text-field>
+
+                    <v-text-field
+                            color="#3093A0"
+                            prepend-icon="lock"
+                            class="inputField"
+                            :rules="[v => !!v || 'Geslo ne sme biti prazno']"
+                            v-model="userData.password"
+                            label="Geslo"
+                            :type="'password'"
+                            :disabled="isLoggingIn"
+                            required
+                    ></v-text-field>
+
+                    <ButtonBase 
+                            msg="Prijava" 
+                            type="submit" 
+                            :isLoading="isLoggingIn"
+                    ></ButtonBase>
+                </v-form>
             </v-layout>
 
             <AlertBox :message="alert.message" :type="alert.type" @close="closeAlert"></AlertBox>
@@ -16,42 +50,57 @@
 
 <script>
     import { APICalls } from "../utils/apiCalls.js";
-    import UserMainForm from "../components/Custom/UserMainForm";
     import AlertBox from "../components/Generic/AlertBox";
+    import ButtonBase from "../components/Generic/ButtonBase";
 
     export default {
         name: 'userLogin',
         created() {
         },
         components: {
-            AlertBox,
-            UserMainForm
+            ButtonBase,
+            AlertBox
         },
         data() {
             return {
                 alert: {
                     type: '',
                     message: ''
-                }
+                },
+                userData: {
+                    username: '',
+                    password: ''
+                },
+                isLoggingIn: false
             };
         },
         methods: {
-            loginSubmit(objLogin) {
+            login() {
                 const vm = this;
 
-                APICalls.loginUser(objLogin).then(
-                    (res) => {
+                if (!vm.$refs.form.validate()) {
+                    return;
+                }
+
+                vm.isLoggingIn = true;
+
+                APICalls.loginUser(vm.userData)
+                    .then((res) => {
                         vm.$store.commit('login', res.data);
 
                         vm.$router.push('/');
-                    },
-                    (error) => {
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+                        
                         vm.alert = {
                             type: 'error',
                             message: 'Prijava je bila neuspešna'
                         }
-                    }
-                );
+                    })
+                    .finally(() => {
+                        vm.isLoggingIn = false;
+                    });
             },
 
             closeAlert() {
@@ -72,7 +121,7 @@
         align-items: center;
         position: relative;
     }
-    
+
     .login-background {
         position: absolute;
         left: 0;
@@ -81,7 +130,6 @@
         height: 50%;
         background-color: #2E354C;
     }
-    
 
     .loginContainer {
         max-width: 600px;

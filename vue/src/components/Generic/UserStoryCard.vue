@@ -34,10 +34,10 @@
                     </div>
                 </v-layout>
                 
-                <v-divider v-if="this.story.done === false || isFinishingStory"></v-divider>
+                <v-divider v-if="this.story.done === false || isFinishingStory || viewOnly"></v-divider>
 
                 <v-layout justify-end>
-                    <template v-if="!isFinishingStory">
+                    <template v-if="!isFinishingStory && !viewOnly">
                         <div id="addToSprint" v-if="this.story.sprintId === null">
                             <v-layout align-end justify-end row>
                                 <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
@@ -56,10 +56,17 @@
                         </div>
                     </template>
 
-                    <div id="finishTask" v-else>
+                    <div id="finishTask" v-else-if="isFinishingStory">
                         <v-layout align-end justify-end row fill-height>
                             <FinishUserStoryDialog :story="this.story" v-on:finishedStory="finishStory"
                                                  :fullEdit="true"></FinishUserStoryDialog>
+                        </v-layout>
+                    </div>
+
+                    <div id="viewTask" v-else-if="viewOnly">
+                        <v-layout align-end justify-end row fill-height>
+                            <ViewUserStoryDialog :story="this.story"
+                                                 :fullEdit="true"></ViewUserStoryDialog>
                         </v-layout>
                     </div>
                 </v-layout>
@@ -72,13 +79,15 @@
     import { APICalls } from "../../utils/apiCalls"
     import EditUserStoryDialog from "../Custom/EditUserStoryDialog";
     import FinishUserStoryDialog from "../Custom/FinishUserStoryDialog";
+    import ViewUserStoryDialog from "../Custom/ViewUserStoryDialog";
 
     export default {
         name: "UserStoryCard",
-        components: { FinishUserStoryDialog, EditUserStoryDialog },
+        components: { ViewUserStoryDialog, FinishUserStoryDialog, EditUserStoryDialog },
         props: {
             story: Object,
             isFinishingStory: Boolean,
+            viewOnly: Boolean,
             currentSprint: Object
         },
         data: () => ({

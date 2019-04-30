@@ -17,7 +17,8 @@ const store = new Vuex.Store({
             isAdmin: false
         },
         editingProject: {},
-        isAllowedRoute: true,
+        currentSprint: {},
+        isAllowedRoute: true
     },
     mutations: {
         login(state, userData) {
@@ -45,6 +46,10 @@ const store = new Vuex.Store({
         
         editProject(state, project) {
             state.editingProject = project;
+        },
+        
+        editCurrentSprint(state, sprint) {
+            state.currentSprint = sprint;
         }
     },
     getters: {
@@ -58,6 +63,10 @@ const store = new Vuex.Store({
         
         editingProject(state) {
             return state.editingProject;
+        },
+        
+        currentSprint(state) {
+            return state.currentSprint;
         }
 
     },

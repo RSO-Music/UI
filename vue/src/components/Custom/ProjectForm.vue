@@ -37,7 +37,7 @@
                                     v-model="assignedUser.role"
                                     :items="$userProjectRoles"
                                     :rules="[v => !!v || 'Izberite vlogo']"
-                                    label="Uporabniška vloga"
+                                    label="Uporabniške vloge"
                                     hide-details
                                     required
                                     flat
@@ -52,36 +52,43 @@
                 </v-card>
             </div>
             <div id="formBottom">
-                <div id="userSearch">
-                    <v-select
-                            color="#3093A0"
-                            prepend-icon="supervised_user_circle"
-                            v-model="selectedUser._id"
-                            :items="users"
-                            :item-text="(user) => {
+                <v-layout>
+                    <v-flex xs5>
+                        <v-select
+                                color="#3093A0"
+                                prepend-icon="supervised_user_circle"
+                                v-model="selectedUser._id"
+                                :items="users"
+                                :item-text="(user) => {
                                 return `${user.firstName} ${user.lastName ? user.lastName : ''}`;
                             }"
-                            no-data-text="Ni najdenih uporabnikov"
-                            item-value="_id"
-                            label="Izberite uporabnika"
-                            hide-details
-                            required
-                            flat
-                    ></v-select>
-
-                    <v-select
-                            color="#3093A0"
-                            prepend-icon="label"
-                            v-model="selectedUser.role"
-                            :items="$userProjectRoles"
-                            label="Uporabniška vloga"
-                            hide-details
-                            multiple
-                            flat
-                    ></v-select>
-
-                    <ButtonOutline msg="+" @clicked="addUserToProject"></ButtonOutline>
-                </div>
+                                no-data-text="Ni najdenih uporabnikov"
+                                item-value="_id"
+                                label="Izberite uporabnika"
+                                hide-details
+                                required
+                                flat
+                        ></v-select>
+                    </v-flex>
+                    <v-flex xs6>
+                        <v-select
+                                color="#3093A0"
+                                prepend-icon="label"
+                                v-model="selectedUser.role"
+                                :items="$userProjectRoles"
+                                label="Uporabniške vloge"
+                                hide-details
+                                multiple
+                                flat
+                        ></v-select>
+                    </v-flex>
+                    
+                    <v-flex xs1>
+                        <v-layout align-end justify-center fill-height>
+                            <ButtonOutline msg="+" @clicked="addUserToProject"></ButtonOutline>
+                        </v-layout>
+                    </v-flex>
+                </v-layout>
             </div>
         </v-layout>
         

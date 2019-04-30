@@ -22,19 +22,22 @@ module.exports = {
         UserModel.findOne({ username: username }, function (err, User) {
             if (err) {
                 return res.status(500).json({
-                    message: 'Error when getting User.',
+                    message: 'Pri prijavi je prišlo do napake',
                     error: err
                 });
             }
+            
             if (!User) {
-                return res.status(404).json({
-                    message: 'Incorrect usename or password'
+                return res.status(500).json({
+                    message: 'Napačno uporabniško ime ali geslo'
                 });
             }
             if (User.password === password)
                 return res.json(User);
             else
-                return res.status(403).send("Incorrect username and password combination.")
+                return res.status(500).json({
+                    message: 'Napačno uporabniško ime ali geslo'
+                });
         });
     },
 
