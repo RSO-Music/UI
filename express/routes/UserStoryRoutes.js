@@ -5,7 +5,7 @@ const UserStoryController = require('../controllers/UserStoryController.js');
 router.get('/', UserStoryController.findAll);
 
 
-router.get('/done/:projectId', UserStoryController.findFinishedStories);
+router.get('/done/:projectId/:sprintId', UserStoryController.findFinishedStories);
 
 
 router.get('/sprint/:projectId/:id', UserStoryController.findStoriesInSprint);

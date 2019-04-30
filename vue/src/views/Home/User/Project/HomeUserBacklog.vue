@@ -45,7 +45,7 @@
             
             <v-flex sm12 m4>
                 <v-layout column id="assigned" class="backlog-section">
-                    <h2>Zgodbe aktivnega Sprinta <span v-if="currentSprint">({{currentSprint.name}})</span></h2>
+                    <h2>Zgodbe dodeljene aktivnemu Sprintu</h2>
                     
                     <template v-if="currentSprint">
                         <template v-if="storiesInCurrentSprint.length">
@@ -67,7 +67,7 @@
             
             <v-flex sm12 m4 ml-4>
                 <v-layout column id="completed" class="backlog-section">
-                    <h2>Zaključene zgodbe</h2>
+                    <h2>Zaključene zgodbe aktivnega Sprinta</h2>
 
                     <template v-if="completedStories.length">
                         <div class="storyContainer" v-for="story in completedStories" :key="story._id">
@@ -101,9 +101,8 @@
             UserStoryCard, EditUserStoryDialog
         },
         created() {
+            this.getActiveSprint();
             this.getStoriesInBacklog();
-            this.getStoriesInCurrentSprint();
-            this.getCompletedStories();
         },
         props: {
             project: Object
@@ -127,32 +126,36 @@
                     }
                 );
             },
-            getStoriesInCurrentSprint() {
+            getActiveSprint() {
                 APICalls.getActiveSprint(this.$route.params.projectId).then(
                     (rs) => {
                         this.currentSprint = rs.data;
-                        APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.currentSprint._id).then(
-                            (rs) => {
-                                //SHOW ONLY NOT DONE TASKS
-                                this.storiesInCurrentSprint = rs.data.filter(function (d) {
-                                    return !d.done;
-                                });
-                            },
-                            (error) => {
-                            }
-                        );
                     },
                     (error) => {
                         this.currentSprint = null;
                     }
                 );
             },
-            getCompletedStories() {
-                APICalls.getDoneStories(this.$route.params.projectId).then(
+            getStoriesInCurrentSprint() {
+                APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.currentSprint._id).then(
+                    (rs) => {
+                        //SHOW ONLY NOT DONE TASKS
+                        this.storiesInCurrentSprint = rs.data.filter(function (d) {
+                            return !d.done;
+                        });
+                    },
+                    (error) => {
+                        console.log(error);
+                    }
+                );
+            },
+            getCompletedStoriesInCurrentSprint() {
+                APICalls.getCompletedStoriesInCurrentSprint(this.$route.params.projectId, this.currentSprint._id).then(
                     (rs) => {
                         this.completedStories = rs.data;
                     },
                     (error) => {
+                        console.log(error);
                     }
                 );
             },
@@ -201,10 +204,13 @@
                 this.storiesToAddToSprint = [];
 
                 this.getStoriesInBacklog();
-                
+            }
+        },
+        watch: {
+            currentSprint() {
                 this.getStoriesInCurrentSprint();
-                
-                this.getCompletedStories();
+
+                this.getCompletedStoriesInCurrentSprint();
             }
         }
     }

@@ -6,7 +6,7 @@
 
                 <ButtonBase classes="full-width" msg="Ustvari nov Sprint" @clicked="addNewSprint"></ButtonBase>
 
-                <SprintsList :sprints="sprintsList" @editSprint="setSprintToEdit"/>
+                <SprintsList :sprints="sprintsList" :categorize="true" @editSprint="setSprintToEdit" @viewSprint="setSprintToView"/>
             </v-flex>
             
             <v-flex xs8 ml-4>
@@ -61,6 +61,10 @@
 
             setSprintToEdit(sprintData) {
                 this.$refs.sprintForm.setSprintToEdit(JSON.parse(JSON.stringify(sprintData)));
+            },
+
+            setSprintToView(sprintData) {
+                this.$refs.sprintForm.setSprintToView(JSON.parse(JSON.stringify(sprintData)));
             }
         }
     }

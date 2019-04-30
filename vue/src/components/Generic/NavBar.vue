@@ -58,7 +58,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     header {
         height: 72px;
         width: 100%;

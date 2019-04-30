@@ -147,10 +147,10 @@ export class APICalls {
         });
     }
 
-    static getDoneStories(projectId) {
+    static getCompletedStoriesInCurrentSprint(projectId, sprintId) {
         return instance({
             method: "get",
-            url: '/story/done/' + projectId,
+            url: '/story/done/' + projectId + '/' + sprintId
         });
     }
 

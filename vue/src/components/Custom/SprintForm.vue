@@ -16,6 +16,7 @@
                     v-model="sprint.name"
                     :rules="[v => !!v || 'Ime sprinta ne sme biti prazno']"
                     required
+                    :disabled="!isEditable"
             ></v-text-field>
             <div id="sprintTime">
                 <v-menu
@@ -38,6 +39,7 @@
                                 readonly
                                 v-on="on"
                                 required
+                                :disabled="!isEditable"
                         ></v-text-field>
                     </template>
                     <v-date-picker v-model="sprint.startDate" no-title scrollable>
@@ -65,6 +67,7 @@
                                 readonly
                                 v-on="on"
                                 required
+                                :disabled="!isEditable"
                         ></v-text-field>
                     </template>
                     <v-date-picker v-model="sprint.endDate" no-title scrollable>
@@ -81,10 +84,11 @@
                     :rules="[ v => sprintValidation(v) || 'Vrednost hitrosti mora biti med 1 in 100']"
                     type="number"
                     required
+                    :disabled="!isEditable"
             ></v-text-field>
         </v-layout>
         
-        <v-layout justify-end>
+        <v-layout v-if="isEditable" justify-end>
             <ButtonBase
                     msg="Shrani"
                     @clicked="addSprint"
@@ -105,6 +109,7 @@
                 sprint: {},
                 valid: true,
                 isNew: true,
+                isEditable: true,
                 dateStart: false,
                 dateStop: false
             }
@@ -157,6 +162,13 @@
             
             setSprintToEdit(sprintData) {
                 this.sprint = sprintData;
+                this.isEditable = true;
+                this.isNew = false;
+            },
+
+            setSprintToView(sprintData) {
+                this.sprint = sprintData;
+                this.isEditable = false;
                 this.isNew = false;
             },
             
@@ -170,6 +182,7 @@
                 this.$refs.form.reset();
                 this.$refs.form.resetValidation();
                 this.isNew = true;
+                this.isEditable = true;
                 this.sprint = {};
             }
         },

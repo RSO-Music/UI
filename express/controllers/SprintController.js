@@ -38,7 +38,7 @@ module.exports = {
     findAllForProject(req, res) {
         SprintModel.find({
             projectId: req.params.projectId
-        }, function (err, Sprint) {
+        }, function (err, Sprints) {
             if (err) {
                 return res.status(500).json({
                     message: 'Error when getting Sprint.',
@@ -46,13 +46,13 @@ module.exports = {
                 });
             }
 
-            if (!Sprint) {
+            if (!Sprints) {
                 return res.status(404).json({
                     message: 'No such Sprint.'
                 });
             }
             
-            return res.json(Sprint);
+            return res.json(Sprints);
         });
     },
 

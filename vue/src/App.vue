@@ -131,4 +131,13 @@
     .theme-color {
         background-color: rgb(48, 147, 160)
     }
+    
+    .dialog-titlebar {
+        background-color: #2E354C;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        height: 72px;
+        width: 100%;
+    }
 </style>

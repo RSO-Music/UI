@@ -17,7 +17,7 @@
             
             <v-layout row>
                 <v-flex xs3 v-for="project in projectsForUser" :key="project._id">
-                    <v-card class="userProjectCard ma-2">
+                    <v-card class="dashboard-project-card ma-2">
                         <v-card-title primary-title>
                             <div>
                                 <div class="headline">{{project.name}}</div>
@@ -91,5 +91,6 @@
 </script>
 
 <style scoped>
-
+    .dashboard-project-card {
+    }
 </style>

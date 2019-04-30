@@ -23,13 +23,11 @@
                         v-model="valid"
                         lazy-validation
                 >
-                    <div id="toolbar">
-                        <div id="topBarLeft">
-                            <v-layout justify-center>
-                                <h2 class="pl-3 pb-0 white--text" v-if="story._id">UREDI ZGODBO</h2>
-                                <h2 class="pl-3 pb-0 white--text" v-else>DODAJ NOVO ZGODBO</h2>
-                            </v-layout>
-                        </div>
+                    <div class="dialog-titlebar">
+                        <v-layout>
+                            <h2 class="pl-3 pb-0 white--text" v-if="story._id">UREDI ZGODBO</h2>
+                            <h2 class="pl-3 pb-0 white--text" v-else>DODAJ NOVO ZGODBO</h2>
+                        </v-layout>
                     </div>
 
                     <v-tabs

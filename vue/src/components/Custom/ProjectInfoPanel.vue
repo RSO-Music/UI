@@ -9,8 +9,8 @@
                 <p class="grey--text text-uppercase mb-2">Aktivni Sprint:</p>
 
                 <v-flex class="ml-4 mb-2" v-if="currentSprint">
-                    <p>{{currentSprint.name}} ({{currentSprint.startDate | moment('DD. MM. YYYY')}} -
-                        {{currentSprint.endDate | moment('DD. MM. YYYY')}})</p>
+                    <h2 class="black--text">{{currentSprint.name}} ({{currentSprint.startDate | moment('DD. MM. YYYY')}} -
+                        {{currentSprint.endDate | moment('DD. MM. YYYY')}})</h2>
                 </v-flex>
                 <v-flex class="ml-4 mb-2" v-else>
                     <p>Trenutno ni aktivnega Sprinta</p>
