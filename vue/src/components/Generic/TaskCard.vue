@@ -18,17 +18,22 @@
 					</div>
 				</v-flex>
 				<v-flex xs3>
-					<v-btn flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null">
+					<v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null">
 						Assign to me
 					</v-btn>
 				</v-flex>
 				<v-flex xs3>
-                    <v-layout justify-end>
+                    <v-layout v-if="!viewOnly" justify-end>
                         <v-btn flat icon color="#3093A0" v-on:click="editTask" :disabled="disabled">
                             <v-icon>edit</v-icon>
                         </v-btn>
                         <v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled">
                             <v-icon>delete</v-icon>
+                        </v-btn>
+                    </v-layout>
+                    <v-layout v-else justify-end>
+                        <v-btn flat icon color="#3093A0" v-on:click="editTask">
+                            <v-icon>info_outline</v-icon>
                         </v-btn>
                     </v-layout>
                 </v-flex>
@@ -43,7 +48,8 @@
 		name: "TaskCard",
 		props: {
 			task: Object,
-			disabled: Boolean
+			disabled: Boolean,
+			viewOnly: Boolean
 		},
 		data: () => ({
 			array: []

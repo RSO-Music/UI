@@ -1,7 +1,6 @@
 <template>
     <div>
-        <v-tabs :key="active"
-                v-model="active"
+        <v-tabs
                 dark
                 slider-color="#A2E0E0"
                 fixed-tabs
@@ -28,16 +27,16 @@
                         :key="1">
                 <HomeUserProductBacklog :project="selectedProject"></HomeUserProductBacklog>
             </v-tab-item>
-            
+
             <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="2">
                 <HomeUserProjectEdit @projectEditUpdate="projectEditUpdate"
                                      :selectedProject="selectedProject"/>
             </v-tab-item>
-            
+
             <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="4">
-                <HomeUserSprint/>
+                <HomeUserSprint @sprintsUpdated="onSprintsUpdated"/>
             </v-tab-item>
-            
+
             <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="5">
                 <FinishSprints/>
             </v-tab-item>
@@ -64,58 +63,35 @@
         },
         created() {
             this.getSelectedProject();
+
             this.getCurrentSprint();
         },
-        watch: {
-            active(newVal, oldVal) {
-                if (newVal !== oldVal) {
-                    if (this.userProjectRole.includes('scrum_master')) {
-                        if (this.active === 0) {
-                            this.$router.push({
-                                name: 'homeUserProductBackLog',
-                                params: { projectId: this.$route.params.projectId }
-                            });
-                        } else if (this.active === 1) {
-                            this.$router.push({
-                                name: 'homeUserProjectEdit',
-                                params: { projectId: this.$route.params.projectId }
-                            });
-                        } else if (this.active === 2) {
-                            this.$router.push({
-                                name: 'homeUserSprintManagemnet',
-                                params: { projectId: this.$route.params.projectId }
-                            });
-                        } else if (this.active === 3) {
-                            this.$router.push({
-                                name: 'finishSprints',
-                                params: { projectId: this.$route.params.projectId }
-                            });
-                        }
-                    } else if (this.userProjectRole.includes('product_owner')) {
-                        if (this.active === 0) {
-                            this.$router.push({
-                                name: 'homeUserProductBackLog',
-                                params: { projectId: this.$route.params.projectId }
-                            });
-                        }
-                    } else if (this.userProjectRole.includes('developer')) {
-                        this.$router.push({
-                            name: 'homeUserProductBackLog',
-                            params: { projectId: this.$route.params.projectId }
-                        });
-                    }
-                }
-            }
+        mounted() {
+            this.setGetCurrentSprintTimeout();
+        },
+        destroyed() {
+            this.setTimeout = false;
+
+            this.$store.commit('editProject', null);
+            this.$store.commit('editCurrentSprint', null);
         },
         data: () => ({
-            active: 0,
             selectedProject: {},
             userProjectRole: '',
             currentSprint: {},
-            endDate: '',
-            startDate: ''
+            setTimeout: true
         }),
         methods: {
+            setGetCurrentSprintTimeout() {
+                if (this.setTimeout) {
+                    setTimeout(() => {
+                        this.getCurrentSprint();
+
+                        this.setGetCurrentSprintTimeout();
+                    }, 30000);
+                }
+            },
+
             getSelectedProject() {
                 APICalls.getProjectId(this.$route.params.projectId).then(
                     (rs) => {
@@ -134,9 +110,10 @@
                     }
                 );
             },
+
             projectEditUpdate(editProjectObj) {
                 const vm = this;
-                
+
                 let objForApi = JSON.parse(JSON.stringify(editProjectObj));
                 let usersAssigned = [];
                 objForApi.users.forEach(function (userAssigned1) {
@@ -153,13 +130,13 @@
                 delete objForApi['_id'];
 
                 APICalls.updateProject(objForApi, projectId).then(
-                    (rs) => {
+                    (res) => {
                         this.selectedProject = editProjectObj;
 
                         this.$store.commit('editProject', editProjectObj);
 
                         if (!this.selectedProject.users.find(x => x.user._id === this.$store.getters.currentUser._id)) {
-                            return this.$router.push({ name: 'userMain' });
+                            return this.$router.push({ name: 'dashboard' });
                         } else {
                             this.$forceUpdate();
                             this.userProjectRole = this.selectedProject.users.find(x => x.user._id === this.$store.getters.currentUser._id).role;
@@ -172,7 +149,7 @@
                     },
                     (error) => {
                         console.log(error);
-                        
+
                         vm.$toasted.error('Pri urejanju projekta je prišlo do napake', {
                             duration: 3000,
                             position: 'bottom-center'
@@ -180,15 +157,24 @@
                     }
                 );
             },
+
+            onSprintsUpdated() {
+                this.getCurrentSprint();
+            },
+
             getCurrentSprint() {
-                APICalls.getActiveSprint(this.$route.params.projectId).then(
-                    (rs) => {
-                        this.currentSprint = rs.data;
-                    },
-                    (error) => {
-                        this.currentSprint = null;
-                    }
-                );
+                APICalls.getActiveSprint(this.$route.params.projectId)
+                    .then(
+                        (res) => {
+                            this.currentSprint = res.data;
+                        },
+                        (error) => {
+                            this.currentSprint = null;
+                        }
+                    )
+                    .finally(() => {
+                        this.$store.commit('editCurrentSprint', this.currentSprint);
+                    })
             }
         }
     }

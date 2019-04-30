@@ -6,9 +6,10 @@
 
                 <ButtonBase classes="full-width" msg="Ustvari nov Sprint" @clicked="addNewSprint"></ButtonBase>
 
-                <SprintsList :sprints="sprintsList" :categorize="true" @editSprint="setSprintToEdit" @viewSprint="setSprintToView"/>
+                <SprintsList :sprints="sprintsList" :isLoaded="loaded.sprintsList" :categorize="true" @editSprint="setSprintToEdit"
+                             @viewSprint="setSprintToView"/>
             </v-flex>
-            
+
             <v-flex xs8 ml-4>
                 <SprintForm ref="sprintForm" @sprintEdited="onSprintEdited"/>
             </v-flex>
@@ -21,7 +22,7 @@
     import SprintsList from "../../../../components/Generic/SprintsList";
     import ButtonBase from "../../../../components/Generic/ButtonBase";
     import { APICalls } from "../../../../utils/apiCalls";
-    
+
     export default {
         name: 'homeUserSprint',
         components: {
@@ -31,7 +32,10 @@
         },
         data() {
             return {
-                sprintsList: []
+                sprintsList: [],
+                loaded: {
+                    sprintsList: false
+                }
             }
         },
         mounted() {
@@ -40,6 +44,8 @@
         methods: {
             onSprintEdited() {
                 this.reloadSprints();
+                
+                this.$emit('sprintsUpdated');
             },
 
             addNewSprint() {
@@ -48,15 +54,21 @@
 
             reloadSprints() {
                 const vm = this;
+                
+                vm.loaded.sprintsList = false;
 
-                APICalls.getProjectSprints(vm.$route.params.projectId).then(
-                    (res) => {
-                        vm.sprintsList = res.data;
-                    },
-                    (error) => {
-                        console.log('An error occured while fetching sprints');
-                    }
-                );
+                APICalls.getProjectSprints(vm.$route.params.projectId)
+                    .then(
+                        (res) => {
+                            vm.sprintsList = res.data;
+                        },
+                        (error) => {
+                            console.log('An error occured while fetching sprints');
+                        }
+                    )
+                    .finally(() => {
+                        vm.loaded.sprintsList = true;    
+                    });
             },
 
             setSprintToEdit(sprintData) {

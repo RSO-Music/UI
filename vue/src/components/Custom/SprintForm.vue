@@ -1,5 +1,6 @@
 <template>
-    <v-form
+    <div>
+        <v-form
             class="form-wrapper"
             ref="form"
             v-model="valid"
@@ -87,7 +88,7 @@
                     :disabled="!isEditable"
             ></v-text-field>
         </v-layout>
-        
+
         <v-layout v-if="isEditable" justify-end>
             <ButtonBase
                     msg="Shrani"
@@ -95,18 +96,49 @@
             ></ButtonBase>
         </v-layout>
     </v-form>
+
+        <template v-if="!isNew">
+            <v-layout mt-4>
+                <h2 class="section-title">Uporabniške zgodbe Sprinta</h2>
+            </v-layout>
+
+            <v-flex xs12>
+                <template v-if="stories.length">
+                    <v-layout>
+                        <v-flex xs6 v-for="story of stories" :key="story._id">
+                            <div class="ma-2">
+                                <UserStoryCard :story="story"
+                                               :viewOnly="true"
+                                               :currentSprint="sprint"
+                                />
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </template>
+
+                <div v-else>
+                    <h2 class="backlog-empty-text text-xs-center grey--text">Ni zgodb</h2>
+                </div>
+            </v-flex>
+        </template>
+    </div>
 </template>
 
 <script>
     import ButtonBase from "../Generic/ButtonBase";
     import { APICalls } from "../../utils/apiCalls";
+    import UserStoryCard from "../Generic/UserStoryCard";
 
     export default {
         name: "SprintForm",
-        components: { ButtonBase },
+        components: { UserStoryCard, ButtonBase },
         data() {
             return {
                 sprint: {},
+                stories: [],
+                loaded: {
+                    stories: false
+                },
                 valid: true,
                 isNew: true,
                 isEditable: true,
@@ -164,12 +196,31 @@
                 this.sprint = sprintData;
                 this.isEditable = true;
                 this.isNew = false;
+                
+                this.fetchStories();
             },
 
             setSprintToView(sprintData) {
                 this.sprint = sprintData;
                 this.isEditable = false;
                 this.isNew = false;
+
+                this.fetchStories();
+            },
+            
+            fetchStories() {
+                this.loaded.stories = false;
+                
+                APICalls.getAllStoriesForSprint(this.$store.getters.editingProject._id, this.sprint._id)
+                    .then((res) => {
+                        this.stories = res.data;
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+                    })
+                    .finally(() => {
+                        this.loaded.stories = true;
+                    });
             },
             
             sprintValidation(val) {
@@ -184,6 +235,7 @@
                 this.isNew = true;
                 this.isEditable = true;
                 this.sprint = {};
+                this.stories = [];
             }
         },
         computed: {

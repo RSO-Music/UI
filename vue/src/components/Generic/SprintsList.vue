@@ -1,52 +1,61 @@
 <template>
     <div id="projectWrapper">
-        <template v-if="sprints && sprints.length">
-            <v-layout v-if="categorize">
-                <v-flex xs12>
-                    <v-layout column mt-2>
-                        <separator title="Aktivni Sprint"></separator>
+        <template v-if="isLoaded">
+            <template v-if="sprints && sprints.length">
+                <v-layout v-if="categorize">
+                    <v-flex xs12>
+                        <v-layout column mt-2>
+                            <separator title="Aktivni Sprint"></separator>
 
-                        <SprintCard v-if="getActiveSprint" :sprint="getActiveSprint"
-                                    @viewSprint="viewSprint(getActiveSprint)"></SprintCard>
-                        <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni aktivnega Sprinta</h2>
+                            <SprintCard v-if="getActiveSprint" :sprint="getActiveSprint"
+                                        @viewSprint="viewSprint(getActiveSprint)"></SprintCard>
+                            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni aktivnega Sprinta</h2>
 
-                    </v-layout>
+                        </v-layout>
 
-                    <v-divider></v-divider>
+                        <v-divider></v-divider>
 
-                    <v-layout column>
-                        <separator title="Prihodnji Sprinti"></separator>
+                        <v-layout column>
+                            <separator title="Prihodnji Sprinti"></separator>
 
-                        <template v-if="getFutureSprints.length">
-                            <SprintCard v-for="sprint in getFutureSprints" :key="sprint._id" :sprint="sprint"
-                                        :editable="true"
-                                        @editSprint="editSprint(sprint)"></SprintCard>
-                        </template>
-                        <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov v prihodnosti</h2>
-                    </v-layout>
+                            <template v-if="getFutureSprints.length">
+                                <SprintCard v-for="sprint in getFutureSprints" :key="sprint._id" :sprint="sprint"
+                                            :editable="true"
+                                            @editSprint="editSprint(sprint)"></SprintCard>
+                            </template>
+                            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov v prihodnosti</h2>
+                        </v-layout>
 
-                    <v-divider></v-divider>
+                        <v-divider></v-divider>
 
-                    <v-layout column>
-                        <separator title="Pretekli Sprinti"></separator>
+                        <v-layout column>
+                            <separator title="Pretekli Sprinti"></separator>
 
-                        <template v-if="getPastSprints.length">
-                            <SprintCard v-for="sprint in getPastSprints" :key="sprint._id" :sprint="sprint"
-                                        @viewSprint="viewSprint(sprint)"></SprintCard>
-                        </template>
-                        <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni preteklih Sprintov</h2>
-                    </v-layout>
-                </v-flex>
-            </v-layout>
-            <v-layout v-else>
-                <v-flex xs12>
-                    <SprintCard v-for="sprint in sprints" :key="sprint._id" :sprint="sprint"
-                                :editable="true"
-                                @editSprint="editSprint(sprint)"></SprintCard>
-                </v-flex>
-            </v-layout>
+                            <template v-if="getPastSprints.length">
+                                <SprintCard v-for="sprint in getPastSprints" :key="sprint._id" :sprint="sprint"
+                                            @viewSprint="viewSprint(sprint)"></SprintCard>
+                            </template>
+                            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni preteklih Sprintov</h2>
+                        </v-layout>
+                    </v-flex>
+                </v-layout>
+                <v-layout v-else>
+                    <v-flex xs12>
+                        <SprintCard v-for="sprint in sprints" :key="sprint._id" :sprint="sprint"
+                                    :editable="true"
+                                    @editSprint="editSprint(sprint)"></SprintCard>
+                    </v-flex>
+                </v-layout>
+            </template>
+            <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov</h2>
         </template>
-        <h2 v-else class="backlog-empty-text text-xs-center full-width">Ni Sprintov</h2>
+        <v-layout v-else justify-center>
+            <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+            ></v-progress-circular>
+        </v-layout>
     </div>
 </template>
 
@@ -62,6 +71,7 @@
         components: { Separator, SprintCard, ButtonOutline, ButtonBase },
         props: {
             sprints: Array,
+            isLoaded: Boolean,
             categorize: Boolean
         },
         methods: {

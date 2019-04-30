@@ -140,4 +140,12 @@
         height: 72px;
         width: 100%;
     }
+
+    .theme--light.v-input--is-disabled input, .theme--light.v-input--is-disabled textarea {
+        color: rgb(0, 0, 0);
+    }
+
+    .theme--light.v-select .v-chip--disabled, .theme--light.v-select .v-select__selection--disabled {
+        color: rgb(0, 0, 0);
+    }
 </style>

@@ -3,23 +3,23 @@
         <v-layout>
             <v-flex md8>
                 <v-flex>
-                    <h1>{{currentProject.name}}</h1>
+                    <h1>{{$store.getters.editingProject.name}}</h1>
                 </v-flex>
 
                 <p class="grey--text text-uppercase mb-2">Aktivni Sprint:</p>
 
-                <v-flex class="ml-4 mb-2" v-if="currentSprint">
-                    <h2 class="black--text">{{currentSprint.name}} ({{currentSprint.startDate | moment('DD. MM. YYYY')}} -
-                        {{currentSprint.endDate | moment('DD. MM. YYYY')}})</h2>
+                <v-flex class="ml-4 mb-2" v-if="$store.getters.currentSprint">
+                    <h2 class="black--text">{{$store.getters.currentSprint.name}} ({{$store.getters.currentSprint.startDate | moment('DD. MM. YYYY')}} -
+                        {{$store.getters.currentSprint.endDate | moment('DD. MM. YYYY')}})</h2>
                 </v-flex>
                 <v-flex class="ml-4 mb-2" v-else>
-                    <p>Trenutno ni aktivnega Sprinta</p>
+                    <h2 class="black--text">Trenutno ni aktivnega Sprinta</h2>
                 </v-flex>
 
                 <p class="grey--text text-uppercase mb-2">Osebe:</p>
 
                 <v-flex class="ml-4">
-                    <v-chip disabled v-for="{ user, role } in currentProject.users" :key="user._id">
+                    <v-chip disabled v-for="{ user, role } in $store.getters.editingProject.users" :key="user._id">
                         <v-avatar class="theme-color white--text">{{user.firstName[0].toUpperCase()}}</v-avatar>
                         <span class="black--text">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}} ({{getUserProjectRoles(role)}})</span>
                     </v-chip>
@@ -40,10 +40,11 @@
         name: 'ProjectInfoPanel',
         data() {
             return {
-                currentProject: {},
-                currentSprint: {},
                 unfinishedSprints: [],
-                userProjectRole: []
+                userProjectRole: [],
+                loaded: {
+                    userProjectRole: false
+                }
             };
         },
         mounted() {
@@ -54,49 +55,21 @@
         methods: {
             reloadData() {
                 const vm = this;
-
-                vm.getSelectedProject();
-
-                vm.getCurrentSprint();
                 
                 vm.getUnfinishedSprints();
             },
 
-            getSelectedProject() {
-                APICalls.getProjectId(this.$route.params.projectId).then(
-                    (res) => {
-                        console.log(res.data);
-
-                        this.currentProject = res.data;
-                        this.userProjectRole = this.currentProject.users.find(x => x.user._id === this.$store.getters.currentUser._id).role;
-                    },
-                    (error) => {
-                    }
-                );
-            },
-
-            getCurrentSprint() {
-                APICalls.getActiveSprint(this.$route.params.projectId).then(
-                    (res) => {
-                        this.currentSprint = res.data;
-                    },
-                    (error) => {
-                        this.currentSprint = null;
-                    }
-                );
-            },
-
             getUnfinishedSprints() {
-                APICalls.getUnfinishedSprints(this.$route.params.projectId).then(
-                    (res) => {
-                        console.log(res);
-                        
+                APICalls.getUnfinishedSprints(this.$route.params.projectId)
+                    .then((res) => {
                         this.unfinishedSprints = res.data;
-                    },
-                    (error) => {
-                        this.unfinishedSprints = [];
-                    }
-                );
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+                    })
+                    .finally(() => {
+                        this.loaded.unfinishedSprints = true;
+                    });
             },
 
             getUserProjectRoles(userRoles) {
@@ -105,15 +78,6 @@
                 return userRoles.map((currentUserRole) => {
                     return vm.$userProjectRoles.find((role) => role.value === currentUserRole).text;
                 }).join(', ');
-            }
-        },
-        computed: {
-            startDateFormat() {
-                return this.currentSprint.startDate;
-            },
-
-            endDateFormat() {
-                return this.currentSprint.endDate;
             }
         }
     }

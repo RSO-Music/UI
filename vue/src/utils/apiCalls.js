@@ -147,6 +147,13 @@ export class APICalls {
         });
     }
 
+    static getAllStoriesForSprint(projectId, sprintId) {
+        return instance({
+            method: "get",
+            url: '/story/sprint/' + projectId + '/' + sprintId
+        });
+    }
+
     static getCompletedStoriesInCurrentSprint(projectId, sprintId) {
         return instance({
             method: "get",
