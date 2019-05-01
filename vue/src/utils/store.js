@@ -16,8 +16,8 @@ const store = new Vuex.Store({
             loggedIn: false,
             isAdmin: false
         },
-        editingProject: {},
-        currentSprint: {},
+        editingProject: null,
+        currentSprint: null,
         isAllowedRoute: true
     },
     mutations: {

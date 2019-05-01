@@ -31,6 +31,10 @@
                             Osnovni podatki
                         </v-tab>
 
+                        <v-tab v-if="story.sprintId" key="2">
+                            Naloge
+                        </v-tab>
+
                         <v-tab-item key="1">
                             <v-container>
                                 <v-layout row>
@@ -144,6 +148,149 @@
                                 </v-layout>
                             </v-container>
                         </v-tab-item>
+
+                        <v-tab-item v-if="story.sprintId" key="2">
+                            <v-container pa-0>
+                                <v-layout>
+                                    <v-flex lg6 mr-1 pa-2 class="tasks-container">
+                                        <separator title="Nedodeljene"></separator>
+                                        <template v-if="unassignedTasks.length">
+                                            <task-card v-for="(task, index) in unassignedTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
+
+                                        <v-divider></v-divider>
+
+                                        <separator title="Dodeljene"></separator>
+
+                                        <template v-if="assignedTasks.length">
+                                            <task-card v-for="(task, index) in assignedTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
+
+                                        <v-divider></v-divider>
+
+                                        <separator title="Aktivne"></separator>
+
+                                        <template v-if="activeTasks.length">
+                                            <task-card v-for="(task, index) in activeTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
+
+                                        <v-divider></v-divider>
+
+                                        <separator title="Zaključene"></separator>
+                                        <template v-if="finishedTasks.length">
+                                            <task-card v-for="(task, index) in finishedTasks" :task="task"
+                                                       @editTask="changeTask"
+                                                       :key="task._id"
+                                                       :disabled="true"
+                                                       :viewOnly="true"
+                                            />
+                                        </template>
+                                        <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
+                                    </v-flex>
+
+
+                                    <v-flex v-if="editTask" lg6 ml-1 pa-4>
+                                        <h1 >Pregled naloge</h1>
+
+                                        <v-layout>
+                                            <v-flex x12>
+                                                <v-textarea
+                                                        color="#3093A0"
+                                                        prepend-icon="assignment"
+                                                        rows="1"
+                                                        label="Opis naloge"
+                                                        v-model="editTask.description"
+                                                        :disabled="true"
+                                                ></v-textarea>
+                                            </v-flex>
+                                        </v-layout>
+
+                                        <v-layout align-center justify-space-between row mb-4>
+                                            <v-flex xs4 mr-2>
+                                                <v-text-field
+                                                        class="mt-4"
+                                                        id="taskSpeed"
+                                                        color="#3093A0"
+                                                        prepend-icon="timer"
+                                                        label="Ocena časa"
+                                                        type="number"
+                                                        v-model="editTask.time"
+                                                        :disabled="true"
+                                                        min="1"
+                                                        flat
+                                                ></v-text-field>
+                                            </v-flex>
+                                            <v-flex xs4>
+                                                <v-select
+                                                        color="#3093A0"
+                                                        prepend-icon="person"
+                                                        v-model="editTask.assignee"
+                                                        :disabled="true"
+                                                        label="Razvijalec"
+                                                        :items="projectUsers"
+                                                        :item-text="({ user }) => {
+                                                    return `${user.firstName} ${user.lastName ? user.lastName : ''}`;
+                                                }"
+                                                        item-value="user._id"
+                                                        hide-details
+                                                        flat
+                                                ></v-select>
+                                            </v-flex>
+                                            <v-flex xs4 ml-2>
+                                                <v-select
+                                                        color="#3093A0"
+                                                        v-model="editTask.status"
+                                                        :disabled="true"
+                                                        :items="taskStatus"
+                                                        item-text="name"
+                                                        item-value="value"
+                                                        label="Status naloge"
+                                                        hide-details
+                                                        flat
+                                                ></v-select>
+                                            </v-flex>
+                                        </v-layout>
+
+                                        <v-layout mb-2 v-if="editTask._id">
+                                            <v-layout align-center v-if="editTask.assignee && !editTask.accepted">
+                                                <v-icon class="red--text">info_outline</v-icon> <span class="ml-2 red--text">Razvijalec naloge še ni sprejel</span>
+                                            </v-layout>
+
+                                            <v-layout align-center v-if="editTask.assignee && editTask.accepted">
+                                                <v-icon class="green--text">check_circle_outline</v-icon> <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
+                                            </v-layout>
+                                        </v-layout>
+
+                                        <v-layout mb-4 mt-4 v-if="editTask.assignee && editTask.accepted">
+                                            <v-flex>
+                                                <p><span class="grey--text">Število porabljenih ur:</span> {{editTask.activeHours}}</p>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-flex>
+                                    <v-flex v-else lg6 ml-1 pa-4>
+                                        <h1 >Izberite nalogo</h1>
+                                    </v-flex>
+                                </v-layout>
+                            </v-container>
+                        </v-tab-item>
                     </v-tabs>
                 </v-form>
             </v-card>
@@ -169,8 +316,37 @@
             finished: {
                 state: 'accept',
                 comment: ''
-            }
+            },
+            tasks: [],
+            taskStatus: [
+                {
+                    name: 'Novo',
+                    value: 'new'
+                },
+                {
+                    name: 'V delu',
+                    value: 'in_progress'
+                },
+                {
+                    name: 'Zaključeno',
+                    value: 'finished'
+                }
+            ],
+            editTask: null
         }),
+        created() {
+            if (this.story) {
+                if (this.story._id) {
+                    APICalls.getTasksInsideCurrentStory(this.story._id).then(
+                        (rs) => {
+                            this.tasks = rs.data;
+                        },
+                        (error) => {
+                            console.log(error);
+                        })
+                }
+            }
+        },
         methods: {
             finishStory() {
                 const updateObject = {};
@@ -206,8 +382,50 @@
             },
             closeDialog() {
                 this.dialog = false;
+            },
+            changeTask(task) {
+                this.editTask = JSON.parse(JSON.stringify(task));
             }
-		}
+		},
+        computed: {
+            unassignedTasks() {
+                //task is treated as unassigned if it has no assignee
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return !task.accepted;
+                    })
+                }
+            },
+            assignedTasks() {
+                //for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.accepted && task.status === 'new'
+                    })
+                }
+            },
+            activeTasks() {
+                //task is treated as active if it is assigned and is marked as 'in_progress'
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.asignee && task.status === 'in_progress'
+                    })
+                }
+            },
+            finishedTasks() {
+                //task is treated as finished if it is assigned and is marked as 'finished'
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.asignee && task.status === 'finished'
+                    })
+                }
+            },
+            projectUsers() {
+                let projectData = this.$store.getters.editingProject;
+
+                return projectData.users;
+            }
+        }
     }
 
 </script>

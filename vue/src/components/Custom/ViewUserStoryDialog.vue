@@ -31,7 +31,6 @@
 
                         <v-tab v-if="story.sprintId" key="2">
                             Naloge
-
                         </v-tab>
                         <v-tab-item key="1">
                             <v-container>
@@ -332,7 +331,6 @@
                 }
             ],
             editTask: null,
-            editingTask: false
         }),
         methods: {
             closeDialog() {
@@ -344,13 +342,9 @@
                     time: '',
                     status: 'new'
                 };
-
-                this.editingTask = false;
             },
             changeTask(task) {
                 this.editTask = JSON.parse(JSON.stringify(task));
-                
-                this.editingTask = true;
             }
 		},
 		computed: {
@@ -390,22 +384,6 @@
 				let projectData = this.$store.getters.editingProject;
 
                 return projectData.users;
-            },
-            canEditTasks() {
-                let projectData = this.$store.getters.editingProject;
-
-                let currentUser = this.$store.getters.currentUser;
-
-                let userInProject = projectData.users.find(function (user) {
-                    return user.user._id === currentUser._id;
-                });
-
-                return userInProject.role.includes('scrum_master') || userInProject.role.includes('developer');
-            },
-            isEditTaskValid() {
-                if (this.editTask) {
-                    return this.editTask.description && this.editTask.description.trim() !== '' && this.editTask.time;
-                }
             }
         },
         watch: {

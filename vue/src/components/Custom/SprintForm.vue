@@ -105,7 +105,7 @@
             <v-flex xs12>
                 <template v-if="stories.length">
                     <v-layout>
-                        <v-flex xs6 v-for="story of stories" :key="story._id">
+                        <v-flex xs4 v-for="story of stories" :key="story._id">
                             <div class="ma-2">
                                 <UserStoryCard :story="story"
                                                :viewOnly="true"
