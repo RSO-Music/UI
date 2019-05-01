@@ -10,7 +10,8 @@ const UserTaskSchema = new Schema({
     time: Number,
     assignee: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        default: null
     },
     status: String,
     accepted: {

@@ -18,8 +18,13 @@
 					</div>
 				</v-flex>
 				<v-flex xs3>
-					<v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null">
+					<v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null"
+					v-show="!isMyTask(task.assignee)">
 						Sprejmi nalogo
+					</v-btn>
+
+					<v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="unassign" v-show="isMyTask(task.assignee)">
+						Opusti nalogo
 					</v-btn>
 				</v-flex>
 				<v-flex xs3>
@@ -55,6 +60,9 @@
 			array: []
 		}),
 		methods: {
+			isMyTask(assignee) {
+				return this.$store.getters.currentUser._id === assignee;
+			},
 			editTask() {
 				this.$emit('editTask', this.task)
 			},
@@ -62,13 +70,32 @@
 			deleteTask() {
 				this.$emit('deleteTask', this.task)
 			},
-			
+
+			unassign() {
+				console.log(
+						"storyId: " + this.task.storyId + " taskId: " + this.task._id
+				);
+
+				const task = {storyId: this.task.storyId, assignee: null};
+				console.log(task);
+
+				APICalls.unassignTask(this.task.storyId, this.task._id, task).then(
+						(res) => {
+							this.$emit('unassign', this.task);
+							this.$forceUpdate();
+						},
+						(error) => {
+							console.log("error: " + error);
+						}
+				);
+			},
+
 			assignToMe() {
 				console.log(
 						"storyId: " + this.task.storyId + " taskId: " + this.task._id
 				);
 				
-				const task = {accepted: true, storyId: this.task.storyId, assignee: this.$store.getters.currentUser._id};
+				const task = {storyId: this.task.storyId, assignee: this.$store.getters.currentUser._id};
 				console.log(task);
 				
 				APICalls.assignToMe(this.task.storyId, this.task._id, task).then(

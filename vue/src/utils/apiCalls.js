@@ -231,6 +231,14 @@ export class APICalls {
         });
     }
 
+    static unassignTask(storyId, taskId, taskObject) {
+        return instance({
+            method: "put",
+            url: '/task/unassign/story/' + storyId + '?taskId=' + taskId,
+            data: taskObject
+        });
+    }
+
     static setActiveStatus(taskId, isActive) {
         return instance({
             method: "put",

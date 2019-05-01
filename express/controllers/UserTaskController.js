@@ -125,7 +125,7 @@ module.exports = {
     assign(req, res) {
         const taskId = req.query.taskId;
         const task = req.body;
-        UserTaskModel.findOneAndUpdate({ _id: taskId, accepted: false },
+        UserTaskModel.findOneAndUpdate({ _id: taskId, assignee: {$eq:null} },
             { $set: task }, function (err, UserTask) {
                 if (err) {
                     console.log("ERR: ", err);
@@ -154,7 +154,7 @@ module.exports = {
     unassign(req, res) {
         const taskId = req.query.taskId;
         const task = req.body;
-        UserTaskModel.findOneAndUpdate({ _id: taskId, accepted: false },
+        UserTaskModel.findOneAndUpdate({ _id: taskId, assignee: {$ne:null} },
             { $set: task }, function (err, UserTask) {
                 if (err) {
                     console.log("ERR: ", err);
