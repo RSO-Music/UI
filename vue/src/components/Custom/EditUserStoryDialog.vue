@@ -561,7 +561,7 @@
 				//task is treated as unassigned if it has no assignee
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
-						return !task.accepted;
+						return task.assignee === null;
 					})
 				}
 			},
@@ -569,7 +569,7 @@
 				//for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
 				if (this.tasks) {
 					return this.tasks.filter(function (task) {
-						return task.accepted && task.status === 'new'
+						return task.assignee !== null && task.status === 'new'
 					})
 				}
 			},
