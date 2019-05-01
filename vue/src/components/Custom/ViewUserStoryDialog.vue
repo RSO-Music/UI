@@ -222,7 +222,7 @@
                                                         flat
                                                 ></v-text-field>
                                             </v-flex>
-                                            <v-flex xs4>
+                                            <v-flex xs8>
                                                 <v-select
                                                         color="#3093A0"
                                                         prepend-icon="person"
@@ -234,19 +234,6 @@
                                                     return `${user.firstName} ${user.lastName ? user.lastName : ''}`;
                                                 }"
                                                         item-value="user._id"
-                                                        hide-details
-                                                        flat
-                                                ></v-select>
-                                            </v-flex>
-                                            <v-flex xs4 ml-2>
-                                                <v-select
-                                                        color="#3093A0"
-                                                        v-model="editTask.status"
-                                                        :disabled="true"
-                                                        :items="taskStatus"
-                                                        item-text="name"
-                                                        item-value="value"
-                                                        label="Status naloge"
                                                         hide-details
                                                         flat
                                                 ></v-select>
@@ -316,21 +303,7 @@
             ],
             storyFinished: false,
             tasks: [],
-            taskStatus: [
-                {
-                    name: 'Novo',
-                    value: 'new'
-                },
-                {
-                    name: 'V delu',
-                    value: 'in_progress'
-                },
-                {
-                    name: 'Zaključeno',
-                    value: 'finished'
-                }
-            ],
-            editTask: null,
+            editTask: null
         }),
         methods: {
             closeDialog() {

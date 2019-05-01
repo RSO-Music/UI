@@ -5,6 +5,14 @@
                 <v-btn flat icon color="#3093A0" v-on="on">
                     <v-icon>edit</v-icon>
                 </v-btn>
+                
+                <!--<v-btn flat icon color="green" @click="finished.state = 'accept' && finishStory()">-->
+                    <!--<v-icon>check</v-icon>-->
+                <!--</v-btn>-->
+                <!---->
+                <!--<v-btn flat icon color="red" @click="finished.state = 'reject' && finishStory()">-->
+                    <!--<v-icon>clear</v-icon>-->
+                <!--</v-btn>-->
             </template>
 
             <v-card>
@@ -238,7 +246,7 @@
                                                         flat
                                                 ></v-text-field>
                                             </v-flex>
-                                            <v-flex xs4>
+                                            <v-flex xs8>
                                                 <v-select
                                                         color="#3093A0"
                                                         prepend-icon="person"
@@ -250,19 +258,6 @@
                                                     return `${user.firstName} ${user.lastName ? user.lastName : ''}`;
                                                 }"
                                                         item-value="user._id"
-                                                        hide-details
-                                                        flat
-                                                ></v-select>
-                                            </v-flex>
-                                            <v-flex xs4 ml-2>
-                                                <v-select
-                                                        color="#3093A0"
-                                                        v-model="editTask.status"
-                                                        :disabled="true"
-                                                        :items="taskStatus"
-                                                        item-text="name"
-                                                        item-value="value"
-                                                        label="Status naloge"
                                                         hide-details
                                                         flat
                                                 ></v-select>
@@ -318,20 +313,6 @@
                 comment: ''
             },
             tasks: [],
-            taskStatus: [
-                {
-                    name: 'Novo',
-                    value: 'new'
-                },
-                {
-                    name: 'V delu',
-                    value: 'in_progress'
-                },
-                {
-                    name: 'Zaključeno',
-                    value: 'finished'
-                }
-            ],
             editTask: null
         }),
         created() {
