@@ -19,7 +19,7 @@
 				</v-flex>
 				<v-flex xs3>
 					<v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null">
-						Assign to me
+						Sprejmi nalogo
 					</v-btn>
 				</v-flex>
 				<v-flex xs3>

@@ -151,6 +151,35 @@ module.exports = {
             });
     },
 
+    unassign(req, res) {
+        const taskId = req.query.taskId;
+        const task = req.body;
+        UserTaskModel.findOneAndUpdate({ _id: taskId, accepted: false },
+            { $set: task }, function (err, UserTask) {
+                if (err) {
+                    console.log("ERR: ", err);
+                    return res.status(500).json({
+                        message: 'Error when getting UserTask',
+                        error: err
+                    });
+                }
+                if (!UserTask) {
+                    return res.status(403).json({
+                        message: 'No such UserTask, Probably already unassigned'
+                    });
+                }
+                UserTask.save(function (err, UserTask) {
+                    if (err) {
+                        return res.status(500).json({
+                            message: 'Error when updating UserTask.',
+                            error: err
+                        });
+                    }
+                    return res.json(UserTask);
+                });
+            });
+    },
+
     changeActiveStatus(req, res) {
         const taskId = req.params.taskId;
         const data = req.body;
