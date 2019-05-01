@@ -139,7 +139,10 @@
                                 </v-layout>
                                 <v-layout mt-2 mb-2 v-if="story.comment">
                                     <v-flex xs12>
-                                        <p><v-icon class="red--text">info_outline</v-icon> <span class="ml-2 red--text">Zgodba je že bila zavrnjena z razlogom: {{story.comment}}</span></p>
+                                        <p>
+                                            <v-icon class="red--text">info_outline</v-icon>
+                                            <span class="ml-2 red--text">Zgodba je že bila zavrnjena z razlogom: {{story.comment}}</span>
+                                        </p>
                                     </v-flex>
                                 </v-layout>
                                 <v-layout>
@@ -159,6 +162,7 @@
                                         <template v-if="unassignedTasks.length">
                                             <task-card v-for="(task, index) in unassignedTasks" :task="task"
                                                        @editTask="changeTask"
+                                                       @updateTask="addTask"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
@@ -171,6 +175,7 @@
                                         <template v-if="assignedTasks.length">
                                             <task-card v-for="(task, index) in assignedTasks" :task="task"
                                                        @editTask="changeTask"
+                                                       @updateTask="addTask"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
@@ -183,17 +188,19 @@
                                         <template v-if="activeTasks.length">
                                             <task-card v-for="(task, index) in activeTasks" :task="task"
                                                        @editTask="changeTask"
+                                                       @updateTask="addTask"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
                                         <p v-else class="grey--text mb-4 text-xs-center">Ni nalog</p>
 
                                         <v-divider></v-divider>
-                                        
+
                                         <separator title="Zaključene"></separator>
                                         <template v-if="finishedTasks.length">
                                             <task-card v-for="(task, index) in finishedTasks" :task="task"
                                                        @editTask="changeTask"
+                                                       @updateTask="addTask"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
@@ -204,7 +211,7 @@
                                     <v-flex lg6 ml-1 pa-4>
                                         <h1 v-if="editTask._id">Uredi nalogo</h1>
                                         <h1 v-else>Dodaj nalogo</h1>
-                                        
+
                                         <v-layout>
                                             <v-flex x12>
                                                 <v-textarea
@@ -218,7 +225,7 @@
                                             </v-flex>
                                         </v-layout>
 
-                                        <v-layout align-center justify-space-between row mb-4>
+                                        <v-layout align-center row mb-4>
                                             <v-flex xs4 mr-2>
                                                 <v-text-field
                                                         class="mt-4"
@@ -233,7 +240,7 @@
                                                         flat
                                                 ></v-text-field>
                                             </v-flex>
-                                            <v-flex xs4>
+                                            <v-flex xs8>
                                                 <v-select
                                                         color="#3093A0"
                                                         prepend-icon="person"
@@ -249,39 +256,50 @@
                                                         flat
                                                 ></v-select>
                                             </v-flex>
-                                            <v-flex xs4 ml-2>
-                                                <v-select
-                                                        color="#3093A0"
-                                                        v-model="editTask.status"
-                                                        :disabled="!editingTask || canEditTasks"
-                                                        :items="taskStatus"
-                                                        item-text="name"
-                                                        item-value="value"
-                                                        label="Status naloge"
-                                                        hide-details
-                                                        flat
-                                                ></v-select>
-                                            </v-flex>
                                         </v-layout>
-                                        
-                                        <v-layout mb-2 v-if="editTask._id">
-                                            <v-layout align-center v-if="editTask.assignee && !editTask.accepted">
-                                                <v-icon class="red--text">info_outline</v-icon> <span class="ml-2 red--text">Razvijalec naloge še ni sprejel</span>
+
+                                        <v-layout mb-4 v-if="editTask._id">
+                                            <v-layout shrink align-center
+                                                      v-if="editTask.assignee && !editTask.accepted">
+                                                <v-flex>
+                                                    <v-icon class="red--text">info_outline</v-icon>
+                                                    <span class="ml-2 red--text">Razvijalec naloge še ni sprejel</span>
+                                                </v-flex>
+
+                                                <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
+                                                    <ButtonBase
+                                                            msg="Sprejmi nalogo"
+                                                            @clicked="acceptOrRejectStory"
+                                                            class="ml-3"
+                                                    />
+                                                </v-flex>
                                             </v-layout>
 
-                                            <v-layout align-center v-if="editTask.assignee && editTask.accepted">
-                                                <v-icon class="green--text">check_circle_outline</v-icon> <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
+                                            <v-layout shrink align-center v-if="editTask.assignee && editTask.accepted">
+                                                <v-flex>
+                                                    <v-icon class="green--text">check_circle_outline</v-icon>
+                                                    <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
+                                                </v-flex>
+
+                                                <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
+                                                    <ButtonBase
+                                                            msg="Opusti nalogo"
+                                                            @clicked="acceptOrRejectStory"
+                                                            class="ml-3"
+                                                    />
+                                                </v-flex>
                                             </v-layout>
                                         </v-layout>
-                                        
+
                                         <v-layout mb-4 mt-4 v-if="editTask.assignee && editTask.accepted">
                                             <v-flex>
-                                                <p><span class="grey--text">Število porabljenih ur:</span> {{editTask.activeHours}}</p>    
+                                                <p><span class="grey--text">Število porabljenih ur:</span>
+                                                    {{editTask.activeHours}}</p>
                                             </v-flex>
-                                            
+
                                             <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
-                                                <ButtonBase 
-                                                        :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`" 
+                                                <ButtonBase
+                                                        :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`"
                                                         @clicked="setTaskActiveStatus"
                                                         :isDisabled="!canEditTasks"
                                                         class="mr-3"
@@ -292,11 +310,11 @@
 
                                         <v-layout align-center justify-end row>
                                             <ButtonBase msg="Ponastavi" @clicked="clearEdit"
-                                                           :isDisabled="!canEditTasks"
-                                                           class="mr-3"></ButtonBase>
-                                            
-                                            <ButtonBase msg="Shrani" @clicked="addTask"
-                                                           :isDisabled="!isEditTaskValid || !canEditTasks"></ButtonBase>
+                                                        :isDisabled="!canEditTasks"
+                                                        class="mr-3"></ButtonBase>
+
+                                            <ButtonBase msg="Shrani" @clicked="addTask(editTask)"
+                                                        :isDisabled="!isEditTaskValid || !canEditTasks"></ButtonBase>
                                         </v-layout>
                                     </v-flex>
                                 </v-layout>
@@ -344,24 +362,9 @@
             ],
             storyFinished: false,
             tasks: [],
-            taskStatus: [
-                {
-                    name: 'Novo',
-                    value: 'new'
-                },
-                {
-                    name: 'V delu',
-                    value: 'in_progress'
-                },
-                {
-                    name: 'Zaključeno',
-                    value: 'finished'
-                }
-            ],
             editTask: {
                 description: '',
-                time: '',
-                status: 'new'
+                time: ''
             },
             editingTask: false
         }),
@@ -421,8 +424,7 @@
             closeDialog() {
                 this.dialog = false;
             },
-            addTask() {
-                let editTask = this.editTask;
+            addTask(editTask) {
                 let currentStory = this.story;
                 let vm = this;
 
@@ -432,7 +434,7 @@
                         duration: 3000,
                         position: "bottom-center",
                     });
-                    
+
                     return;
                 }
 
@@ -445,13 +447,12 @@
                             description: editTask.description,
                             time: editTask.time,
                             assignee: editTask.assignee,
-                            status: editTask.status,
                             accepted: false
                         }
                     ).then(
                         (rs) => {
                             vm.tasks.push(rs.data);
-                            
+
                             vm.clearEdit();
 
                             vm.$toasted.success('Naloga je bila uspešno dodana', {
@@ -472,19 +473,20 @@
                             description: editTask.description,
                             time: editTask.time,
                             assignee: editTask.assignee,
-                            status: editTask.status,
-                            accepted: false
+                            accepted: editTask.accepted
                         }, editTask._id
                     ).then(
-                        (rs) => {
+                        (res) => {
+                            const updatedTask = res.data;
+
                             vm.tasks = vm.tasks.map((task) => {
-                                if (task._id === editTask._id) {
-                                    return editTask;
+                                if (task._id === updatedTask._id) {
+                                    return updatedTask;
                                 }
-                                
+
                                 return task;
                             });
-                            
+
                             vm.clearEdit();
 
                             vm.$toasted.success('Naloga je bila uspešno posodobljena', {
@@ -498,18 +500,58 @@
 
                 }
             },
+            acceptOrRejectStory() {
+                const vm = this;
+                
+                const updateObject = {};
+
+                const editTask = vm.editTask;
+
+                if (editTask.accepted) {
+                    updateObject.assignee = null;
+                    updateObject.accepted = false;
+                } else {
+                    updateObject.assignee = vm.$store.getters.currentUser._id;
+                    updateObject.accepted = true;
+                }
+
+                APICalls.updateUserTask(updateObject, vm.editTask._id)
+                    .then(
+                        (res) => {
+                            const updatedTask = res.data;
+
+                            vm.tasks = vm.tasks.map((task) => {
+                                if (task._id === updatedTask._id) {
+                                    return updatedTask;
+                                }
+
+                                return task;
+                            });
+
+                            vm.clearEdit();
+
+                            vm.$toasted.success('Naloga je bila uspešno posodobljena', {
+                                duration: 3000,
+                                position: "bottom-center",
+                            });
+                        },
+                        (error) => {
+                            console.log(error);
+                        })
+            },
             clearEdit() {
                 this.editTask = {
                     description: '',
-                    time: '',
-                    status: 'new'
+                    time: ''
                 };
 
                 this.editingTask = false;
             },
             changeTask(task) {
-                this.editTask = JSON.parse(JSON.stringify(task));
-                
+                const clonedTask = JSON.parse(JSON.stringify(task));
+
+                this.editTask = clonedTask;
+
                 this.editingTask = true;
             },
             deleteTask(deleteTask) {
@@ -525,24 +567,34 @@
 
                 this.clearEdit();
 
-			},
-			resetForm() {
-				this.$refs.form.reset();
-				this.$refs.form.resetValidation();
-			},
-			setTaskActiveStatus() {
+            },
+            resetForm() {
+                this.$refs.form.reset();
+                this.$refs.form.resetValidation();
+            },
+            setTaskActiveStatus() {
                 const vm = this;
 
                 vm.editTask.active = !vm.editTask.active;
-                
-                APICalls.setActiveStatus(vm.editTask._id, vm.editTask.active)
+
+                APICalls.updateUserTask({ active: vm.editTask.active }, vm.editTask._id)
                     .then((res) => {
+                        const updatedTask = res.data;
+
+                        vm.tasks = vm.tasks.map((task) => {
+                            if (task._id === updatedTask._id) {
+                                return updatedTask;
+                            }
+
+                            return task;
+                        });
+                        
                         vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna' : 'Naloga je sedaj neaktivna'}`, {
                             duration: 3000,
                             position: "bottom-center",
                         });
-                        
-                        vm.editTask.activeHours = res.data.activeHours;
+
+                        vm.editTask.activeHours = updatedTask.activeHours;
                     })
                     .catch((ex) => {
                         console.log(ex);
@@ -555,42 +607,42 @@
                         });
                     });
             }
-		},
-		computed: {
-			unassignedTasks() {
-				//task is treated as unassigned if it has no assignee
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return task.assignee === null;
-					})
-				}
-			},
-			assignedTasks() {
-				//for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return task.assignee !== null && task.status === 'new'
-					})
-				}
-			},
-			activeTasks() {
-				//task is treated as active if it is assigned and is marked as 'in_progress'
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return task.asignee && task.status === 'in_progress'
-					})
-				}
-			},
-			finishedTasks() {
-				//task is treated as finished if it is assigned and is marked as 'finished'
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return task.asignee && task.status === 'finished'
-					})
-				}
-			},
-			projectUsers() {
-				let projectData = this.$store.getters.editingProject;
+        },
+        computed: {
+            unassignedTasks() {
+                //task is treated as unassigned if it has no assignee
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return !task.assignee;
+                    })
+                }
+            },
+            assignedTasks() {
+                //for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.assignee !== null && !task.active;
+                    })
+                }
+            },
+            activeTasks() {
+                //task is treated as active if it is assigned and is marked as 'in_progress'
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.assignee && task.active;
+                    })
+                }
+            },
+            finishedTasks() {
+                //task is treated as finished if it is assigned and is marked as 'finished'
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.assignee && task.finished;
+                    })
+                }
+            },
+            projectUsers() {
+                let projectData = this.$store.getters.editingProject;
 
                 return projectData.users;
             },

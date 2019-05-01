@@ -63,16 +63,9 @@ module.exports = {
         let sId = req.body.storyId;
 
         UserTaskModel.findOne({ description: description, storyId: sId }, function (err, UserTask) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Error when getting UserTask.',
-                    error: err
-                });
-            }
-
             if (UserTask) {
                 return res.status(404).json({
-                    message: 'This user task already exists'
+                    message: 'Naloga s tem imenom že obstaja za to zgodbo'
                 });
             } else {
                 UserTaskG.save(function (err, UserTask) {
@@ -94,7 +87,7 @@ module.exports = {
     update(req, res) {
         const id = req.params.id;
 
-        UserTaskModel.findOneAndUpdate({ _id: id }, { $set: req.body }, function (err, UserTask) {
+        UserTaskModel.findOneAndUpdate({ _id: id }, { $set: req.body }, { new: true }, function (err, UserTask) {
             if (err) {
                 console.log("ERR: ", err);
                 return res.status(500).json({
@@ -109,24 +102,18 @@ module.exports = {
                 });
             }
 
-            UserTask.save(function (err, UserTask) {
-                if (err) {
-                    return res.status(500).json({
-                        message: 'Error when updating UserTask.',
-                        error: err
-                    });
-                }
-
-                return res.json(UserTask);
-            });
+            return res.json(UserTask);
         });
     },
 
     assign(req, res) {
         const taskId = req.query.taskId;
         const task = req.body;
-        UserTaskModel.findOneAndUpdate({ _id: taskId, assignee: {$eq:null} },
-            { $set: task }, function (err, UserTask) {
+
+        UserTaskModel.findOneAndUpdate({ _id: taskId, assignee: { $eq: null } },
+            { $set: { assignee: task.assignee, accepted: true } }, { new: true }, function (err, UserTask) {
+                console.log(taskId, UserTask);
+            
                 if (err) {
                     console.log("ERR: ", err);
                     return res.status(500).json({
@@ -139,23 +126,18 @@ module.exports = {
                         message: 'No such UserTask, Probably already taken'
                     });
                 }
-                UserTask.save(function (err, UserTask) {
-                    if (err) {
-                        return res.status(500).json({
-                            message: 'Error when updating UserTask.',
-                            error: err
-                        });
-                    }
-                    return res.json(UserTask);
-                });
+
+                return res.json(UserTask);
             });
     },
 
     unassign(req, res) {
         const taskId = req.query.taskId;
-        const task = req.body;
-        UserTaskModel.findOneAndUpdate({ _id: taskId, assignee: {$ne:null} },
-            { $set: task }, function (err, UserTask) {
+
+        UserTaskModel.findOneAndUpdate({ _id: taskId, assignee: { $ne: null } },
+            { $set: { assignee: null, accepted: false } }, { new: true }, function (err, UserTask) {
+                console.log(taskId, UserTask);
+            
                 if (err) {
                     console.log("ERR: ", err);
                     return res.status(500).json({
@@ -164,26 +146,19 @@ module.exports = {
                     });
                 }
                 if (!UserTask) {
-                    return res.status(403).json({
+                    return res.status(500).json({
                         message: 'No such UserTask, Probably already unassigned'
                     });
                 }
-                UserTask.save(function (err, UserTask) {
-                    if (err) {
-                        return res.status(500).json({
-                            message: 'Error when updating UserTask.',
-                            error: err
-                        });
-                    }
-                    return res.json(UserTask);
-                });
+
+                return res.json(UserTask);
             });
     },
 
     changeActiveStatus(req, res) {
         const taskId = req.params.taskId;
         const data = req.body;
-        
+
         console.log(req.body);
 
         UserTaskModel.findOne({ _id: taskId }, function (err, UserTask) {
@@ -201,7 +176,7 @@ module.exports = {
             }
 
             UserTask.active = data.isActive;
-            
+
             if (!data.isActive) {
                 UserTask.activeHours += 1;
             }
@@ -213,7 +188,7 @@ module.exports = {
                         error: err
                     });
                 }
-                
+
                 return res.json(UserTask);
             });
         });

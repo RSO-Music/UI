@@ -348,38 +348,38 @@
             }
 		},
 		computed: {
-			unassignedTasks() {
-				//task is treated as unassigned if it has no assignee
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return !task.accepted;
-					})
-				}
-			},
-			assignedTasks() {
-				//for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return task.accepted && task.status === 'new'
-					})
-				}
-			},
-			activeTasks() {
-				//task is treated as active if it is assigned and is marked as 'in_progress'
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return task.asignee && task.status === 'in_progress'
-					})
-				}
-			},
-			finishedTasks() {
-				//task is treated as finished if it is assigned and is marked as 'finished'
-				if (this.tasks) {
-					return this.tasks.filter(function (task) {
-						return task.asignee && task.status === 'finished'
-					})
-				}
-			},
+            unassignedTasks() {
+                //task is treated as unassigned if it has no assignee
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return !task.assignee;
+                    })
+                }
+            },
+            assignedTasks() {
+                //for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.assignee !== null && !task.active;
+                    })
+                }
+            },
+            activeTasks() {
+                //task is treated as active if it is assigned and is marked as 'in_progress'
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.assignee && task.active;
+                    })
+                }
+            },
+            finishedTasks() {
+                //task is treated as finished if it is assigned and is marked as 'finished'
+                if (this.tasks) {
+                    return this.tasks.filter(function (task) {
+                        return task.assignee && task.finished;
+                    })
+                }
+            },
 			projectUsers() {
 				let projectData = this.$store.getters.editingProject;
 

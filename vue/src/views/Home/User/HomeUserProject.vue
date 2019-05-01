@@ -103,7 +103,7 @@
                     (error) => {
                         console.log(error);
 
-                        vm.$toasted.error('Pri pridobivanju projekta je prišlo do napake', {
+                        this.$toasted.error('Pri pridobivanju projekta je prišlo do napake', {
                             duration: 3000,
                             position: 'bottom-center'
                         });

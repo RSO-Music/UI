@@ -238,14 +238,4 @@ export class APICalls {
             data: taskObject
         });
     }
-
-    static setActiveStatus(taskId, isActive) {
-        return instance({
-            method: "put",
-            url: '/task/active/' + taskId,
-            data: {
-                isActive
-            }
-        });
-    }
 }

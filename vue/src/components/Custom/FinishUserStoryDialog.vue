@@ -392,7 +392,7 @@
                 //task is treated as unassigned if it has no assignee
                 if (this.tasks) {
                     return this.tasks.filter(function (task) {
-                        return !task.accepted;
+                        return !task.assignee;
                     })
                 }
             },
@@ -400,7 +400,7 @@
                 //for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
                 if (this.tasks) {
                     return this.tasks.filter(function (task) {
-                        return task.accepted && task.status === 'new'
+                        return task.assignee !== null && !task.active;
                     })
                 }
             },
@@ -408,7 +408,7 @@
                 //task is treated as active if it is assigned and is marked as 'in_progress'
                 if (this.tasks) {
                     return this.tasks.filter(function (task) {
-                        return task.asignee && task.status === 'in_progress'
+                        return task.assignee && task.active;
                     })
                 }
             },
@@ -416,7 +416,7 @@
                 //task is treated as finished if it is assigned and is marked as 'finished'
                 if (this.tasks) {
                     return this.tasks.filter(function (task) {
-                        return task.asignee && task.status === 'finished'
+                        return task.assignee && task.finished;
                     })
                 }
             },

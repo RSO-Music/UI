@@ -13,12 +13,15 @@ const UserTaskSchema = new Schema({
         ref: "User",
         default: null
     },
-    status: String,
     accepted: {
         type: Boolean,
         default: false
     },
     active: {
+        type: Boolean,
+        default: false
+    },
+    finished: {
         type: Boolean,
         default: false
     },
