@@ -4,7 +4,6 @@
             :disabled="isDisabled ||isLoading"
             @click="buttonClicked"
             color="#3093A0"
-            depressed
             :type="type"
             :loading="isLoading"
     >

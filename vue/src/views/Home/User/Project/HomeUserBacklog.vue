@@ -49,8 +49,8 @@
                     </v-layout>
 
                     <v-layout class="align-right">
-                        <EditUserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
-                                             :customBtn="true"></EditUserStoryDialog>
+                        <UserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
+                                             :customBtn="true"></UserStoryDialog>
                     </v-layout>
                 </v-layout>
             </v-flex>
@@ -130,7 +130,7 @@
     import ButtonBase from "../../../../components/Generic/ButtonBase";
     import ButtonOutline from "../../../../components/Generic/ButtonOutline";
     import Separator from "../../../../components/Generic/Separator";
-    import EditUserStoryDialog from "../../../../components/Custom/EditUserStoryDialog"
+    import UserStoryDialog from "../../../../components/Custom/UserStoryDialog"
     import ProjectInfoPanel from "../../../../components/Custom/ProjectInfoPanel";
 
     export default {
@@ -138,7 +138,7 @@
         components: {
             ProjectInfoPanel,
             Separator, ButtonBase, ButtonOutline,
-            UserStoryCard, EditUserStoryDialog
+            UserStoryCard, UserStoryDialog
         },
         created() {
             this.getActiveSprint();

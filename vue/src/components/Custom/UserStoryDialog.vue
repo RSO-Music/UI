@@ -4,16 +4,16 @@
             <template v-slot:activator="{ on }">
                 <v-btn v-on="on"
                        v-if="customBtn"
-                       class="custom-btn"
+                       class="main-button"
                        color="#3093A0"
-                       depressed
                        dark
                 >
                     DODAJ NOVO ZGODBO
                 </v-btn>
 
                 <v-btn flat icon color="#3093A0" v-on="on" v-else>
-                    <v-icon>edit</v-icon>
+                    <v-icon v-if="!viewOnly">edit</v-icon>
+                    <v-icon v-else>info_outline</v-icon>
                 </v-btn>
             </template>
 
@@ -55,7 +55,7 @@
                                                 :rules="[v => !!v || 'Naslov zgodbe ne sme biti prazen']"
                                                 v-model="storyName"
                                                 required
-                                                :disabled="editExisting"
+                                                :disabled="editExisting || viewOnly"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs-3 offset-xs1>
@@ -63,7 +63,7 @@
                                                     @change=""
                                                     v-model="storyFinished"
                                                     label="Zgodba zaključena"
-                                                    :disabled="!editExisting"
+                                                    :disabled="!editExisting || viewOnly"
                                         ></v-checkbox>
                                     </v-flex>
                                 </v-layout>
@@ -80,20 +80,20 @@
                                                         label="Prioriteta"
                                                         hide-details
                                                         required
-                                                        :disabled="editExisting"
+                                                        :disabled="editExisting || viewOnly"
                                                 ></v-select>
                                             </v-flex>
                                             <v-flex xs4>
                                                 <v-select
                                                         color="#3093A0"
                                                         prepend-icon="loyalty"
-                                                        v-model="selectBussinessValue"
+                                                        v-model="selectBusinessValue"
                                                         :items="storyValue"
                                                         :rules="[v => !!v || 'Poslovna vrednost ne sme biti prazna']"
                                                         label="Poslovna vrednost"
                                                         hide-details
                                                         required
-                                                        :disabled="editExisting"
+                                                        :disabled="editExisting || viewOnly"
                                                 ></v-select>
                                             </v-flex>
                                             <v-flex xs4>
@@ -104,7 +104,7 @@
                                                         min="0"
                                                         label="Časovna ocena"
                                                         v-model="timeEstimation"
-                                                        :disabled="editExisting"
+                                                        :disabled="editExisting || viewOnly"
                                                 ></v-text-field>
                                             </v-flex>
                                         </v-layout>
@@ -121,7 +121,7 @@
                                                 rows="5"
                                                 :auto-grow="true"
                                                 required
-                                                :disabled="editExisting"
+                                                :disabled="editExisting || viewOnly"
                                         ></v-textarea>
                                     </v-flex>
                                     <v-flex xs6>
@@ -133,7 +133,7 @@
                                                 rows="5"
                                                 :auto-grow="true"
                                                 required
-                                                :disabled="editExisting"
+                                                :disabled="editExisting || viewOnly"
                                         ></v-textarea>
                                     </v-flex>
                                 </v-layout>
@@ -145,7 +145,7 @@
                                         </p>
                                     </v-flex>
                                 </v-layout>
-                                <v-layout>
+                                <v-layout v-if="!viewOnly">
                                     <v-flex xs12>
                                         <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
                                         <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
@@ -163,6 +163,7 @@
                                             <task-card v-for="(task, index) in unassignedTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @updateTask="addTask"
+                                                       :viewOnly="viewOnly"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
@@ -176,6 +177,7 @@
                                             <task-card v-for="(task, index) in assignedTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @updateTask="addTask"
+                                                       :viewOnly="viewOnly"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
@@ -189,6 +191,7 @@
                                             <task-card v-for="(task, index) in activeTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @updateTask="addTask"
+                                                       :viewOnly="viewOnly"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
@@ -201,6 +204,7 @@
                                             <task-card v-for="(task, index) in finishedTasks" :task="task"
                                                        @editTask="changeTask"
                                                        @updateTask="addTask"
+                                                       :viewOnly="viewOnly"
                                                        @deleteTask="deleteTask" :key="task._id"
                                                        :disabled="!canEditTasks"/>
                                         </template>
@@ -220,7 +224,7 @@
                                                         rows="1"
                                                         label="Opis naloge"
                                                         v-model="editTask.description"
-                                                        :disabled="!canEditTasks"
+                                                        :disabled="!canEditTasks || viewOnly"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -235,7 +239,7 @@
                                                         label="Ocena časa"
                                                         type="number"
                                                         v-model="editTask.time"
-                                                        :disabled="!canEditTasks"
+                                                        :disabled="!canEditTasks || viewOnly"
                                                         min="1"
                                                         flat
                                                 ></v-text-field>
@@ -245,7 +249,7 @@
                                                         color="#3093A0"
                                                         prepend-icon="person"
                                                         v-model="editTask.assignee"
-                                                        :disabled="!canEditTasks"
+                                                        :disabled="!canEditTasks || viewOnly"
                                                         label="Razvijalec"
                                                         :items="projectUsers"
                                                         :item-text="({ user }) => {
@@ -258,7 +262,7 @@
                                             </v-flex>
                                         </v-layout>
 
-                                        <v-layout mb-4 v-if="editTask._id">
+                                        <v-layout mb-4 v-if="!viewOnly && editTask._id">
                                             <v-layout shrink align-center
                                                       v-if="editTask.assignee && !editTask.accepted">
                                                 <v-flex>
@@ -297,7 +301,7 @@
                                                     {{editTask.activeHours}}</p>
                                             </v-flex>
 
-                                            <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
+                                            <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
                                                 <ButtonBase
                                                         :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`"
                                                         @clicked="setTaskActiveStatus"
@@ -308,7 +312,7 @@
                                             </v-flex>
                                         </v-layout>
 
-                                        <v-layout align-center justify-end row>
+                                        <v-layout v-if="!viewOnly" align-center justify-end row>
                                             <ButtonBase msg="Ponastavi" @clicked="clearEdit"
                                                         :isDisabled="!canEditTasks"
                                                         class="mr-3"></ButtonBase>
@@ -335,39 +339,48 @@
     import TaskCard from "../Generic/TaskCard";
 
     export default {
-        name: "EditUserStoryDialog",
+        name: "UserStoryDialog",
         components: { ButtonBase, ButtonOutline, Separator, TaskCard },
-        props: ['story', 'fullEdit', 'customBtn'],
-        data: () => ({
-            dialog: false,
-            valid: true,
-            editExisting: false,
-            errorText: '',
-            storyName: '',
-            storyDescription: '',
-            storyAcceptanceTests: '',
-            selectPriority: '',
-            timeEstimation: '',
-            storyPriority: ['Must have',
-                'Should have',
-                'Could have',
-                'Wont have this time',
-            ],
-            selectBussinessValue: '',
-            storyValue: ['Critical',
-                'Significant',
-                'Moderate',
-                'Minor',
-                'Low',
-            ],
-            storyFinished: false,
-            tasks: [],
-            editTask: {
-                description: '',
-                time: ''
-            },
-            editingTask: false
-        }),
+        props: {
+            story: Object,
+            customBtn: Boolean,
+            fullEdit: Boolean,
+            viewOnly: Boolean
+        },
+        data() {
+            return {
+                dialog: false,
+                valid: true,
+                editExisting: false,
+                errorText: '',
+                storyName: '',
+                storyDescription: '',
+                storyAcceptanceTests: '',
+                selectPriority: '',
+                timeEstimation: '',
+                storyPriority: [
+                    'Must have',
+                    'Should have',
+                    'Could have',
+                    'Wont have this time',
+                ],
+                selectBusinessValue: '',
+                storyValue: [
+                    'Critical',
+                    'Significant',
+                    'Moderate',
+                    'Minor',
+                    'Low',
+                ],
+                storyFinished: false,
+                tasks: [],
+                editTask: {
+                    description: '',
+                    time: ''
+                },
+                editingTask: false
+            };
+        },
         methods: {
             updateStory() {
                 if (this.story._id) {
@@ -378,7 +391,7 @@
                         acceptanceTests: this.storyAcceptanceTests,
                         priority: this.selectPriority,
                         timeEstimation: this.timeEstimation,
-                        businessValue: this.selectBussinessValue,
+                        businessValue: this.selectBusinessValue,
                         done: this.storyFinished,
                         tasks: this.tasks
                     }, this.story._id).then(
@@ -401,7 +414,7 @@
                             acceptanceTests: this.storyAcceptanceTests,
                             priority: this.selectPriority,
                             timeEstimation: this.timeEstimation,
-                            businessValue: this.selectBussinessValue,
+                            businessValue: this.selectBusinessValue,
                             projectId: this.$store.getters.editingProject._id,
                             sprintId: null,
                             done: false,
@@ -683,7 +696,7 @@
                 this.storyAcceptanceTests = this.story.acceptanceTests;
                 this.selectPriority = this.story.priority;
                 this.timeEstimation = this.story.timeEstimation;
-                this.selectBussinessValue = this.story.businessValue;
+                this.selectBusinessValue = this.story.businessValue;
                 this.storyFinished = this.story.done;
                 this.editExisting = this.fullEdit;
                 if (this.story._id) {

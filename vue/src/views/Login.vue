@@ -2,8 +2,11 @@
     <div id="wrapper">
         <div class="login-background"></div>
 
+
         <v-card class="loginContainer">
             <v-layout column>
+                <h1 class="login-application-name">Scrummy</h1>
+
                 <h1>Prijava v sistem</h1>
 
                 <v-form
@@ -117,6 +120,7 @@
         width: 100%;
         height: 100%;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         position: relative;
@@ -129,6 +133,15 @@
         width: 100%;
         height: 50%;
         background-color: #2E354C;
+    }
+    
+    .login-application-name {
+        z-index: 1;
+        color: #ffffff;
+        position: absolute;
+        top: -100px;
+        left: 50%;
+        transform: translateX(-50%);
     }
 
     .loginContainer {

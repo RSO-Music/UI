@@ -4,7 +4,7 @@
             <v-flex>
                 <div class="user-story-priority" :style="getPriorityColor()"></div>
             </v-flex>
-            
+
             <v-flex xs11 class="user-story-content">
                 <v-layout v-if="currentSprint && story.sprintId === null" add-to-sprint-wrapper>
                     <v-checkbox color="#3093A0"
@@ -33,14 +33,14 @@
                         </v-flex>
                     </div>
                 </v-layout>
-                
+
                 <v-divider v-if="this.story.done === false || isFinishingStory || viewOnly"></v-divider>
 
                 <v-layout justify-end>
                     <template v-if="!isFinishingStory && !viewOnly">
                         <div id="addToSprint" v-if="this.story.sprintId === null">
                             <v-layout align-end justify-end row>
-                                <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"></EditUserStoryDialog>
+                                <UserStoryDialog :story="this.story" v-on:refresh="refreshStory"></UserStoryDialog>
 
                                 <v-btn flat icon color="red" v-on:click="deleteStory">
                                     <v-icon>delete</v-icon>
@@ -50,23 +50,32 @@
 
                         <div id="editTask" v-if="this.story.sprintId !== null && this.story.done === false">
                             <v-layout align-end justify-end row fill-height>
-                                <EditUserStoryDialog :story="this.story" v-on:refresh="refreshStory"
-                                                     :fullEdit="true"></EditUserStoryDialog>
+                                <UserStoryDialog 
+                                        :story="this.story" 
+                                        v-on:refresh="refreshStory"
+                                        :fullEdit="true"
+                                ></UserStoryDialog>
                             </v-layout>
                         </div>
                     </template>
 
                     <div id="finishTask" v-else-if="isFinishingStory">
                         <v-layout align-end justify-end row fill-height>
-                            <FinishUserStoryDialog :story="this.story" v-on:finishedStory="finishStory"
-                                                 :fullEdit="true"></FinishUserStoryDialog>
+                            <FinishUserStoryDialog 
+                                    :story="this.story" 
+                                    v-on:finishedStory="finishStory"
+                                    :fullEdit="true"
+                            ></FinishUserStoryDialog>
                         </v-layout>
                     </div>
 
                     <div id="viewTask" v-else-if="viewOnly">
                         <v-layout align-end justify-end row fill-height>
-                            <ViewUserStoryDialog :story="this.story"
-                                                 :fullEdit="true"></ViewUserStoryDialog>
+                            <UserStoryDialog 
+                                    :story="this.story"
+                                    :fullEdit="true"
+                                    :viewOnly="true"
+                            ></UserStoryDialog>
                         </v-layout>
                     </div>
                 </v-layout>
@@ -77,13 +86,12 @@
 
 <script>
     import { APICalls } from "../../utils/apiCalls"
-    import EditUserStoryDialog from "../Custom/EditUserStoryDialog";
+    import UserStoryDialog from "../Custom/UserStoryDialog";
     import FinishUserStoryDialog from "../Custom/FinishUserStoryDialog";
-    import ViewUserStoryDialog from "../Custom/ViewUserStoryDialog";
 
     export default {
         name: "UserStoryCard",
-        components: { ViewUserStoryDialog, FinishUserStoryDialog, EditUserStoryDialog },
+        components: { FinishUserStoryDialog, UserStoryDialog },
         props: {
             story: Object,
             isFinishingStory: Boolean,
@@ -111,7 +119,7 @@
         methods: {
             changedCheckbox(checked) {
                 this.checked = checked;
-                
+
                 this.$emit('addStory', { id: this.story._id, checked });
 
             },
@@ -159,16 +167,16 @@
         border: 2px solid #DEDEDE;
         position: relative;
     }
-    
+
     .user-story--selected {
         border: 2px solid teal;
     }
-    
+
     .user-story-priority {
         width: 24px;
         height: 100%;
     }
-    
+
     .user-story-content {
         padding: 12px 12px 0;
     }
@@ -193,7 +201,7 @@
     #cardName {
         margin-top: 5px;
     }
-    
+
     .priority-label {
         padding-left: 8px;
     }
