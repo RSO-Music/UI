@@ -38,6 +38,8 @@
     import ButtonBase from "../../../../components/Generic/ButtonBase";
     import { APICalls } from "../../../../utils/apiCalls";
     import UserStoryCard from "../../../../components/Generic/UserStoryCard";
+
+    import EventBus from '../../../../utils/eventBus';
     
     export default {
         name: "FinishSprintEdit",
@@ -60,6 +62,8 @@
             },
 
             onStoryFinished() {
+                EventBus.$emit('reloadBacklogPage');
+                
                 this.getAllStoriesForSprint();
             },
             

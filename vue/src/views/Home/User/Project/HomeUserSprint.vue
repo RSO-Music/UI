@@ -23,6 +23,8 @@
     import ButtonBase from "../../../../components/Generic/ButtonBase";
     import { APICalls } from "../../../../utils/apiCalls";
 
+    import EventBus from '../../../../utils/eventBus';
+
     export default {
         name: 'homeUserSprint',
         components: {
@@ -46,6 +48,8 @@
                 this.reloadSprints();
                 
                 this.$emit('sprintsUpdated');
+
+                EventBus.$emit('reloadActiveSprint');
             },
 
             addNewSprint() {

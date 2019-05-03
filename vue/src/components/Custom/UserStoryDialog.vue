@@ -25,8 +25,10 @@
                 >
                     <div class="dialog-titlebar">
                         <v-layout>
-                            <h2 class="pl-3 pb-0 white--text" v-if="story._id">UREDI ZGODBO</h2>
-                            <h2 class="pl-3 pb-0 white--text" v-else>DODAJ NOVO ZGODBO</h2>
+                            <h2 class="pl-3 pb-0 white--text" v-if="viewOnly">PREGLEJ ZGODBO</h2>
+                            <h2 class="pl-3 pb-0 white--text" v-else-if="isFinishing">ZAKLJUČI ZGODBO</h2>
+                            <h2 class="pl-3 pb-0 white--text" v-else-if="story._id">UREDI ZGODBO</h2>
+                            <h2 class="pl-3 pb-0 white--text" v-else>DODAJ ZGODBO</h2>
                         </v-layout>
                     </div>
 
@@ -137,15 +139,45 @@
                                         ></v-textarea>
                                     </v-flex>
                                 </v-layout>
-                                <v-layout mt-2 mb-2 v-if="story.comment">
+                                <v-layout mt-2 mb-2 v-if="story.rejected">
                                     <v-flex xs12>
-                                        <p>
+                                        <p class="red--text">
                                             <v-icon class="red--text">info_outline</v-icon>
-                                            <span class="ml-2 red--text">Zgodba je že bila zavrnjena z razlogom: {{story.comment}}</span>
+                                            <span class="ml-2">Zgodba je bila enkrat že zavrnjena</span><span v-if="story.rejectionReason"> z razlogom: {{story.rejectionReason}}</span>
                                         </p>
                                     </v-flex>
                                 </v-layout>
-                                <v-layout v-if="!viewOnly">
+
+                                <template v-if="isFinishing">
+                                    <v-layout mt-4>
+                                        <h2 class="section-title">Zaključi zgodbo</h2>
+                                    </v-layout>
+
+                                    <v-layout justify-start>
+                                        <v-flex xs4>
+                                            <v-radio-group v-model="finished.state" row :mandatory="false">
+                                                <v-radio color="#1A616B" label="Sprejmi zgodbo" value="accept"></v-radio>
+                                                <v-radio color="#1A616B" label="Zavrni zgodbo" value="reject"></v-radio>
+                                            </v-radio-group>
+                                        </v-flex>
+
+                                        <v-text-field
+                                                color="#3093A0"
+                                                label="Razlog za zavrnitev"
+                                                v-model="finished.rejectionReason"
+                                                :disabled="finished.state !== 'reject'"
+                                        ></v-text-field>
+                                    </v-layout>
+
+                                    <v-layout>
+                                        <v-flex xs12>
+                                            <ButtonBase msg="Zaključi" @clicked="finishStory"></ButtonBase>
+                                            <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
+                                        </v-flex>
+                                    </v-layout>
+                                </template>
+                                
+                                <v-layout v-else-if="!viewOnly">
                                     <v-flex xs12>
                                         <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
                                         <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
@@ -345,7 +377,8 @@
             story: Object,
             customBtn: Boolean,
             fullEdit: Boolean,
-            viewOnly: Boolean
+            viewOnly: Boolean,
+            isFinishing: Boolean
         },
         data() {
             return {
@@ -378,7 +411,11 @@
                     description: '',
                     time: ''
                 },
-                editingTask: false
+                editingTask: false,
+                finished: {
+                    state: 'accept',
+                    rejectionReason: ''
+                }
             };
         },
         methods: {
@@ -433,6 +470,39 @@
                             this.errorText = "Uporabniška zgodba s takim naslovom že obstaja."
                         })
                 }
+            },
+            finishStory() {
+                const updateObject = {};
+
+                if (this.finished.state === 'accept') {
+                    updateObject.done = true;
+                    updateObject.realized = true;
+                } else if (this.finished.state === 'reject') {
+                    updateObject.done = false;
+                    updateObject.sprintId = null;
+                    updateObject.rejected = true;
+                    updateObject.rejectionReason = this.finished.rejectionReason;
+                }
+
+                APICalls.updateUserStory(updateObject, this.story._id).then(
+                    (res) => {
+                        this.$toasted.success(this.finished.state === 'accept' ? 'Zgodba je bila sprejeta' : 'Zgodba je bila zavrnjena', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+
+                        this.closeDialog();
+
+                        this.$emit("finishedStory", true);
+                    },
+                    (error) => {
+                        console.log(error);
+
+                        this.$toasted.error('Napaka pri zaključevanju zgodbe', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    });
             },
             closeDialog() {
                 this.dialog = false;

@@ -136,7 +136,9 @@ module.exports = {
     update(req, res) {
         const id = req.params.id;
         
-        UserStoryModel.findOneAndUpdate({ _id: id }, { $set: req.body }, function (err, UserStory) {
+        const updateObject = req.body;
+        
+        UserStoryModel.findOneAndUpdate({ _id: id }, { $set: updateObject }, function (err, UserStory) {
             if (err) {
                 console.log("ERR: ", err);
                 return res.status(500).json({
@@ -160,10 +162,8 @@ module.exports = {
         
         const stories = req.body.stories;
         
-        console.log({ sprintId, stories });
-        
         for (const storyId of stories) {
-            await UserStoryModel.findOneAndUpdate({ _id: storyId }, { $set: { sprintId } });
+            await UserStoryModel.findOneAndUpdate({ _id: storyId }, { $set: { sprintId, rejected: false, rejectionReason: null } });
         }
 
         return res.json({ success: true });

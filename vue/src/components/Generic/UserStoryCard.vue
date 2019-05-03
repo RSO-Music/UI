@@ -61,11 +61,13 @@
 
                     <div id="finishTask" v-else-if="isFinishingStory">
                         <v-layout align-end justify-end row fill-height>
-                            <FinishUserStoryDialog 
-                                    :story="this.story" 
-                                    v-on:finishedStory="finishStory"
+                            <UserStoryDialog
+                                    :story="this.story"
                                     :fullEdit="true"
-                            ></FinishUserStoryDialog>
+                                    :viewOnly="true"
+                                    :isFinishing="true"
+                                    v-on:finishedStory="finishStory"
+                            ></UserStoryDialog>
                         </v-layout>
                     </div>
 
@@ -87,11 +89,10 @@
 <script>
     import { APICalls } from "../../utils/apiCalls"
     import UserStoryDialog from "../Custom/UserStoryDialog";
-    import FinishUserStoryDialog from "../Custom/FinishUserStoryDialog";
 
     export default {
         name: "UserStoryCard",
-        components: { FinishUserStoryDialog, UserStoryDialog },
+        components: { UserStoryDialog },
         props: {
             story: Object,
             isFinishingStory: Boolean,

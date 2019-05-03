@@ -133,16 +133,14 @@
     import UserStoryDialog from "../../../../components/Custom/UserStoryDialog"
     import ProjectInfoPanel from "../../../../components/Custom/ProjectInfoPanel";
 
+    import EventBus from '../../../../utils/eventBus';
+    
     export default {
         name: 'homeUserProductBacklog',
         components: {
             ProjectInfoPanel,
             Separator, ButtonBase, ButtonOutline,
             UserStoryCard, UserStoryDialog
-        },
-        created() {
-            this.getActiveSprint();
-            this.getStoriesInBacklog();
         },
         props: {
             project: Object
@@ -162,6 +160,21 @@
                     storiesInCurrentSprint: false
                 }
             };
+        },
+        created() {
+            this.getActiveSprint();
+            this.getStoriesInBacklog();
+        },
+        mounted() {
+            const vm = this;
+            
+            EventBus.$on('reloadBacklogPage', function () {
+                vm.reloadData();
+            });
+            
+            EventBus.$on('reloadActiveSprint', function () {
+                vm.getActiveSprint();
+            });
         },
         methods: {
             getStoriesInBacklog() {
@@ -207,6 +220,8 @@
                     });
             },
             getStoriesInCurrentSprint() {
+                if (!this.currentSprint) return;
+                
                 this.loaded.storiesInCurrentSprint = false;
                 
                 APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.currentSprint._id)
@@ -225,6 +240,8 @@
                     });
             },
             getCompletedStoriesInCurrentSprint() {
+                if (!this.currentSprint) return;
+                
                 this.loaded.completedStories = false;
                 
                 APICalls.getCompletedStoriesInCurrentSprint(this.$route.params.projectId, this.currentSprint._id)

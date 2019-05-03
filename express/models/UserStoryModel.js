@@ -44,7 +44,12 @@ const UserStorySchema = new Schema({
         required: true,
         default: false
     },
-    comment: String
+    rejected: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+    rejectionReason: String
 });
 
 module.exports = mongoose.model('UserStory', UserStorySchema);
