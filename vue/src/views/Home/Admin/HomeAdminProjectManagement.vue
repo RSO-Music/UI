@@ -29,6 +29,8 @@
     import { APICalls } from "../../../utils/apiCalls";
     import ButtonBase from "../../../components/Generic/ButtonBase";
 
+    import EventBus from '../../../utils/eventBus';
+
     export default {
         name: 'homeAdminProjectManagement',
         components: {
@@ -39,6 +41,13 @@
         created() {
             this.getAllUsers();
             this.getAllProjects();
+        },
+        mounted() {
+            const vm = this;
+            
+            EventBus.$on('reloadUsersList', function () {
+                vm.getAllUsers();
+            });    
         },
         data() {
             return {

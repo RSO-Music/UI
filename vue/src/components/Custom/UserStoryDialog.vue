@@ -2,17 +2,19 @@
     <v-layout row justify-end>
         <v-dialog v-model="dialog" max-width="1200px">
             <template v-slot:activator="{ on }">
-                <v-btn v-on="on"
-                       v-if="customBtn"
-                       class="main-button"
-                       color="#3093A0"
-                       dark
-                >
-                    DODAJ NOVO ZGODBO
-                </v-btn>
-
+                <template v-if="customBtn">
+                    <v-btn v-on="on"
+                           v-if="canEditUserStories"
+                           class="main-button"
+                           color="#3093A0"
+                           dark
+                    >
+                        DODAJ NOVO ZGODBO
+                    </v-btn>
+                </template>
+                
                 <v-btn flat icon color="#3093A0" v-on="on" v-else>
-                    <v-icon v-if="!viewOnly">edit</v-icon>
+                    <v-icon v-if="!viewOnly && canEditUserStories">edit</v-icon>
                     <v-icon v-else>info_outline</v-icon>
                 </v-btn>
             </template>
@@ -25,7 +27,7 @@
                 >
                     <div class="dialog-titlebar">
                         <v-layout>
-                            <h2 class="pl-3 pb-0 white--text" v-if="viewOnly">PREGLEJ ZGODBO</h2>
+                            <h2 class="pl-3 pb-0 white--text" v-if="viewOnly || !canEditUserStories">PREGLEJ ZGODBO</h2>
                             <h2 class="pl-3 pb-0 white--text" v-else-if="isFinishing">ZAKLJUČI ZGODBO</h2>
                             <h2 class="pl-3 pb-0 white--text" v-else-if="story._id">UREDI ZGODBO</h2>
                             <h2 class="pl-3 pb-0 white--text" v-else>DODAJ ZGODBO</h2>
@@ -57,7 +59,7 @@
                                                 :rules="[v => !!v || 'Naslov zgodbe ne sme biti prazen']"
                                                 v-model="storyName"
                                                 required
-                                                :disabled="editExisting || viewOnly"
+                                                :disabled="editExisting || viewOnly || !canEditUserStories"
                                         ></v-text-field>
                                     </v-flex>
                                     <v-flex xs-3 offset-xs1>
@@ -65,7 +67,7 @@
                                                     @change=""
                                                     v-model="storyFinished"
                                                     label="Zgodba zaključena"
-                                                    :disabled="!editExisting || viewOnly"
+                                                    :disabled="!editExisting || viewOnly || !canEditUserStories"
                                         ></v-checkbox>
                                     </v-flex>
                                 </v-layout>
@@ -82,7 +84,7 @@
                                                         label="Prioriteta"
                                                         hide-details
                                                         required
-                                                        :disabled="editExisting || viewOnly"
+                                                        :disabled="editExisting || viewOnly || !canEditUserStories"
                                                 ></v-select>
                                             </v-flex>
                                             <v-flex xs4>
@@ -95,7 +97,7 @@
                                                         label="Poslovna vrednost"
                                                         hide-details
                                                         required
-                                                        :disabled="editExisting || viewOnly"
+                                                        :disabled="editExisting || viewOnly || !canEditUserStories"
                                                 ></v-select>
                                             </v-flex>
                                             <v-flex xs4>
@@ -106,7 +108,7 @@
                                                         min="0"
                                                         label="Časovna ocena"
                                                         v-model="timeEstimation"
-                                                        :disabled="editExisting || viewOnly"
+                                                        :disabled="editExisting || viewOnly || !canEditUserStories"
                                                 ></v-text-field>
                                             </v-flex>
                                         </v-layout>
@@ -123,7 +125,7 @@
                                                 rows="5"
                                                 :auto-grow="true"
                                                 required
-                                                :disabled="editExisting || viewOnly"
+                                                :disabled="editExisting || viewOnly || !canEditUserStories"
                                         ></v-textarea>
                                     </v-flex>
                                     <v-flex xs6>
@@ -135,7 +137,7 @@
                                                 rows="5"
                                                 :auto-grow="true"
                                                 required
-                                                :disabled="editExisting || viewOnly"
+                                                :disabled="editExisting || viewOnly || !canEditUserStories"
                                         ></v-textarea>
                                     </v-flex>
                                 </v-layout>
@@ -177,10 +179,16 @@
                                     </v-layout>
                                 </template>
                                 
-                                <v-layout v-else-if="!viewOnly">
+                                <v-layout v-else-if="!viewOnly && canEditUserStories">
                                     <v-flex xs12>
                                         <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
                                         <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
+                                    </v-flex>
+                                </v-layout>
+                                
+                                <v-layout v-else>
+                                    <v-flex xs12>
+                                        <ButtonBase msg="Zapri" @clicked="closeDialog" class="cancel"></ButtonBase>
                                     </v-flex>
                                 </v-layout>
                             </v-container>
@@ -728,6 +736,17 @@
                 let projectData = this.$store.getters.editingProject;
 
                 return projectData.users;
+            },
+            canEditUserStories() {
+                let projectData = this.$store.getters.editingProject;
+
+                let currentUser = this.$store.getters.currentUser;
+
+                let userInProject = projectData.users.find(function (user) {
+                    return user.user._id === currentUser._id;
+                });
+
+                return userInProject.role.includes('scrum_master') || userInProject.role.includes('product_owner');
             },
             canEditTasks() {
                 let projectData = this.$store.getters.editingProject;

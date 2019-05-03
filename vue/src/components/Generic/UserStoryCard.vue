@@ -6,7 +6,7 @@
             </v-flex>
 
             <v-flex xs11 class="user-story-content">
-                <v-layout v-if="currentSprint && story.sprintId === null" add-to-sprint-wrapper>
+                <v-layout v-if="currentSprint && story.sprintId === null && canEditUserStories" add-to-sprint-wrapper>
                     <v-checkbox color="#3093A0"
                                 @change="changedCheckbox($event)"
                                 :disabled="hasNoTimeEstimation"
@@ -42,7 +42,7 @@
                             <v-layout align-end justify-end row>
                                 <UserStoryDialog :story="this.story" v-on:refresh="refreshStory"></UserStoryDialog>
 
-                                <v-btn flat icon color="red" v-on:click="deleteStory">
+                                <v-btn v-if="canEditUserStories" flat icon color="red" v-on:click="deleteStory">
                                     <v-icon>delete</v-icon>
                                 </v-btn>
                             </v-layout>
@@ -155,6 +155,17 @@
         computed: {
             hasNoTimeEstimation() {
                 return !this.story.timeEstimation || this.story.timeEstimation === '';
+            },
+            canEditUserStories() {
+                let projectData = this.$store.getters.editingProject;
+
+                let currentUser = this.$store.getters.currentUser;
+
+                let userInProject = projectData.users.find(function (user) {
+                    return user.user._id === currentUser._id;
+                });
+
+                return userInProject.role.includes('scrum_master') || userInProject.role.includes('product_owner');
             }
         }
     }

@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 const UserStorySchema = new Schema({
     name: { 
         type: String, 
-        required: true, 
-        unique: true, 
+        required: true
     },
     sprintId: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -51,5 +50,7 @@ const UserStorySchema = new Schema({
     },
     rejectionReason: String
 });
+
+UserStorySchema.index({ name: 1, projectId: 1 });
 
 module.exports = mongoose.model('UserStory', UserStorySchema);

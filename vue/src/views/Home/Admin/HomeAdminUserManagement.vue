@@ -20,6 +20,8 @@
     import UserManagementForm from "../../../components/Custom/UserManagementForm";
     import UsersList from "../../../components/Generic/UsersList";
     import ButtonBase from "../../../components/Generic/ButtonBase";
+    
+    import EventBus from '../../../utils/eventBus';
 
     export default {
         name: 'homeAdminUserManagement',
@@ -31,6 +33,8 @@
         methods: {
             onUserEdited() {
                 this.$refs.usersList.reloadData();
+
+                EventBus.$emit('reloadUsersList');
             },
             
             addNewUser() {

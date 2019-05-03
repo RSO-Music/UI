@@ -38,7 +38,7 @@
                     <HomeUserSprint @sprintsUpdated="onSprintsUpdated"/>
                 </v-tab-item>
 
-                <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="5">
+                <v-tab-item id v-if="userProjectRole.includes('product_owner')" :key="5">
                     <FinishSprints/>
                 </v-tab-item>
             </v-tabs>
