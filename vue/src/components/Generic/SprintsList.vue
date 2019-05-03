@@ -16,7 +16,7 @@
                         <v-divider></v-divider>
 
                         <v-layout column>
-                            <separator title="Prihodnji Sprinti"></separator>
+                            <separator title="Sprinti v prihodnosti"></separator>
 
                             <template v-if="getFutureSprints.length">
                                 <SprintCard v-for="sprint in getFutureSprints" :key="sprint._id" :sprint="sprint"

@@ -1,18 +1,20 @@
 <template>
-    <v-layout class="form-wrapper" column>
-        <v-flex mb-4 xs12 column>
-            <h1 class="text-uppercase text-xs-center">Zaključi Sprint</h1>
-            
-            <h2 class="black--text">{{sprint.name}} ({{formattedStartDate}} - {{formattedEndDate}})</h2>
-        </v-flex>
-        
-        <v-divider></v-divider>
+    <div>
+        <v-layout class="form-wrapper" column>
+            <v-flex mb-4 xs12 column>
+                <h1 class="text-uppercase text-xs-center">Zaključi Sprint</h1>
+
+                <h2 class="black--text mb-4">{{sprint.name}} ({{formattedStartDate}} - {{formattedEndDate}})</h2>
+
+                <h2>Pričakovana hitrost: <span class="black--text">{{sprint.speed}}</span></h2>
+            </v-flex>
+        </v-layout>
 
         <v-layout mt-4>
             <h2 class="section-title">Uporabniške zgodbe Sprinta</h2>
         </v-layout>
-        
-        <v-flex xs12>
+
+        <v-layout v-if="loaded.stories">
             <template v-if="stories.length">
                 <v-layout>
                     <v-flex xs6 v-for="story of stories" :key="story._id">
@@ -30,8 +32,15 @@
             <div v-else>
                 <h2 class="backlog-empty-text text-xs-center grey--text">Ni zgodb</h2>
             </div>
-        </v-flex>
-    </v-layout>
+        </v-layout>
+        <v-layout v-else justify-center>
+            <v-progress-circular
+                    :size="50"
+                    color="primary"
+                    indeterminate
+            ></v-progress-circular>
+        </v-layout>
+    </div>
 </template>
 
 <script>
@@ -40,7 +49,7 @@
     import UserStoryCard from "../../../../components/Generic/UserStoryCard";
 
     import EventBus from '../../../../utils/eventBus';
-    
+
     export default {
         name: "FinishSprintEdit",
         components: { UserStoryCard, ButtonBase },
@@ -50,7 +59,10 @@
         data() {
             return {
                 sprint: this.sprintToFinish,
-                stories: []
+                stories: [],
+                loaded: {
+                    stories: false
+                },
             }
         },
         mounted() {
@@ -63,17 +75,17 @@
 
             onStoryFinished() {
                 EventBus.$emit('reloadBacklogPage');
-                
+
                 this.getAllStoriesForSprint();
             },
-            
+
             finishSprint() {
                 const updateObject = {
                     $set: {
                         finished: true
                     }
                 };
-                
+
                 APICalls.updateSprint(this.sprint._id, updateObject)
                     .then((res) => {
                         this.$emit('sprintFinished');
@@ -92,27 +104,31 @@
                         });
                     });
             },
-            
+
             getAllStoriesForSprint() {
-                APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.sprint._id).then(
-                    (res) => {
+                this.loaded.stories = false;
+
+                APICalls.getStoriesInsideCurrentSprint(this.$route.params.projectId, this.sprint._id)
+                    .then((res) => {
                         const unrealizedStories = res.data.filter((story) => !story.realized);
-                        
+
                         if (unrealizedStories.length) {
                             this.stories = unrealizedStories;
                         } else {
                             this.finishSprint();
                         }
-                    },
-                    (error) => {
-                        console.log(error);
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
 
                         this.$toasted.error('Napaka pri pridobivanju zgodb Sprinta', {
                             duration: 3000,
                             position: "bottom-center"
                         });
-                    }
-                );
+                    })
+                    .finally(() => {
+                        this.loaded.stories = true;
+                    });
             }
         },
         computed: {

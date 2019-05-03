@@ -1,47 +1,54 @@
 <template>
-    <div>
-        <v-tabs
-                dark
-                slider-color="#A2E0E0"
-                fixed-tabs
-                color="#1A2432"
-        >
-            <v-tab id
-                   v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
-                   :key="1" ripple>
-                Pregled
-            </v-tab>
-            <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="2" ripple>
-                Uredi projekt
-            </v-tab>
-            <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="4" ripple>
-                Sprinti
-            </v-tab>
+    <v-layout column>
+        <template v-if="selectedProject">
+            <v-tabs
+                    dark
+                    slider-color="#A2E0E0"
+                    fixed-tabs
+                    color="#1A2432"
+            >
+                <v-tab id
+                       v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
+                       :key="1" ripple>
+                    Pregled
+                </v-tab>
+                <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="2" ripple>
+                    Uredi projekt
+                </v-tab>
+                <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="4" ripple>
+                    Sprinti
+                </v-tab>
 
-            <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="5" ripple>
-                Zaključi Sprinte
-            </v-tab>
+                <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="5" ripple>
+                    Zaključi Sprinte
+                </v-tab>
 
-            <v-tab-item id
-                        v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
-                        :key="1">
-                <HomeUserProductBacklog :project="selectedProject"></HomeUserProductBacklog>
-            </v-tab-item>
+                <v-tab-item id
+                            v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
+                            :key="1">
+                    <HomeUserProductBacklog :project="selectedProject"></HomeUserProductBacklog>
+                </v-tab-item>
 
-            <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="2">
-                <HomeUserProjectEdit @projectEditUpdate="projectEditUpdate"
-                                     :selectedProject="selectedProject"/>
-            </v-tab-item>
+                <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="2">
+                    <HomeUserProjectEdit @projectEditUpdate="projectEditUpdate"
+                                         :selectedProject="selectedProject"/>
+                </v-tab-item>
 
-            <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="4">
-                <HomeUserSprint @sprintsUpdated="onSprintsUpdated"/>
-            </v-tab-item>
+                <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="4">
+                    <HomeUserSprint @sprintsUpdated="onSprintsUpdated"/>
+                </v-tab-item>
 
-            <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="5">
-                <FinishSprints/>
-            </v-tab-item>
-        </v-tabs>
-    </div>
+                <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="5">
+                    <FinishSprints/>
+                </v-tab-item>
+            </v-tabs>
+        </template>
+        <v-layout v-else column justify-center align-center>
+            <v-progress-linear class="mt-0" :indeterminate="true"></v-progress-linear>
+            
+            <h1 class="mt-4">Nalagam projekt...</h1>
+        </v-layout>
+    </v-layout>
 </template>
 
 <script>
@@ -76,9 +83,9 @@
             this.$store.commit('editCurrentSprint', null);
         },
         data: () => ({
-            selectedProject: {},
+            selectedProject: null,
             userProjectRole: '',
-            currentSprint: {},
+            currentSprint: null,
             setTimeout: true
         }),
         methods: {
@@ -94,11 +101,11 @@
 
             getSelectedProject() {
                 APICalls.getProjectId(this.$route.params.projectId).then(
-                    (rs) => {
-                        this.selectedProject = rs.data;
+                    (res) => {
+                        this.selectedProject = res.data;
                         this.userProjectRole = this.selectedProject.users.find(x => x.user._id === this.$store.getters.currentUser._id).role;
 
-                        this.$store.commit('editProject', rs.data);
+                        this.$store.commit('editProject', res.data);
                     },
                     (error) => {
                         console.log(error);

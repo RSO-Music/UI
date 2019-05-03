@@ -3,10 +3,6 @@ import Router from 'vue-router'
 import Dashboard from './views/Dashboard/Dashboard'
 import NotFound from './views/NotFound'
 import HomeUserProject from "./views/Home/User/HomeUserProject";
-import HomeUserProjectEdit from "./views/Home/User/Project/HomeUserProjectEdit";
-import HomeUserSprint from "./views/Home/User/Project/HomeUserSprint";
-import HomeUserProductBacklog from "./views/Home/User/Project/HomeUserBacklog";
-import FinishSprints from "./views/Home/User/Project/FinishSprints";
 
 import store from "@/utils/store";
 
@@ -27,29 +23,7 @@ const createRouter = () => new Router({
                 name: 'homeUserProject'
             },
             name: 'projectPage',
-            component: HomeUserProject,
-            children: [
-                {
-                    path: 'edit',
-                    name: 'homeUserProjectEdit',
-                    component: HomeUserProjectEdit
-                },
-                {
-                    path: 'sprint',
-                    name: 'homeUserSprintManagemnet',
-                    component: HomeUserSprint
-                },
-                {
-                    path: 'backlog',
-                    name: 'homeUserProductBackLog',
-                    component: HomeUserProductBacklog
-                },
-                {
-                    path: 'finish-sprints',
-                    name: 'finishSprints',
-                    component: FinishSprints
-                }
-            ]
+            component: HomeUserProject
         },
         {
             path: '*',
