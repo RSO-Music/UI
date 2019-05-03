@@ -104,8 +104,6 @@
                     (res) => {
                         this.selectedProject = res.data;
                         this.userProjectRole = this.selectedProject.users.find(x => x.user._id === this.$store.getters.currentUser._id).role;
-                        
-                        console.log('userProjectRole', this.userProjectRole);
 
                         this.$store.commit('editProject', res.data);
                     },

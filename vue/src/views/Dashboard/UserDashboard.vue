@@ -4,10 +4,21 @@
             <h1>Pozdravljeni v sistemu Scrummy!</h1>
 
             <v-card class="ma-2 pa-3">
-                <v-layout column >
-                    <h1>{{getCurrentUser.firstName}} {{getCurrentUser.lastName}}</h1>
+                <v-layout>
+                    <v-flex shrink mr-4>
+                        <v-layout align-center>
+                            <v-icon class="user-avatar grey--text">account_circle</v-icon>
+                        </v-layout>
+                    </v-flex>
+                    
+                    <v-flex shrink>
+                        <v-layout column>
+                            <h1>{{getCurrentUser.firstName}} {{getCurrentUser.lastName}}</h1>
 
-                    <p>{{getCurrentUser.username}}</p>
+                            <p class="mb-2"><span class="grey--text">Uporabniško ime:</span> {{getCurrentUser.username}}</p>
+                            <p class="mb-2"><span class="grey--text">E-mail:</span> {{getCurrentUser.email}}</p>
+                        </v-layout>
+                    </v-flex>
                 </v-layout>
             </v-card>
 
@@ -59,13 +70,16 @@
                 const vm = this;
 
                 APICalls.getProjectBasedOnUserId(vm.$store.getters.currentUser._id).then(
-                    (rs) => {
-                        console.log(rs.data);
-                        
-                        vm.projectsForUser = rs.data;
+                    (res) => {
+                        vm.projectsForUser = res.data;
                     },
                     (error) => {
-                        console.log('An error occured while fetching projects');
+                        console.log(error);
+
+                        vm.$toasted.error('Pri pridobivanju projektov je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center"
+                        });
                     }
                 );
             },
@@ -91,6 +105,7 @@
 </script>
 
 <style scoped>
-    .dashboard-project-card {
+    .user-avatar {
+        font-size: 120px;
     }
 </style>
