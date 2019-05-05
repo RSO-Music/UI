@@ -12,7 +12,7 @@
                         DODAJ NOVO ZGODBO
                     </v-btn>
                 </template>
-                
+
                 <v-btn flat icon color="#3093A0" v-on="on" v-else>
                     <v-icon v-if="!viewOnly && canEditUserStories">edit</v-icon>
                     <v-icon v-else>info_outline</v-icon>
@@ -145,7 +145,8 @@
                                     <v-flex xs12>
                                         <p class="red--text">
                                             <v-icon class="red--text">info_outline</v-icon>
-                                            <span class="ml-2">Zgodba je bila enkrat že zavrnjena</span><span v-if="story.rejectionReason"> z razlogom: {{story.rejectionReason}}</span>
+                                            <span class="ml-2">Zgodba je bila enkrat že zavrnjena</span><span
+                                                v-if="story.rejectionReason"> z razlogom: {{story.rejectionReason}}</span>
                                         </p>
                                     </v-flex>
                                 </v-layout>
@@ -158,7 +159,8 @@
                                     <v-layout justify-start>
                                         <v-flex xs4>
                                             <v-radio-group v-model="finished.state" row :mandatory="false">
-                                                <v-radio color="#1A616B" label="Sprejmi zgodbo" value="accept"></v-radio>
+                                                <v-radio color="#1A616B" label="Sprejmi zgodbo"
+                                                         value="accept"></v-radio>
                                                 <v-radio color="#1A616B" label="Zavrni zgodbo" value="reject"></v-radio>
                                             </v-radio-group>
                                         </v-flex>
@@ -174,18 +176,19 @@
                                     <v-layout>
                                         <v-flex xs12>
                                             <ButtonBase msg="Zaključi" @clicked="finishStory"></ButtonBase>
-                                            <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
+                                            <ButtonBase msg="Prekliči" @clicked="closeDialog"
+                                                        class="cancel"></ButtonBase>
                                         </v-flex>
                                     </v-layout>
                                 </template>
-                                
+
                                 <v-layout v-else-if="!viewOnly && canEditUserStories">
                                     <v-flex xs12>
                                         <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
                                         <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
                                     </v-flex>
                                 </v-layout>
-                                
+
                                 <v-layout v-else>
                                     <v-flex xs12>
                                         <ButtonBase msg="Zapri" @clicked="closeDialog" class="cancel"></ButtonBase>
@@ -373,14 +376,14 @@
 
 <script>
     import ButtonBase from "../Generic/ButtonBase";
-    import { APICalls } from "../../utils/apiCalls";
+    import {APICalls} from "../../utils/apiCalls";
     import ButtonOutline from "../Generic/ButtonOutline";
     import Separator from "../Generic/Separator";
     import TaskCard from "../Generic/TaskCard";
 
     export default {
         name: "UserStoryDialog",
-        components: { ButtonBase, ButtonOutline, Separator, TaskCard },
+        components: {ButtonBase, ButtonOutline, Separator, TaskCard},
         props: {
             story: Object,
             customBtn: Boolean,
@@ -556,8 +559,7 @@
                             console.log(error);
                         })
 
-                }
-                else {
+                } else {
                     //update existing task
                     APICalls.updateUserTask(
                         {
@@ -594,7 +596,7 @@
             },
             acceptOrRejectStory() {
                 const vm = this;
-                
+
                 const updateObject = {};
 
                 const editTask = vm.editTask;
@@ -669,7 +671,7 @@
 
                 vm.editTask.active = !vm.editTask.active;
 
-                APICalls.updateUserTask({ active: vm.editTask.active }, vm.editTask._id)
+                APICalls.updateUserTask({active: vm.editTask.active}, vm.editTask._id)
                     .then((res) => {
                         const updatedTask = res.data;
 
