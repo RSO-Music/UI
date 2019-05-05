@@ -322,7 +322,7 @@
                                                 </v-flex>
                                             </v-layout>
 
-                                            <v-layout shrink align-center v-if="editTask.assignee && editTask.accepted">
+                                            <v-layout v-if="editTask.assignee && editTask.accepted">
                                                 <v-flex>
                                                     <v-icon class="green--text">check_circle_outline</v-icon>
                                                     <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
@@ -338,20 +338,26 @@
                                             </v-layout>
                                         </v-layout>
 
-                                        <v-layout mb-4 mt-4 v-if="editTask.assignee && editTask.accepted">
+                                        <v-layout v-if="editTask.assignee && editTask.accepted">
                                             <v-flex>
-                                                <p><span class="grey--text">Število porabljenih ur:</span>
+                                                <p><span class="grey--text">Število mojih porabljenih ur:</span>
                                                     {{editTask.activeHours}}</p>
                                             </v-flex>
-
                                             <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
                                                 <ButtonBase
                                                         :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`"
                                                         @clicked="setTaskActiveStatus"
                                                         :isDisabled="!canEditTasks"
-                                                        class="mr-3"
+                                                        class="ml-3"
                                                 >
                                                 </ButtonBase>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout mb-4 v-if="editTask.assignee">
+                                            <v-flex>
+                                                <p><span
+                                                        class="grey--text">Število porabljenih ur vseh razvijalcev:</span>
+                                                    {{editTask.activeHoursAll}}</p>
                                             </v-flex>
                                         </v-layout>
 
@@ -426,7 +432,8 @@
                 finished: {
                     state: 'accept',
                     rejectionReason: ''
-                }
+                },
+                activeHoursSmart: 0
             };
         },
         methods: {
@@ -692,7 +699,18 @@
 
                         */
 
-                        vm.editTask.activeHours = updatedTask.activeHours;
+                        let totalTime = 0;
+
+                        for (let i = 0; i < res.data.activities.length; i++) {
+                            let activity = res.data.activities[i];
+                            if (activity.user === res.data.asignee) {
+                                totalTime += activity[i].activeHours;
+                            }
+                        }
+
+                        console.log("~705, total time", totalTime);
+
+                        vm.editTask.activeHours = totalTime;
                     })
                     .catch((ex) => {
                         console.log(ex);
@@ -705,6 +723,8 @@
                         });
                     });
 
+                console.log("708, vm.editTask._id", vm.editTask._id);
+
                 APICalls.setActive(vm.editTask._id)
                     .then((res) => {
                         const task = res.data;
@@ -716,7 +736,7 @@
                     })
                     .catch((ex) => {
                         console.log(ex);
-                        vm.$toasted.error('Pri nastavlanju beleženja časa je prišlo do napake', {
+                        vm.$toasted.error('Pri zagonu beleženja časa je prišlo do napake', {
                             duration: 3000,
                             position: "bottom-center",
                         });
@@ -816,6 +836,34 @@
                     APICalls.getTasksInsideCurrentStory(this.story._id).then(
                         (rs) => {
                             this.tasks = rs.data;
+
+                            for (let i = 0; i < this.tasks.length; i++) {
+                                let currentTask = this.tasks[i];
+
+                                console.log("currentTask.activities", currentTask.activities);
+
+                                let totalTimeUser = 0;
+                                let totalTime = 0;
+
+                                for (let j = 0; j < currentTask.activities.length; j++) {
+                                    let activity = currentTask.activities[j];
+
+                                    totalTime += activity.activeHours;
+
+                                    console.log("activity.activeHours", activity.activeHours);
+
+                                    console.log("activity.user, currentTask.assignee", activity.user, currentTask.assignee);
+
+                                    if (activity.user === currentTask.assignee) {
+                                        totalTimeUser += activity.activeHours;
+                                    }
+                                }
+
+                                console.log("~846, total time", totalTimeUser);
+
+                                this.tasks[i].activeHours = totalTimeUser;
+                                this.tasks[i].activeHoursAll = totalTime;
+                            }
                         },
                         (error) => {
                             console.log(error);
