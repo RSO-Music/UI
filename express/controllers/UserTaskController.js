@@ -133,7 +133,7 @@ module.exports = {
         const taskId = req.query.taskId;
 
         UserTaskModel.findOneAndUpdate({_id: taskId, assignee: {$ne: null}},
-            {$set: {assignee: null, accepted: false}}, {new: true}, function (err, UserTask) {
+            {$set: {assignee: null, accepted: false, active: false}}, {new: true}, function (err, UserTask) {
                 console.log(taskId, UserTask);
 
                 if (err) {
@@ -182,7 +182,7 @@ module.exports = {
                     let dbDate = new Date(UserTask.activities[i].date.getTime());
                     console.log("183 dbDate, UserTask.activities[i].date;", dbDate, UserTask.activities[i].date);
 
-                    if (dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)) {
+                    if (dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0) && UserTask.activities[i].user.toString() === UserTask.assignee.toString()) {
                         console.log("i, todaysActivityFound = true;", i);
                         console.log("187 dbDate", dbDate);
 
@@ -221,17 +221,24 @@ module.exports = {
                 let todaysActivityFound = false;
 
                 for (let i = 0; i < UserTask.activities.length; i++) {
-                    let dbDate = UserTask.activities[i].date;
+                    let dbDate = new Date(UserTask.activities[i].date.getTime());
                     console.log("UserTask.activities[i].date", UserTask.activities[i].date);
+                    console.log("UserTask.activities[i].user === UserTask.assignee", UserTask.activities[i].user.toString() === UserTask.assignee.toString());
+
+                    console.log("dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)", dbDate.setHours(0, 0, 0, 0), todaysDate.setHours(0, 0, 0, 0), dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0));
 
                     if (dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)) {
-                        todaysActivityFound = true;
-                        console.log("i, todaysActivityFound = true;", i);
+                        if (UserTask.activities[i].user.toString() === UserTask.assignee.toString()) {
+                            todaysActivityFound = true;
+                            console.log("i, todaysActivityFound = true;", i);
+                        }
                     }
                 }
 
+                console.error("todaysActivityFound:", todaysActivityFound);
+
                 if (!todaysActivityFound) {
-                    UserTask.activities.push({"user": UserTask.assignee, "date": new Date(), "activeHours": 0})
+                    UserTask.activities.push({"user": UserTask.assignee, "date": new Date()})
                 }
 
             }
