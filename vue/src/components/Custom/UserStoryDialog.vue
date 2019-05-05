@@ -673,12 +673,12 @@
                 this.$refs.form.reset();
                 this.$refs.form.resetValidation();
             },
-            setTaskActiveStatus() {
+            async setTaskActiveStatus() {
                 const vm = this;
 
                 vm.editTask.active = !vm.editTask.active;
 
-                APICalls.updateUserTask({active: vm.editTask.active}, vm.editTask._id)
+                await APICalls.updateUserTask({active: vm.editTask.active}, vm.editTask._id)
                     .then((res) => {
                         const updatedTask = res.data;
 
@@ -725,10 +725,13 @@
 
                 console.log("708, vm.editTask._id", vm.editTask._id);
 
-                APICalls.setActive(vm.editTask._id)
+                await APICalls.setActive(vm.editTask._id)
                     .then((res) => {
                         const task = res.data;
                         console.log(task);
+
+
+
                         vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna, čas se beleži' : 'Naloga je sedaj neaktivna, čas se več ne beleži'}`, {
                             duration: 3000,
                             position: "bottom-center",
@@ -852,9 +855,9 @@
 
                                     console.log("activity.activeHours", activity.activeHours);
 
-                                    console.log("activity.user, currentTask.assignee", activity.user, currentTask.assignee);
+                                    console.log("activity.user.toString(), currentTask.assignee.toString()", activity.user.toString(), currentTask.assignee.toString());
 
-                                    if (activity.user === currentTask.assignee) {
+                                    if (activity.user.toString() === this.$store.getters.currentUser._id.toString()) {
                                         totalTimeUser += activity.activeHours;
                                     }
                                 }

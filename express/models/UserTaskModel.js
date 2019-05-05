@@ -29,6 +29,10 @@ const UserTaskSchema = new Schema({
         type: Number,
         default: 0
     },
+    activeHoursAssignee: {
+        type: Number,
+        default: 0
+    },
     activities: [
         {
             user: {

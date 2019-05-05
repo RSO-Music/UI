@@ -173,8 +173,6 @@ module.exports = {
             }
 
             if (UserTask.active) {
-                UserTask.activeHours += 1;
-
                 let todaysDate = new Date();
                 console.log("todaysDate", todaysDate);
 
@@ -242,6 +240,32 @@ module.exports = {
                 }
 
             }
+
+            let totalTimeUser = 0;
+            let totalTime = 0;
+
+            for (let j = 0; j < UserTask.activities.length; j++) {
+                let activity = UserTask.activities[j];
+
+                totalTime += activity.activeHours;
+
+                console.log("activity.activeHours", activity.activeHours);
+
+                console.log("activity.user, currentTask.assignee", activity.user.toString(), UserTask.assignee.toString());
+
+                if (activity.user.toString() === UserTask.assignee.toString()) {
+                    totalTimeUser += activity.activeHours;
+                }
+            }
+
+            console.log("totalTimeUser", totalTimeUser);
+            console.log("totalTime", totalTime);
+
+            UserTask.activeHoursAssignee = totalTimeUser;
+            UserTask.activeHours = totalTime;
+
+
+
 
 
             UserTask.save(function (err, UserTask) {
