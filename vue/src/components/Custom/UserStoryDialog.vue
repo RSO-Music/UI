@@ -191,7 +191,7 @@
 
                                 <v-layout v-else>
                                     <v-flex xs12>
-                                        <ButtonBase msg="Zapri" @clicked="closeDialog" class="cancel"></ButtonBase>
+                                        <ButtonBase msg="Zapri" @clicked="closeDialog" class="cancel mr-0"></ButtonBase>
                                     </v-flex>
                                 </v-layout>
                             </v-container>
