@@ -238,4 +238,11 @@ export class APICalls {
             data: taskObject
         });
     }
+
+    static setActive(taskId) {
+        return instance({
+            method: "put",
+            url: '/task/active/' + taskId
+        });
+    }
 }

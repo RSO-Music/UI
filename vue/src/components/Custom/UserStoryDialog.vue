@@ -12,7 +12,7 @@
                         DODAJ NOVO ZGODBO
                     </v-btn>
                 </template>
-                
+
                 <v-btn flat icon color="#3093A0" v-on="on" v-else>
                     <v-icon v-if="!viewOnly && canEditUserStories">edit</v-icon>
                     <v-icon v-else>info_outline</v-icon>
@@ -145,7 +145,8 @@
                                     <v-flex xs12>
                                         <p class="red--text">
                                             <v-icon class="red--text">info_outline</v-icon>
-                                            <span class="ml-2">Zgodba je bila enkrat že zavrnjena</span><span v-if="story.rejectionReason"> z razlogom: {{story.rejectionReason}}</span>
+                                            <span class="ml-2">Zgodba je bila enkrat že zavrnjena</span><span
+                                                v-if="story.rejectionReason"> z razlogom: {{story.rejectionReason}}</span>
                                         </p>
                                     </v-flex>
                                 </v-layout>
@@ -158,7 +159,8 @@
                                     <v-layout justify-start>
                                         <v-flex xs4>
                                             <v-radio-group v-model="finished.state" row :mandatory="false">
-                                                <v-radio color="#1A616B" label="Sprejmi zgodbo" value="accept"></v-radio>
+                                                <v-radio color="#1A616B" label="Sprejmi zgodbo"
+                                                         value="accept"></v-radio>
                                                 <v-radio color="#1A616B" label="Zavrni zgodbo" value="reject"></v-radio>
                                             </v-radio-group>
                                         </v-flex>
@@ -174,18 +176,19 @@
                                     <v-layout>
                                         <v-flex xs12>
                                             <ButtonBase msg="Zaključi" @clicked="finishStory"></ButtonBase>
-                                            <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
+                                            <ButtonBase msg="Prekliči" @clicked="closeDialog"
+                                                        class="cancel"></ButtonBase>
                                         </v-flex>
                                     </v-layout>
                                 </template>
-                                
+
                                 <v-layout v-else-if="!viewOnly && canEditUserStories">
                                     <v-flex xs12>
                                         <ButtonBase :disabled="!valid" msg="Shrani" @clicked="updateStory"></ButtonBase>
                                         <ButtonBase msg="Prekliči" @clicked="closeDialog" class="cancel"></ButtonBase>
                                     </v-flex>
                                 </v-layout>
-                                
+
                                 <v-layout v-else>
                                     <v-flex xs12>
                                         <ButtonBase msg="Zapri" @clicked="closeDialog" class="cancel"></ButtonBase>
@@ -264,7 +267,7 @@
                                                         rows="1"
                                                         label="Opis naloge"
                                                         v-model="editTask.description"
-                                                        :disabled="!canEditTasks || viewOnly"
+                                                        :disabled="!canEditTasks || viewOnly || editTask.active"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -279,7 +282,7 @@
                                                         label="Ocena časa"
                                                         type="number"
                                                         v-model="editTask.time"
-                                                        :disabled="!canEditTasks || viewOnly"
+                                                        :disabled="!canEditTasks || viewOnly ||editTask.active"
                                                         min="1"
                                                         flat
                                                 ></v-text-field>
@@ -289,7 +292,7 @@
                                                         color="#3093A0"
                                                         prepend-icon="person"
                                                         v-model="editTask.assignee"
-                                                        :disabled="!canEditTasks || viewOnly"
+                                                        :disabled="!canEditTasks || viewOnly || editTask.accepted"
                                                         label="Razvijalec"
                                                         :items="projectUsers"
                                                         :item-text="({ user }) => {
@@ -319,7 +322,7 @@
                                                 </v-flex>
                                             </v-layout>
 
-                                            <v-layout shrink align-center v-if="editTask.assignee && editTask.accepted">
+                                            <v-layout v-if="editTask.assignee && editTask.accepted">
                                                 <v-flex>
                                                     <v-icon class="green--text">check_circle_outline</v-icon>
                                                     <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
@@ -329,36 +332,44 @@
                                                     <ButtonBase
                                                             msg="Opusti nalogo"
                                                             @clicked="acceptOrRejectStory"
+                                                            :isDisabled="editTask.active"
                                                             class="ml-3"
                                                     />
                                                 </v-flex>
                                             </v-layout>
                                         </v-layout>
 
-                                        <v-layout mb-4 mt-4 v-if="editTask.assignee && editTask.accepted">
+                                        <v-layout
+                                                v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id.toString()">
                                             <v-flex>
-                                                <p><span class="grey--text">Število porabljenih ur:</span>
-                                                    {{editTask.activeHours}}</p>
+                                                <p><span class="grey--text">Število mojih ur:</span>
+                                                    {{editTask.activeHoursAssignee}}</p>
                                             </v-flex>
-
                                             <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
                                                 <ButtonBase
                                                         :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`"
                                                         @clicked="setTaskActiveStatus"
                                                         :isDisabled="!canEditTasks"
-                                                        class="mr-3"
+                                                        class="ml-3"
                                                 >
                                                 </ButtonBase>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout mb-4 v-if="editTask.activeHours > 0">
+                                            <v-flex>
+                                                <p><span
+                                                        class="grey--text">Število ur vseh razvijalcev:</span>
+                                                    {{editTask.activeHours}}</p>
                                             </v-flex>
                                         </v-layout>
 
                                         <v-layout v-if="!viewOnly" align-center justify-end row>
                                             <ButtonBase msg="Ponastavi" @clicked="clearEdit"
-                                                        :isDisabled="!canEditTasks"
+                                                        :isDisabled="!canEditTasks || editTask.accepted && editTask.active"
                                                         class="mr-3"></ButtonBase>
 
                                             <ButtonBase msg="Shrani" @clicked="addTask(editTask)"
-                                                        :isDisabled="!isEditTaskValid || !canEditTasks"></ButtonBase>
+                                                        :isDisabled="!isEditTaskValid || !canEditTasks || editTask.accepted && editTask.active"></ButtonBase>
                                         </v-layout>
                                     </v-flex>
                                 </v-layout>
@@ -373,14 +384,14 @@
 
 <script>
     import ButtonBase from "../Generic/ButtonBase";
-    import { APICalls } from "../../utils/apiCalls";
+    import {APICalls} from "../../utils/apiCalls";
     import ButtonOutline from "../Generic/ButtonOutline";
     import Separator from "../Generic/Separator";
     import TaskCard from "../Generic/TaskCard";
 
     export default {
         name: "UserStoryDialog",
-        components: { ButtonBase, ButtonOutline, Separator, TaskCard },
+        components: {ButtonBase, ButtonOutline, Separator, TaskCard},
         props: {
             story: Object,
             customBtn: Boolean,
@@ -538,7 +549,8 @@
                             description: editTask.description,
                             time: editTask.time,
                             assignee: editTask.assignee,
-                            accepted: false
+                            accepted: false,
+                            active: false
                         }
                     ).then(
                         (rs) => {
@@ -555,8 +567,7 @@
                             console.log(error);
                         })
 
-                }
-                else {
+                } else {
                     //update existing task
                     APICalls.updateUserTask(
                         {
@@ -593,7 +604,7 @@
             },
             acceptOrRejectStory() {
                 const vm = this;
-                
+
                 const updateObject = {};
 
                 const editTask = vm.editTask;
@@ -620,6 +631,9 @@
                             });
 
                             vm.clearEdit();
+
+                            vm.editTask.activeHours = updatedTask.activeHours;
+                            vm.editTask.activeHoursAssignee = updatedTask.activeHoursAssignee;
 
                             vm.$toasted.success('Naloga je bila uspešno posodobljena', {
                                 duration: 3000,
@@ -654,7 +668,7 @@
                     },
                     (error) => {
                         console.log(error);
-                    })
+                    });
 
                 this.clearEdit();
 
@@ -663,12 +677,32 @@
                 this.$refs.form.reset();
                 this.$refs.form.resetValidation();
             },
-            setTaskActiveStatus() {
+            async setTaskActiveStatus() {
                 const vm = this;
 
-                vm.editTask.active = !vm.editTask.active;
+                await APICalls.setActive(vm.editTask._id)
+                    .then((res) => {
+                        const task = res.data;
+                        console.log(task);
 
-                APICalls.updateUserTask({ active: vm.editTask.active }, vm.editTask._id)
+                        vm.editTask.active = task.active;
+
+                        vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna, čas se beleži' : 'Naloga je sedaj neaktivna, čas se več ne beleži'}`, {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+                        vm.$toasted.error('Pri zagonu beleženja časa je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    });
+
+                //vm.editTask.active = !vm.editTask.active;
+
+                await APICalls.updateUserTask({active: vm.editTask.active}, vm.editTask._id)
                     .then((res) => {
                         const updatedTask = res.data;
 
@@ -679,13 +713,35 @@
 
                             return task;
                         });
-                        
+
+                        /*
+
                         vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna' : 'Naloga je sedaj neaktivna'}`, {
                             duration: 3000,
                             position: "bottom-center",
                         });
 
+                        */
+
+                        /*
+
+                        let totalTime = 0;
+
+                        for (let i = 0; i < res.data.activities.length; i++) {
+                            let activity = res.data.activities[i];
+                            if (activity.user.toString() === res.data.assignee.toString()) {
+                                totalTime += activity[i].activeHours;
+                            }
+                        }
+
+                        console.log("~705, total time", totalTime);
+
+                        vm.editTask.activeHours = totalTime;
+
+                        */
+
                         vm.editTask.activeHours = updatedTask.activeHours;
+                        vm.editTask.activeHoursAssignee = updatedTask.activeHoursAssignee;
                     })
                     .catch((ex) => {
                         console.log(ex);
@@ -697,6 +753,9 @@
                             position: "bottom-center",
                         });
                     });
+
+                console.log("708, vm.editTask._id", vm.editTask._id);
+
             }
         },
         computed: {
@@ -792,6 +851,39 @@
                     APICalls.getTasksInsideCurrentStory(this.story._id).then(
                         (rs) => {
                             this.tasks = rs.data;
+
+                            /*
+
+                            for (let i = 0; i < this.tasks.length; i++) {
+                                let currentTask = this.tasks[i];
+
+                                console.log("currentTask.activities", currentTask.activities);
+
+                                let totalTimeUser = 0;
+                                //let totalTime = 0;
+
+                                for (let j = 0; j < currentTask.activities.length; j++) {
+                                    let activity = currentTask.activities[j];
+
+                                    //totalTime += activity.activeHours;
+
+                                    console.log("activity.activeHours", activity.activeHours);
+
+                                    console.log("activity.user.toString(), currentTask.assignee.toString()", activity.user.toString(), currentTask.assignee.toString());
+
+                                    if (activity.user.toString() === this.$store.getters.currentUser._id.toString()) {
+                                        totalTimeUser += activity.activeHours;
+                                    }
+                                }
+
+                                console.log("~846, total time", totalTimeUser);
+
+                                this.tasks[i].activeHours = totalTimeUser;
+                                //this.tasks[i].activeHoursAll = totalTime;
+                            }
+
+                             */
+
                         },
                         (error) => {
                             console.log(error);

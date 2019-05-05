@@ -28,7 +28,24 @@ const UserTaskSchema = new Schema({
     activeHours: {
         type: Number,
         default: 0
-    }
+    },
+    activeHoursAssignee: {
+        type: Number,
+        default: 0
+    },
+    activities: [
+        {
+            user: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User"
+            },
+            date: Date,
+            activeHours: {
+                type: Number,
+                default: 0
+            }
+        }
+    ]
 });
 
 module.exports = mongoose.model('UserTask', UserTaskSchema);
