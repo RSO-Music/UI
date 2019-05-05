@@ -179,10 +179,12 @@ module.exports = {
                 console.log("todaysDate", todaysDate);
 
                 for (let i = 0; i < UserTask.activities.length; i++) {
-                    let dbDate = UserTask.activities[i].date;
+                    let dbDate = new Date(UserTask.activities[i].date.getTime());
+                    console.log("183 dbDate, UserTask.activities[i].date;", dbDate, UserTask.activities[i].date);
 
                     if (dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)) {
                         console.log("i, todaysActivityFound = true;", i);
+                        console.log("187 dbDate", dbDate);
 
 
                         let timeDifference = new Date() - UserTask.activities[i].date;
