@@ -538,7 +538,8 @@
                             description: editTask.description,
                             time: editTask.time,
                             assignee: editTask.assignee,
-                            accepted: false
+                            accepted: false,
+                            active: false
                         }
                     ).then(
                         (rs) => {
@@ -679,11 +680,15 @@
 
                             return task;
                         });
+
+                        /*
                         
                         vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna' : 'Naloga je sedaj neaktivna'}`, {
                             duration: 3000,
                             position: "bottom-center",
                         });
+
+                        */
 
                         vm.editTask.activeHours = updatedTask.activeHours;
                     })
@@ -693,6 +698,23 @@
                         vm.editTask.active = !vm.editTask.active;
 
                         vm.$toasted.error('Pri posodabljanju naloge je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    });
+
+                APICalls.setActive(vm.editTask._id)
+                    .then((res) => {
+                        const task = res.data;
+                        console.log(task);
+                        vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna, čas se beleži' : 'Naloga je sedaj neaktivna, čas se več ne beleži'}`, {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+                        vm.$toasted.error('Pri nastavlanju beleženja časa je prišlo do napake', {
                             duration: 3000,
                             position: "bottom-center",
                         });

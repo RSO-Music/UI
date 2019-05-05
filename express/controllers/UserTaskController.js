@@ -189,6 +189,8 @@ module.exports = {
                     });
                 }
 
+                console.log(UserTask);
+
                 return res.json(UserTask);
             });
         });
