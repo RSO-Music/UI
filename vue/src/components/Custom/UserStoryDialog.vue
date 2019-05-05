@@ -338,10 +338,11 @@
                                             </v-layout>
                                         </v-layout>
 
-                                        <v-layout v-if="editTask.assignee && editTask.accepted">
+                                        <v-layout
+                                                v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id.toString()">
                                             <v-flex>
                                                 <p><span class="grey--text">Število mojih porabljenih ur:</span>
-                                                    {{editTask.activeHours}}</p>
+                                                    {{editTask.activeHoursAssignee}}</p>
                                             </v-flex>
                                             <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
                                                 <ButtonBase
@@ -357,7 +358,7 @@
                                             <v-flex>
                                                 <p><span
                                                         class="grey--text">Število porabljenih ur vseh razvijalcev:</span>
-                                                    {{editTask.activeHoursAll}}</p>
+                                                    {{editTask.activeHours}}</p>
                                             </v-flex>
                                         </v-layout>
 
@@ -699,11 +700,13 @@
 
                         */
 
+                        /*
+
                         let totalTime = 0;
 
                         for (let i = 0; i < res.data.activities.length; i++) {
                             let activity = res.data.activities[i];
-                            if (activity.user === res.data.asignee) {
+                            if (activity.user.toString() === res.data.assignee.toString()) {
                                 totalTime += activity[i].activeHours;
                             }
                         }
@@ -711,6 +714,8 @@
                         console.log("~705, total time", totalTime);
 
                         vm.editTask.activeHours = totalTime;
+
+                        */
                     })
                     .catch((ex) => {
                         console.log(ex);
@@ -729,7 +734,6 @@
                     .then((res) => {
                         const task = res.data;
                         console.log(task);
-
 
 
                         vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna, čas se beleži' : 'Naloga je sedaj neaktivna, čas se več ne beleži'}`, {
@@ -840,18 +844,20 @@
                         (rs) => {
                             this.tasks = rs.data;
 
+                            /*
+
                             for (let i = 0; i < this.tasks.length; i++) {
                                 let currentTask = this.tasks[i];
 
                                 console.log("currentTask.activities", currentTask.activities);
 
                                 let totalTimeUser = 0;
-                                let totalTime = 0;
+                                //let totalTime = 0;
 
                                 for (let j = 0; j < currentTask.activities.length; j++) {
                                     let activity = currentTask.activities[j];
 
-                                    totalTime += activity.activeHours;
+                                    //totalTime += activity.activeHours;
 
                                     console.log("activity.activeHours", activity.activeHours);
 
@@ -865,8 +871,11 @@
                                 console.log("~846, total time", totalTimeUser);
 
                                 this.tasks[i].activeHours = totalTimeUser;
-                                this.tasks[i].activeHoursAll = totalTime;
+                                //this.tasks[i].activeHoursAll = totalTime;
                             }
+
+                             */
+
                         },
                         (error) => {
                             console.log(error);
