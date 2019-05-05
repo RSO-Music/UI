@@ -26,7 +26,7 @@
                     Sprejmi nalogo
                 </v-btn>
 
-                <v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="unassign" v-show="isMyTask(task.assignee)">
+                <v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="unassign" :disabled="task.active" v-show="isMyTask(task.assignee)">
                     Opusti nalogo
                 </v-btn>
             </v-flex>

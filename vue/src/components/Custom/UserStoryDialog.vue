@@ -355,7 +355,7 @@
                                                 </ButtonBase>
                                             </v-flex>
                                         </v-layout>
-                                        <v-layout mb-4 v-if="editTask.assignee">
+                                        <v-layout mb-4 v-if="editTask.activeHours > 0">
                                             <v-flex>
                                                 <p><span
                                                         class="grey--text">Število ur vseh razvijalcev:</span>
@@ -631,6 +631,9 @@
                             });
 
                             vm.clearEdit();
+
+                            vm.editTask.activeHours = updatedTask.activeHours;
+                            vm.editTask.activeHoursAssignee = updatedTask.activeHoursAssignee;
 
                             vm.$toasted.success('Naloga je bila uspešno posodobljena', {
                                 duration: 3000,

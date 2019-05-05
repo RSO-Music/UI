@@ -100,6 +100,33 @@ module.exports = {
                 });
             }
 
+            try {
+                let totalTimeUser = 0;
+                let totalTime = 0;
+
+                for (let j = 0; j < UserTask.activities.length; j++) {
+                    let activity = UserTask.activities[j];
+
+                    totalTime += activity.activeHours;
+
+                    console.log("activity.activeHours", activity.activeHours);
+
+                    console.log("activity.user, currentTask.assignee", activity.user.toString(), UserTask.assignee.toString());
+
+                    if (activity.user.toString() === UserTask.assignee.toString()) {
+                        totalTimeUser += activity.activeHours;
+                    }
+                }
+
+                UserTask.activeHoursAssignee = totalTimeUser;
+                UserTask.activeHours = totalTime;
+
+            } catch (e) {
+
+            }
+
+
+
             return res.json(UserTask);
         });
     },
@@ -123,6 +150,30 @@ module.exports = {
                     return res.status(403).json({
                         message: 'No such UserTask, Probably already taken'
                     });
+                }
+
+                try {
+                    let totalTimeUser = 0;
+                    let totalTime = 0;
+
+                    for (let j = 0; j < UserTask.activities.length; j++) {
+                        let activity = UserTask.activities[j];
+
+                        totalTime += activity.activeHours;
+
+                        console.log("activity.activeHours", activity.activeHours);
+
+                        console.log("activity.user, currentTask.assignee", activity.user.toString(), UserTask.assignee.toString());
+
+                        if (activity.user.toString() === UserTask.assignee.toString()) {
+                            totalTimeUser += activity.activeHours;
+                        }
+                    }
+
+                    UserTask.activeHoursAssignee = totalTimeUser;
+                    UserTask.activeHours = totalTime;
+                } catch (e) {
+                    console.log("ERROR", e);
                 }
 
                 return res.json(UserTask);
