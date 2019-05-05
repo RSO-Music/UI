@@ -207,8 +207,6 @@ module.exports = {
                 }
             }
 
-            /*
-
             if (UserTask.active) {
                 //Task is active, user requested a change
                 //Change status to inactive
@@ -238,7 +236,6 @@ module.exports = {
 
             }
 
-             */
 
             UserTask.save(function (err, UserTask) {
                 if (err) {
