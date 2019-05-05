@@ -267,7 +267,7 @@
                                                         rows="1"
                                                         label="Opis naloge"
                                                         v-model="editTask.description"
-                                                        :disabled="!canEditTasks || viewOnly"
+                                                        :disabled="!canEditTasks || viewOnly || editTask.active"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -282,7 +282,7 @@
                                                         label="Ocena časa"
                                                         type="number"
                                                         v-model="editTask.time"
-                                                        :disabled="!canEditTasks || viewOnly"
+                                                        :disabled="!canEditTasks || viewOnly ||editTask.active"
                                                         min="1"
                                                         flat
                                                 ></v-text-field>
@@ -292,7 +292,7 @@
                                                         color="#3093A0"
                                                         prepend-icon="person"
                                                         v-model="editTask.assignee"
-                                                        :disabled="!canEditTasks || viewOnly"
+                                                        :disabled="!canEditTasks || viewOnly || editTask.accepted"
                                                         label="Razvijalec"
                                                         :items="projectUsers"
                                                         :item-text="({ user }) => {
@@ -332,6 +332,7 @@
                                                     <ButtonBase
                                                             msg="Opusti nalogo"
                                                             @clicked="acceptOrRejectStory"
+                                                            :isDisabled="editTask.active"
                                                             class="ml-3"
                                                     />
                                                 </v-flex>
@@ -341,7 +342,7 @@
                                         <v-layout
                                                 v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id.toString()">
                                             <v-flex>
-                                                <p><span class="grey--text">Število mojih porabljenih ur:</span>
+                                                <p><span class="grey--text">Število mojih ur:</span>
                                                     {{editTask.activeHoursAssignee}}</p>
                                             </v-flex>
                                             <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
@@ -357,18 +358,18 @@
                                         <v-layout mb-4 v-if="editTask.assignee">
                                             <v-flex>
                                                 <p><span
-                                                        class="grey--text">Število porabljenih ur vseh razvijalcev:</span>
+                                                        class="grey--text">Število ur vseh razvijalcev:</span>
                                                     {{editTask.activeHours}}</p>
                                             </v-flex>
                                         </v-layout>
 
                                         <v-layout v-if="!viewOnly" align-center justify-end row>
                                             <ButtonBase msg="Ponastavi" @clicked="clearEdit"
-                                                        :isDisabled="!canEditTasks"
+                                                        :isDisabled="!canEditTasks || editTask.accepted && editTask.active"
                                                         class="mr-3"></ButtonBase>
 
                                             <ButtonBase msg="Shrani" @clicked="addTask(editTask)"
-                                                        :isDisabled="!isEditTaskValid || !canEditTasks"></ButtonBase>
+                                                        :isDisabled="!isEditTaskValid || !canEditTasks || editTask.accepted && editTask.active"></ButtonBase>
                                         </v-layout>
                                     </v-flex>
                                 </v-layout>
@@ -433,8 +434,7 @@
                 finished: {
                     state: 'accept',
                     rejectionReason: ''
-                },
-                activeHoursSmart: 0
+                }
             };
         },
         methods: {
@@ -665,7 +665,7 @@
                     },
                     (error) => {
                         console.log(error);
-                    })
+                    });
 
                 this.clearEdit();
 
@@ -677,7 +677,27 @@
             async setTaskActiveStatus() {
                 const vm = this;
 
-                vm.editTask.active = !vm.editTask.active;
+                await APICalls.setActive(vm.editTask._id)
+                    .then((res) => {
+                        const task = res.data;
+                        console.log(task);
+
+                        vm.editTask.active = task.active;
+
+                        vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna, čas se beleži' : 'Naloga je sedaj neaktivna, čas se več ne beleži'}`, {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+                        vm.$toasted.error('Pri zagonu beleženja časa je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    });
+
+                //vm.editTask.active = !vm.editTask.active;
 
                 await APICalls.updateUserTask({active: vm.editTask.active}, vm.editTask._id)
                     .then((res) => {
@@ -692,7 +712,7 @@
                         });
 
                         /*
-                        
+
                         vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna' : 'Naloga je sedaj neaktivna'}`, {
                             duration: 3000,
                             position: "bottom-center",
@@ -716,6 +736,9 @@
                         vm.editTask.activeHours = totalTime;
 
                         */
+
+                        vm.editTask.activeHours = updatedTask.activeHours;
+                        vm.editTask.activeHoursAssignee = updatedTask.activeHoursAssignee;
                     })
                     .catch((ex) => {
                         console.log(ex);
@@ -730,24 +753,6 @@
 
                 console.log("708, vm.editTask._id", vm.editTask._id);
 
-                await APICalls.setActive(vm.editTask._id)
-                    .then((res) => {
-                        const task = res.data;
-                        console.log(task);
-
-
-                        vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna, čas se beleži' : 'Naloga je sedaj neaktivna, čas se več ne beleži'}`, {
-                            duration: 3000,
-                            position: "bottom-center",
-                        });
-                    })
-                    .catch((ex) => {
-                        console.log(ex);
-                        vm.$toasted.error('Pri zagonu beleženja časa je prišlo do napake', {
-                            duration: 3000,
-                            position: "bottom-center",
-                        });
-                    });
             }
         },
         computed: {
