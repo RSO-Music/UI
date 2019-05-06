@@ -39,7 +39,7 @@
                 </v-tab-item>
 
                 <v-tab-item id v-if="userProjectRole.includes('product_owner')" :key="5">
-                    <FinishSprints/>
+                    <FinishSprints @sprintFinished="onSprintFinished"/>
                 </v-tab-item>
             </v-tabs>
         </template>
@@ -167,6 +167,10 @@
 
             onSprintsUpdated() {
                 this.getCurrentSprint();
+            },
+
+            onSprintFinished() {
+                console.log('Finished a Sprint');
             },
 
             getCurrentSprint() {

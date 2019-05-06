@@ -794,7 +794,9 @@
             projectUsers() {
                 let projectData = this.$store.getters.editingProject;
 
-                return projectData.users;
+                return projectData.users.filter((user) => {
+                    return user.role.includes('developer');
+                });
             },
             canEditUserStories() {
                 let projectData = this.$store.getters.editingProject;
