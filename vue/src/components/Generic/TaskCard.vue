@@ -13,7 +13,7 @@
                     </v-flex>
                     <v-flex xs4>
                         <div id="cardUserName">
-                            <p v-if="taskAssignee" class="text-truncate">
+                            <p v-if="taskAssignee" class="text-truncate pb-2">
                                 <span v-if="task.accepted" class="green--text">{{taskAssignee}}</span>
                                 <span v-else class="red--text" title="Razvijalec naloge še ni sprejel">{{taskAssignee}}</span>
                             </p>
