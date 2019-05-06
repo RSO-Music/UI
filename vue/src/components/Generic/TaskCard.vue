@@ -21,12 +21,12 @@
                 </div>
             </v-flex>
             <v-flex xs3>
-                <v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null"
+                <v-btn v-if="!viewOnly && isCurrentUserDeveloper" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null"
                        v-show="!isMyTask(task.assignee)">
                     Sprejmi nalogo
                 </v-btn>
 
-                <v-btn v-if="!viewOnly" flat color="#1C69C1" v-on:click="unassign" :disabled="task.active" v-show="isMyTask(task.assignee)">
+                <v-btn v-if="!viewOnly && isCurrentUserDeveloper" flat color="#1C69C1" v-on:click="unassign" :disabled="task.active" v-show="isMyTask(task.assignee)">
                     Opusti nalogo
                 </v-btn>
             </v-flex>
@@ -123,6 +123,19 @@
 
                     if (assignedUser) return `${assignedUser.user.firstName} ${assignedUser.user.lastName}`;
                 }
+            },
+            isCurrentUserDeveloper() {
+                let vm = this;
+
+                const editingProject = this.$store.getters.editingProject;
+
+                const currentUser = this.$store.getters.currentUser;
+
+                const foundCurrentUser = editingProject.users.find(function (user) {
+                    return user.user._id === currentUser._id;
+                });
+                
+                return foundCurrentUser.role.includes('developer');
             }
         }
     }

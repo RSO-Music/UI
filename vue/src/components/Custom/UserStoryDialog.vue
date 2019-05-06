@@ -256,8 +256,19 @@
 
 
                                     <v-flex lg6 ml-1 pa-4>
-                                        <h1 v-if="editTask._id">Uredi nalogo</h1>
-                                        <h1 v-else>Dodaj nalogo</h1>
+                                        <v-layout mb-2 align-center justify-space-between v-if="editTask._id">
+                                            <h1 v-if="!viewOnly" class="pb-0">Uredi nalogo</h1>
+                                            <h1 v-else class="pb-0">Preglej nalogo</h1>
+
+                                            <v-flex shrink v-if="!viewOnly">
+                                                <ButtonOutline msg="Ustvari novo" @clicked="clearEdit"
+                                                            :isDisabled="!canEditTasks"
+                                                            classes="mr-0"></ButtonOutline>
+                                            </v-flex>
+                                        </v-layout>
+                                        <v-layout mb-2 align-center v-else>
+                                            <h1 class="pb-0">Ustvari novo nalogo</h1>
+                                        </v-layout>
 
                                         <v-layout>
                                             <v-flex x12>
@@ -338,36 +349,35 @@
                                                 </v-flex>
                                             </v-layout>
                                         </v-layout>
+                                        
+                                        <template v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id.toString()">
+                                            <v-divider class="mb-4"></v-divider>
+                                            
+                                            <v-layout mb-4>
+                                                <v-flex>
+                                                    <p class="mb-2"><span class="grey--text">Število mojih ur:</span>
+                                                        {{editTask.activeHoursAssignee}}</p>
 
-                                        <v-layout
-                                                v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id.toString()">
-                                            <v-flex>
-                                                <p><span class="grey--text">Število mojih ur:</span>
-                                                    {{editTask.activeHoursAssignee}}</p>
-                                            </v-flex>
-                                            <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
-                                                <ButtonBase
-                                                        :msg="`${!editTask.active ? 'Zaženi števec' : 'Ustavi števec'}`"
-                                                        @clicked="setTaskActiveStatus"
-                                                        :isDisabled="!canEditTasks"
-                                                        class="ml-3"
-                                                >
-                                                </ButtonBase>
-                                            </v-flex>
-                                        </v-layout>
-                                        <v-layout mb-4 v-if="editTask.activeHours > 0">
-                                            <v-flex>
-                                                <p><span
-                                                        class="grey--text">Število ur vseh razvijalcev:</span>
-                                                    {{editTask.activeHours}}</p>
-                                            </v-flex>
-                                        </v-layout>
+                                                    <p>
+                                                        <span class="grey--text">Število ur vseh razvijalcev:</span>
+                                                        {{editTask.activeHours}}
+                                                    </p>
+                                                </v-flex>
+                                                <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
+                                                    <ButtonBase
+                                                            :msg="`${!editTask.active ? 'Prični delo' : 'Zaključi delo'}`"
+                                                            @clicked="setTaskActiveStatus"
+                                                            :isDisabled="!canEditTasks"
+                                                            class="ml-3"
+                                                    >
+                                                    </ButtonBase>
+                                                </v-flex>
+                                            </v-layout>
+
+                                            <v-divider class="mb-3"></v-divider>
+                                        </template>
 
                                         <v-layout v-if="!viewOnly" align-center justify-end row>
-                                            <ButtonBase msg="Ponastavi" @clicked="clearEdit"
-                                                        :isDisabled="!canEditTasks || editTask.accepted && editTask.active"
-                                                        class="mr-3"></ButtonBase>
-
                                             <ButtonBase msg="Shrani" @clicked="addTask(editTask)"
                                                         :isDisabled="!isEditTaskValid || !canEditTasks || editTask.accepted && editTask.active"></ButtonBase>
                                         </v-layout>

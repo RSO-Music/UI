@@ -1,6 +1,6 @@
 <template>
     <v-btn
-            class="main-button"
+            :class="`main-button ${classes ? classes : ''} ${isDisabled ? 'main-button--disabled' : ''}`"
             :disabled="isDisabled"
             @click="buttonClicked"
             outline
@@ -16,7 +16,8 @@
         name: "ButtonOutline",
         props: {
             msg: String,
-            isDisabled: Boolean
+            isDisabled: Boolean,
+            classes: String
         },
         methods: {
             buttonClicked() {
