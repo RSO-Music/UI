@@ -366,7 +366,7 @@
                                             </v-layout>
                                         </v-layout>
 
-                                        <template>
+                                        <template v-if="editTask._id">
                                             <v-divider class="mb-4"></v-divider>
 
                                             <v-layout mb-4>
