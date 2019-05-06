@@ -347,6 +347,14 @@
                                                             class="ml-3"
                                                     />
                                                 </v-flex>
+                                                <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
+                                                    <ButtonBase
+                                                            msg="Zaključi nalogo"
+                                                            @clicked="acceptOrRejectStory"
+                                                            :isDisabled="editTask.active && editTask.activeHours < 1"
+                                                            class="ml-3"
+                                                    />
+                                                </v-flex>
                                             </v-layout>
                                         </v-layout>
                                         
