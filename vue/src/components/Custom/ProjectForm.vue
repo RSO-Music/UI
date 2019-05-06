@@ -35,7 +35,6 @@
                             <v-flex xs6>
                                 <v-select
                                         color="#3093A0"
-                                        prepend-icon="label"
                                         v-model="assignedUser.role"
                                         :items="$userProjectRoles"
                                         :rules="[v => !!v || 'Izberite vlogo']"

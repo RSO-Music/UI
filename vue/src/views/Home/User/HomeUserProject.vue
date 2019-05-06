@@ -1,60 +1,67 @@
 <template>
     <v-layout column>
-        <template v-if="selectedProject">
-            <v-tabs
-                    dark
-                    slider-color="#A2E0E0"
-                    fixed-tabs
-                    color="#1A2432"
-            >
-                <v-tab id
-                       v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
-                       :key="1" ripple>
-                    Pregled
-                </v-tab>
-                <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="2" ripple>
-                    Uredi projekt
-                </v-tab>
-                <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="4" ripple>
-                    Sprinti
-                </v-tab>
-
-                <v-tab id v-if="userProjectRole.includes('product_owner')" :key="5" ripple>
-                    <v-badge v-model="hasUnfinishedSprints" right color="transparent">
-                        <template v-slot:badge>
-                            <v-icon color="orange" dark small>notifications</v-icon>
-                        </template>
-                        <span>Zaključi Sprinte</span>
-                    </v-badge>
-                </v-tab>
-
-                <v-tab-item id
-                            v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
-                            :key="1">
-                    <HomeUserProductBacklog :project="selectedProject"></HomeUserProductBacklog>
-                </v-tab-item>
-
-                <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="2">
-                    <HomeUserProjectEdit @projectEditUpdate="projectEditUpdate"
-                                         :selectedProject="selectedProject"/>
-                </v-tab-item>
-
-                <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="4">
-                    <HomeUserSprint @sprintsUpdated="onSprintsUpdated"/>
-                </v-tab-item>
-
-                <v-tab-item id v-if="userProjectRole.includes('product_owner')" :key="5">
-                    <FinishSprints 
-                            @fetchedUnfinishedSprints="fetchedUnfinishedSprints"
-                    />
-                </v-tab-item>
-            </v-tabs>
-        </template>
-        <v-layout v-else column justify-center align-center>
-            <v-progress-linear class="mt-0" color="primary" :indeterminate="true"></v-progress-linear>
+        <transition name="fade" mode="out-in">
+            <template v-if="selectedProject">
+                <v-tabs
+                        dark
+                        slider-color="#A2E0E0"
+                        fixed-tabs
+                        color="#1A2432"
+                >
+                    <v-tab id
+                           v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
+                           :key="1" ripple>
+                        Pregled
+                    </v-tab>
+                    <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="2" ripple>
+                        Uredi projekt
+                    </v-tab>
+                    <v-tab id v-if="userProjectRole.includes('scrum_master')" :key="4" ripple>
+                        Sprinti
+                    </v-tab>
+    
+                    <v-tab id v-if="userProjectRole.includes('product_owner')" :key="5" ripple>
+                        <v-badge v-model="hasUnfinishedSprints" right color="transparent">
+                            <template v-slot:badge>
+                                <v-icon color="orange" dark small>notifications</v-icon>
+                            </template>
+                            <span>Zaključi Sprinte</span>
+                        </v-badge>
+                    </v-tab>
+    
+                    <v-tab-item id
+                                v-if="userProjectRole.includes('scrum_master') || userProjectRole.includes('product_owner') || userProjectRole.includes('developer')"
+                                :key="1">
+                        <HomeUserProductBacklog :project="selectedProject"></HomeUserProductBacklog>
+                    </v-tab-item>
+    
+                    <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="2">
+                        <HomeUserProjectEdit @projectEditUpdate="projectEditUpdate"
+                                             :selectedProject="selectedProject"/>
+                    </v-tab-item>
+    
+                    <v-tab-item id v-if="userProjectRole.includes('scrum_master')" :key="4">
+                        <HomeUserSprint @sprintsUpdated="onSprintsUpdated"/>
+                    </v-tab-item>
+    
+                    <v-tab-item id v-if="userProjectRole.includes('product_owner')" :key="5">
+                        <FinishSprints 
+                                @fetchedUnfinishedSprints="fetchedUnfinishedSprints"
+                        />
+                    </v-tab-item>
+                </v-tabs>
+            </template>
             
-            <h1 class="mt-4">Nalagam projekt...</h1>
-        </v-layout>
+            <v-layout v-else class="project-loading-wrapper" column justify-center align-center>
+                <v-progress-circular
+                        :size="100"
+                        color="primary"
+                        indeterminate
+                ></v-progress-circular>
+                
+                <h1 class="mt-4">Nalagam projekt ...</h1>
+            </v-layout>
+        </transition>
     </v-layout>
 </template>
 
@@ -200,4 +207,10 @@
 </script>
 
 <style scoped>
+    .project-loading-wrapper {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
 </style>
