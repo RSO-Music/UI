@@ -24,6 +24,7 @@
                             required
                             :disabled="isLoggingIn"
                             focus
+                            ref="usernameInput"
                     ></v-text-field>
 
                     <v-text-field
@@ -76,6 +77,11 @@
                 },
                 isLoggingIn: false
             };
+        },
+        mounted() {
+            const vm = this;
+            
+            vm.$refs['usernameInput'].focus();
         },
         methods: {
             login() {

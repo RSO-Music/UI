@@ -41,16 +41,20 @@
                         </v-flex>
                     </v-layout>
 
-
                     <v-layout align-center justify-end row class="mb-2">
-                        <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe aktivnemu sprintu"
-                                       @clicked="addStoryToSprint">
-                        </ButtonOutline>
+                        <v-flex shrink>
+                            <ButtonOutline v-if="storiesToAddToSprint.length" msg="Dodeli zgodbe aktivnemu sprintu"
+                                           @clicked="addStoryToSprint">
+                            </ButtonOutline>
+                        </v-flex>
+                        
+                        <v-flex shrink>
+                            <UserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
+                                             :customBtn="true"></UserStoryDialog>
+                        </v-flex>
                     </v-layout>
 
                     <v-layout class="align-right">
-                        <UserStoryDialog :story="{}" v-on:refresh="reloadData" :full-edit="false"
-                                             :customBtn="true"></UserStoryDialog>
                     </v-layout>
                 </v-layout>
             </v-flex>
@@ -96,7 +100,7 @@
                         <template v-if="currentSprint">
                             <template v-if="completedStories.length">
                                 <div class="storyContainer" v-for="story in completedStories" :key="story._id">
-                                    <UserStoryCard :story="story"/>
+                                    <UserStoryCard :story="story" :viewOnly="true"/>
                                 </div>
                             </template>
 

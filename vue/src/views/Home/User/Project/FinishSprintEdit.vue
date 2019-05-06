@@ -6,7 +6,7 @@
 
                 <h2 class="black--text mb-4">{{sprint.name}} ({{formattedStartDate}} - {{formattedEndDate}})</h2>
 
-                <h2>Pričakovana hitrost: <span class="black--text">{{sprint.speed}}</span></h2>
+                <p class="grey--text">Pričakovana hitrost: <span class="black--text">{{sprint.speed}}</span></p>
             </v-flex>
         </v-layout>
 

@@ -46,8 +46,8 @@
 
                         <v-tab v-if="story.sprintId" key="2">
                             Naloge
-
                         </v-tab>
+                        
                         <v-tab-item key="1">
                             <v-container>
                                 <v-layout row>
@@ -145,7 +145,7 @@
                                     <v-flex xs12>
                                         <p class="red--text">
                                             <v-icon class="red--text">info_outline</v-icon>
-                                            <span class="ml-2">Zgodba je bila enkrat že zavrnjena</span><span
+                                            <span class="ml-2">Zgodba je bila zavrnjena</span><span
                                                 v-if="story.rejectionReason"> z razlogom: {{story.rejectionReason}}</span>
                                         </p>
                                     </v-flex>

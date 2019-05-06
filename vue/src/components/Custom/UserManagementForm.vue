@@ -9,8 +9,8 @@
             <h1 class="text-uppercase text-xs-center" v-if="isNew">Ustvari uporabnika</h1>
             <h1 class="text-uppercase text-xs-center" v-else>Uredi uporabnika</h1>
 
-            <div class="formDivide">
-                <div id="formLeft">
+            <v-layout>
+                <v-flex xs6>
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="face"
@@ -19,6 +19,9 @@
                             label="Ime"
                             required
                     ></v-text-field>
+                </v-flex>
+                
+                <v-flex xs6>
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="face"
@@ -27,16 +30,12 @@
                             label="Priimek"
                             required
                     ></v-text-field>
-                    <v-text-field
-                            color="#3093A0"
-                            prepend-icon="mail"
-                            v-model="user.email"
-                            label="E-pošta"
-                            :rules="emailRules"
-                            required
-                    ></v-text-field>
-                </div>
-                <div id="formRight">
+                </v-flex>
+                
+            </v-layout>
+            
+            <v-layout>
+                <v-flex xs6>
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="person"
@@ -45,6 +44,8 @@
                             :rules="nameRules"
                             required
                     ></v-text-field>
+                </v-flex>
+                <v-flex xs6>
                     <v-text-field
                             color="#3093A0"
                             prepend-icon="lock"
@@ -54,20 +55,41 @@
                             :type="'password'"
                             required
                     ></v-text-field>
+                </v-flex>
+            </v-layout>
+            
+            <v-layout>
+                <v-flex xs6>
+                    <v-text-field
+                            color="#3093A0"
+                            prepend-icon="mail"
+                            v-model="user.email"
+                            label="E-pošta"
+                            :rules="emailRules"
+                            required
+                    ></v-text-field>
+                </v-flex>
+            </v-layout>
+
+            <h2 class="section-title mb-2 mt-2">Sistemska vloga</h2>
+
+            <v-layout>
+                <v-flex xs6>
                     <v-select
                             color="#3093A0"
                             prepend-icon="star"
                             v-model="user.role"
                             :items="userRoleSelectObjects"
                             :rules="[v => !!v || 'Izberite sistemsko vlogo']"
-                            label="Sistemska vloga"
+                            label="Izberite sistemsko vlogo"
                             item-text="label"
                             item-value="value"
                             hide-details
                             required
+                            :disabled="!!user._id"
                     ></v-select>
-                </div>
-            </div>
+                </v-flex>
+            </v-layout>
         </v-layout>
         
         <v-layout justify-end>
@@ -180,26 +202,5 @@
 </script>
 
 <style scoped>
-    h1 {
-        text-transform: uppercase;
-    }
 
-    .formDivide {
-        padding: 10px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: stretch;
-    }
-
-    .formDivide > * {
-        flex-basis: 50%;
-    }
-
-    #formLeft {
-        margin-right: 5px;
-    }
-
-    #formRight {
-        margin-left: 5px;
-    }
 </style>

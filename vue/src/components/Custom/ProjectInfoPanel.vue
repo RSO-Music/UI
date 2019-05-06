@@ -1,7 +1,7 @@
 <template>
     <v-flex xs-12 class="projectInfo">
         <v-layout>
-            <v-flex md8>
+            <v-flex>
                 <v-flex>
                     <h1>{{$store.getters.editingProject.name}}</h1>
                 </v-flex>
@@ -9,8 +9,11 @@
                 <p class="grey--text text-uppercase mb-2">Aktivni Sprint:</p>
 
                 <v-flex class="ml-4 mb-2" v-if="$store.getters.currentSprint">
-                    <h2 class="black--text">{{$store.getters.currentSprint.name}} ({{$store.getters.currentSprint.startDate | moment('DD. MM. YYYY')}} -
-                        {{$store.getters.currentSprint.endDate | moment('DD. MM. YYYY')}})</h2>
+                    <h2 class="black--text">{{$store.getters.currentSprint.name}}: 
+                        {{$store.getters.currentSprint.startDate | moment('DD. MM. YYYY')}} -
+                        {{$store.getters.currentSprint.endDate | moment('DD. MM. YYYY')}}
+                        ({{getRemainingDaysText()}})
+                    </h2>
                 </v-flex>
                 <v-flex class="ml-4 mb-2" v-else>
                     <h2 class="black--text">Trenutno ni aktivnega Sprinta</h2>
@@ -24,10 +27,6 @@
                         <span class="black--text">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}} ({{getUserProjectRoles(role)}})</span>
                     </v-chip>
                 </v-flex>
-            </v-flex>
-            
-            <v-flex md6>
-                
             </v-flex>
         </v-layout>
     </v-flex>
@@ -78,6 +77,30 @@
                 return userRoles.map((currentUserRole) => {
                     return vm.$userProjectRoles.find((role) => role.value === currentUserRole).text;
                 }).join(', ');
+            },
+            
+            getRemainingDaysText() {
+                const vm = this;
+                
+                const currentSprint = vm.$store.getters.currentSprint;
+                
+                const currentDate = vm.$moment();
+                const sprintEndDate = vm.$moment(currentSprint.endDate);
+                
+                console.log('DATE DIFF', currentDate.diff(sprintEndDate, 'days'));
+                
+                const dateDifference = sprintEndDate.diff(currentDate, 'days');
+                
+                switch (dateDifference) {
+                    case 0:
+                        return 'Sprint se konča danes';
+                    case 1:
+                        return 'še 1 dan';
+                    default:
+                        return `še ${dateDifference} dni`;
+                        
+                        break
+                }
             }
         }
     }
