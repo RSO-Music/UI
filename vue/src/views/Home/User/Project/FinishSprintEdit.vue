@@ -8,37 +8,37 @@
 
                 <p class="grey--text">Pričakovana hitrost: <span class="black--text">{{sprint.speed}}</span></p>
             </v-flex>
-        </v-layout>
 
-        <v-layout mt-4>
-            <h2 class="section-title">Uporabniške zgodbe Sprinta</h2>
-        </v-layout>
+            <v-layout mt-4>
+                <h2 class="section-title">Uporabniške zgodbe Sprinta</h2>
+            </v-layout>
 
-        <v-layout v-if="loaded.stories">
-            <template v-if="stories.length">
-                <v-layout>
-                    <v-flex xs6 v-for="story of stories" :key="story._id">
-                        <div class="ma-2">
-                            <UserStoryCard :story="story"
-                                           :isFinishingStory="true"
-                                           :currentSprint="sprint"
-                                           @finishedStory="onStoryFinished"
-                            />
-                        </div>
-                    </v-flex>
-                </v-layout>
-            </template>
+            <v-layout v-if="loaded.stories">
+                <template v-if="stories.length">
+                    <v-layout>
+                        <v-flex xs6 v-for="story of stories" :key="story._id">
+                            <div class="ma-2">
+                                <UserStoryCard :story="story"
+                                               :isFinishingStory="true"
+                                               :currentSprint="sprint"
+                                               @finishedStory="onStoryFinished"
+                                />
+                            </div>
+                        </v-flex>
+                    </v-layout>
+                </template>
 
-            <div v-else>
-                <h2 class="backlog-empty-text text-xs-center grey--text">Ni zgodb</h2>
-            </div>
-        </v-layout>
-        <v-layout v-else justify-center>
-            <v-progress-circular
-                    :size="50"
-                    color="primary"
-                    indeterminate
-            ></v-progress-circular>
+                <div v-else>
+                    <h2 class="backlog-empty-text text-xs-center grey--text">Ni zgodb</h2>
+                </div>
+            </v-layout>
+            <v-layout v-else justify-center>
+                <v-progress-circular
+                        :size="50"
+                        color="primary"
+                        indeterminate
+                ></v-progress-circular>
+            </v-layout>
         </v-layout>
     </div>
 </template>

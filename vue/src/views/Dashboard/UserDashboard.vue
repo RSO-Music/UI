@@ -45,11 +45,11 @@
                                 </h2>
 
                                 <small class="grey--text">Projekt</small>
-                                <h2 class="black--text ml-1">{{project.name}}</h2>
+                                <h2 class="black--text ml-1 mr-1 pb-1 text-truncate">{{project.name}}</h2>
                             </v-layout>
 
                             <v-card-actions>
-                                <v-layout justify-end>
+                                <v-layout mt-2 justify-end>
                                     <ButtonBase msg="Odpri projekt" @clicked="openProject(project)"></ButtonBase>
                                 </v-layout>
                             </v-card-actions>
@@ -98,7 +98,7 @@
                             </v-layout>
 
                             <v-card-actions>
-                                <v-layout justify-end>
+                                <v-layout mt-2 justify-end>
                                     <ButtonBase msg="Odpri" @clicked="openProject(project)"></ButtonBase>
                                 </v-layout>
                             </v-card-actions>
