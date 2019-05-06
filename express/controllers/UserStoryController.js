@@ -115,8 +115,8 @@ module.exports = {
             }
 
             if (UserStory) {
-                return res.status(404).json({
-                    message: 'This user story already exists'
+                return res.status(500).json({
+                    message: 'Zgodba s tem imenom že obstaja za trenutni projekt'
                 });
             } else {
                 UserStoryG.save(function (err, UserStory) {
@@ -148,7 +148,7 @@ module.exports = {
             }
 
             if (!UserStory) {
-                return res.status(404).json({
+                return res.status(500).json({
                     message: 'No such UserStory'
                 });
             }

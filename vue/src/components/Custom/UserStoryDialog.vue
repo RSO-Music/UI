@@ -465,54 +465,71 @@
         },
         methods: {
             updateStory() {
-                if (this.story._id) {
+                const vm = this;
+                
+                if (vm.story._id) {
                     //update existing story
                     APICalls.updateUserStory({
-                        name: this.storyName,
-                        description: this.storyDescription,
-                        acceptanceTests: this.storyAcceptanceTests,
-                        priority: this.selectPriority,
-                        timeEstimation: this.timeEstimation,
-                        businessValue: this.selectBusinessValue,
-                        done: this.storyFinished,
-                        tasks: this.tasks
-                    }, this.story._id).then(
-                        (rs) => {
-                            this.closeDialog();
-                            this.$emit("refresh", true);
-                            this.error = 0;
-                            this.errorText = ""
+                        name: vm.storyName,
+                        description: vm.storyDescription,
+                        acceptanceTests: vm.storyAcceptanceTests,
+                        priority: vm.selectPriority,
+                        timeEstimation: vm.timeEstimation,
+                        businessValue: vm.selectBusinessValue,
+                        done: vm.storyFinished,
+                        tasks: vm.tasks
+                    }, vm.story._id).then(
+                        (res) => {
+                            vm.closeDialog();
+                            vm.$emit("refresh", true);
                         },
                         (error) => {
                             console.log(error);
-                            this.error = 2;
-                            this.errorText = "Uporabniška zgodba s takim naslovom že obstaja."
+
+                            vm.$toasted.error('Pri posodabljanju zgodbe je prišlo do napake', {
+                                duration: 3000,
+                                position: "bottom-center"
+                            });
                         })
                 } else {
                     APICalls.addNewUserStoryToProject(
                         {
-                            name: this.storyName,
-                            description: this.storyDescription,
-                            acceptanceTests: this.storyAcceptanceTests,
-                            priority: this.selectPriority,
-                            timeEstimation: this.timeEstimation,
-                            businessValue: this.selectBusinessValue,
-                            projectId: this.$store.getters.editingProject._id,
+                            name: vm.storyName,
+                            description: vm.storyDescription,
+                            acceptanceTests: vm.storyAcceptanceTests,
+                            priority: vm.selectPriority,
+                            timeEstimation: vm.timeEstimation,
+                            businessValue: vm.selectBusinessValue,
+                            projectId: vm.$store.getters.editingProject._id,
                             sprintId: null,
                             done: false,
-                            tasks: this.tasks
+                            tasks: vm.tasks
                         }
                     ).then(
-                        (rs) => {
-                            this.closeDialog();
-                            this.$emit("refresh", true);
-                            this.error = 0;
-                            this.errorText = ""
+                        (res) => {
+                            vm.closeDialog();
+                            vm.$emit("refresh", true);
                         },
                         (error) => {
                             console.log(error);
-                            this.error = 2;
-                            this.errorText = "Uporabniška zgodba s takim naslovom že obstaja."
+                            
+                            if (error.response) {
+                                if (error.response.status === 500) {
+                                    if (error.response.data) {
+                                        vm.$toasted.error(error.response.data.message, {
+                                            duration: 3000,
+                                            position: "bottom-center"
+                                        });
+                                        
+                                        return;
+                                    }
+                                }
+                            }
+
+                            vm.$toasted.error('Pri ustvarjanju zgodbe je prišlo do napake', {
+                                duration: 3000,
+                                position: "bottom-center"
+                            });
                         })
                 }
             },

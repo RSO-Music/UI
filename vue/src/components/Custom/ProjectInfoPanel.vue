@@ -87,8 +87,6 @@
                 const currentDate = vm.$moment();
                 const sprintEndDate = vm.$moment(currentSprint.endDate);
                 
-                console.log('DATE DIFF', currentDate.diff(sprintEndDate, 'days'));
-                
                 const dateDifference = sprintEndDate.diff(currentDate, 'days');
                 
                 switch (dateDifference) {
