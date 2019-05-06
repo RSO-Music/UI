@@ -89,7 +89,7 @@ export class APICalls {
         });
     }
 
-    static getProjectBasedOnUserId(userId) {
+    static getProjectsForUser(userId) {
         return instance({
             method: "get",
             url: '/project/user/' + userId,
@@ -137,6 +137,13 @@ export class APICalls {
         return instance({
             method: "get",
             url: '/sprint/active/' + projectId,
+        });
+    }
+
+    static getActiveSprintsForUser(userId) {
+        return instance({
+            method: "get",
+            url: `/sprint/active/user/${userId}`,
         });
     }
 

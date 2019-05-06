@@ -23,25 +23,98 @@
             </v-card>
 
             <v-layout mt-4>
+                <h2 class="section-title">Trenutni aktivni Sprinti</h2>
+            </v-layout>
+            
+            <v-layout v-if="loaded.activeSprintsForUser" row class="slide-up">
+                <template v-if="activeSprintsForUser">
+                    <v-flex xs3 v-for="{ project, sprint } in activeSprintsForUser" :key="sprint._id">
+                        <v-card class="dashboard-project-card ma-2">
+                            <v-card-title primary-title>
+                                <div>
+                                    <div class="headline">{{sprint.name}}</div>
+                                </div>
+                            </v-card-title>
+
+                            <v-layout ml-3 column>
+                                <small class="grey--text">Trajanje</small>
+                                <h2 class="black--text ml-1">
+                                    {{sprint.startDate | moment('DD. MM. YYYY')}} -
+                                    {{sprint.endDate | moment('DD. MM. YYYY')}}
+                                    ({{getRemainingDaysText(sprint)}})
+                                </h2>
+
+                                <small class="grey--text">Projekt</small>
+                                <h2 class="black--text ml-1">{{project.name}}</h2>
+                            </v-layout>
+
+                            <v-card-actions>
+                                <v-layout justify-end>
+                                    <ButtonBase msg="Odpri projekt" @clicked="openProject(project)"></ButtonBase>
+                                </v-layout>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                </template>
+                <v-flex v-else>
+                    <h2 class="backlog-empty-text text-xs-center grey--text">Trenutno nimate aktivnih Sprintov</h2>
+                </v-flex>
+            </v-layout>
+            <v-layout v-else justify-center>
+                <v-progress-circular
+                        :size="50"
+                        color="primary"
+                        indeterminate
+                ></v-progress-circular>
+            </v-layout>
+            <v-layout mt-4>
                 <h2 class="section-title">Vaši projekti</h2>
             </v-layout>
             
-            <v-layout row class="slide-up">
-                <v-flex xs3 v-for="project in projectsForUser" :key="project._id">
-                    <v-card class="dashboard-project-card ma-2">
-                        <v-card-title primary-title>
-                            <div>
-                                <div class="headline">{{project.name}}</div>
-                            </div>
-                        </v-card-title>
+            <v-layout v-if="loaded.projectsForUser" row class="slide-up">
+                <template v-if="activeSprintsForUser">
+                    <v-flex xs3 v-for="project in projectsForUser" :key="project._id">
+                        <v-card class="dashboard-project-card ma-2">
+                            <v-card-title primary-title>
+                                <div>
+                                    <div class="headline">{{project.name}}</div>
+                                </div>
+                            </v-card-title>
 
-                        <v-card-actions>
-                            <v-layout justify-end>
-                                <ButtonBase msg="Odpri" @clicked="openProject(project)"></ButtonBase>
+                            <v-layout ml-3 column>
+                                <small class="grey--text">Vaše vloge</small>
+                                <v-flex mb-1>
+
+                                    <p class="ml-1">{{getCurrentUserProjectRole(project)}}</p>
+                                </v-flex>
+
+                                <small class="grey--text">Osebe</small>
+                                <v-flex>
+                                    <v-chip disabled v-for="{ user, role } in project.users" :key="user._id">
+                                        <v-avatar class="theme-color white--text">{{user.firstName[0].toUpperCase()}}</v-avatar>
+                                        <span class="black--text">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}}</span>
+                                    </v-chip>
+                                </v-flex>
                             </v-layout>
-                        </v-card-actions>
-                    </v-card>
+
+                            <v-card-actions>
+                                <v-layout justify-end>
+                                    <ButtonBase msg="Odpri" @clicked="openProject(project)"></ButtonBase>
+                                </v-layout>
+                            </v-card-actions>
+                        </v-card>
+                    </v-flex>
+                </template>
+                <v-flex v-else>
+                    <h2 class="backlog-empty-text text-xs-center grey--text">Dodeljeni niste na noben projekt</h2>
                 </v-flex>
+            </v-layout>
+            <v-layout v-else justify-center>
+                <v-progress-circular
+                        :size="50"
+                        color="primary"
+                        indeterminate
+                ></v-progress-circular>
             </v-layout>
         </v-content>
     </v-container>
@@ -61,25 +134,54 @@
         },
         data: () => ({
             active: null,
-            projectsForUser: []
+            projectsForUser: null,
+            activeSprintsForUser: null,
+            loaded: {
+                projectsForUser: false,
+                activeSprintsForUser: false
+            }
         }),
         methods: {
             reloadData() {
                 const vm = this;
+                
+                vm.loaded.projectsForUser = false;
+                vm.loaded.activeSprintsForUser = false;
 
-                APICalls.getProjectBasedOnUserId(vm.$store.getters.currentUser._id).then(
-                    (res) => {
+                vm.projectsForUser = null;
+                vm.activeSprintsForUser = null;
+
+                APICalls.getProjectsForUser(vm.$store.getters.currentUser._id)
+                    .then((res) => {
                         vm.projectsForUser = res.data;
-                    },
-                    (error) => {
-                        console.log(error);
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
 
                         vm.$toasted.error('Pri pridobivanju projektov je prišlo do napake', {
                             duration: 3000,
                             position: "bottom-center"
                         });
-                    }
-                );
+                    })
+                    .finally(() => {
+                        vm.loaded.projectsForUser = true;
+                    });
+
+                APICalls.getActiveSprintsForUser(vm.$store.getters.currentUser._id)
+                    .then((res) => {
+                        vm.activeSprintsForUser = res.data;
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+
+                        vm.$toasted.error('Pri pridobivanju Sprintov je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center"
+                        });
+                    })
+                    .finally(() => {
+                        vm.loaded.activeSprintsForUser = true;
+                    });
             },
 
             openProject(project) {
@@ -91,6 +193,44 @@
                         }
                     }
                 );
+            },
+            
+            getCurrentUserProjectRole(project) {
+                const vm = this;
+                
+                const currentUser = vm.$store.getters.currentUser;
+
+                const foundCurrentUser = project.users.find(({ user, role }) => {
+                    return user._id === currentUser._id;
+                });
+                
+                return vm.getUserProjectRoles(foundCurrentUser.role);
+            },
+            
+            getUserProjectRoles(userRoles) {
+                const vm = this;
+
+                return userRoles.map((currentUserRole) => {
+                    return vm.$userProjectRoles.find((role) => role.value === currentUserRole).text;
+                }).join(', ');
+            },
+
+            getRemainingDaysText(sprint) {
+                const vm = this;
+
+                const currentDate = vm.$moment();
+                const sprintEndDate = vm.$moment(sprint.endDate);
+
+                const dateDifference = sprintEndDate.diff(currentDate, 'days');
+
+                switch (dateDifference) {
+                    case 0:
+                        return 'Sprint se konča danes';
+                    case 1:
+                        return 'še 1 dan';
+                    default:
+                        return `še ${dateDifference} dni`;
+                }
             }
         },
         

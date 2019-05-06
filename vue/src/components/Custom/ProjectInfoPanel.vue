@@ -24,7 +24,8 @@
                 <v-flex class="ml-4">
                     <v-chip disabled v-for="{ user, role } in $store.getters.editingProject.users" :key="user._id">
                         <v-avatar class="theme-color white--text">{{user.firstName[0].toUpperCase()}}</v-avatar>
-                        <span class="black--text">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}} ({{getUserProjectRoles(role)}})</span>
+                        <span v-if="user._id === $store.getters.currentUser._id" class="black--text font-weight-bold">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}} ({{getUserProjectRoles(role)}})</span>
+                        <span v-else class="black--text">{{`${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`}} ({{getUserProjectRoles(role)}})</span>
                     </v-chip>
                 </v-flex>
             </v-flex>
@@ -96,8 +97,6 @@
                         return 'še 1 dan';
                     default:
                         return `še ${dateDifference} dni`;
-                        
-                        break
                 }
             }
         }

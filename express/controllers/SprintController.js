@@ -1,4 +1,5 @@
 const SprintModel = require('../models/SprintModel');
+const ProjectModel = require('../models/ProjectModel');
 
 module.exports = {
     findAll(req, res) {
@@ -79,6 +80,40 @@ module.exports = {
             
             return res.json(Sprint);
         });
+    },
+
+    async findActiveForUser(req, res) {
+        const userId = req.params.userId;
+
+        const Projects = await ProjectModel.find({ 'users.user': userId }).exec();
+        
+        if (!Projects.length) {
+            return res.status(200);
+        }
+        
+        const response = [];
+        
+        for (const Project of Projects) {
+            const time = new Date();
+
+            const activeSprint = await SprintModel.findOne({
+                startDate: { $lte: time },
+                endDate: { $gte: time },
+                projectId: Project._id
+            });
+            
+            if (activeSprint) {
+                response.push({
+                    project: {
+                        name: Project.name,
+                        _id: Project._id
+                    },
+                    sprint: activeSprint
+                });
+            }
+        }
+        
+        return res.json(response);
     },
 
     findUnfinishedForProject(req, res) {

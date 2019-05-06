@@ -9,6 +9,8 @@ router.get('/all/:projectId', SprintController.findAllForProject);
 
 router.get('/active/:projectId', SprintController.findActiveForProject);
 
+router.get('/active/user/:userId', SprintController.findActiveForUser);
+
 router.get('/unfinished/:projectId', SprintController.findUnfinishedForProject);
 
 
