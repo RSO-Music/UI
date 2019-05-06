@@ -379,7 +379,7 @@
                                                         {{editTask.activeHours}}
                                                     </p>
                                                 </v-flex>
-                                                <v-flex v-if="!viewOnly && editTask.assignee === $store.getters.currentUser._id">
+                                                <v-flex v-if="!viewOnly && editTask.accepted && editTask.assignee === $store.getters.currentUser._id">
                                                     <ButtonBase
                                                             :msg="`${!editTask.active ? 'Prični delo' : 'Zaključi delo'}`"
                                                             @clicked="setTaskActiveStatus"
@@ -632,8 +632,6 @@
                                 return task;
                             });
 
-                            vm.clearEdit();
-
                             vm.$toasted.success('Naloga je bila uspešno posodobljena', {
                                 duration: 3000,
                                 position: "bottom-center",
@@ -673,10 +671,7 @@
                                 return task;
                             });
 
-                            vm.clearEdit();
-
-                            vm.editTask.activeHours = updatedTask.activeHours;
-                            vm.editTask.activeHoursAssignee = updatedTask.activeHoursAssignee;
+                            vm.editTask = updatedTask;
 
                             vm.$toasted.success('Naloga je bila uspešno posodobljena', {
                                 duration: 3000,

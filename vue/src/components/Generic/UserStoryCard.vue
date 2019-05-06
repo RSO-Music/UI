@@ -50,9 +50,34 @@
                             <v-layout align-end justify-end row>
                                 <UserStoryDialog :story="this.story" v-on:refresh="refreshStory"></UserStoryDialog>
 
-                                <v-btn v-if="canEditUserStories" flat icon color="red" v-on:click="deleteStory">
-                                    <v-icon>delete</v-icon>
-                                </v-btn>
+                                <v-menu
+                                        v-model="menu"
+                                        :close-on-content-click="false"
+                                        :nudge-width="200"
+                                        offset-x
+                                >
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn
+                                                v-on="on"
+                                                flat
+                                                icon
+                                                color="red"
+                                                v-if="canEditUserStories">
+                                            <v-icon>delete</v-icon>
+                                        </v-btn>
+                                    </template>
+
+                                    <v-card>
+                                        <v-card-title>
+                                            Ste prepričani, da želite izbrisati izbrano zgodbo?
+                                        </v-card-title>
+
+                                        <v-card-actions>
+                                            <v-btn flat @click="menu = false">Prekliči</v-btn>
+                                            <v-btn color="red" flat @click="deleteStory()">Izbriši</v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-menu>
                             </v-layout>
                         </div>
 
@@ -123,7 +148,8 @@
             tagBlue: {
                 backgroundColor: '#16B4D8'
             },
-            checked: false
+            checked: false,
+            menu: false
         }),
         methods: {
             changedCheckbox(checked) {
