@@ -3,7 +3,7 @@
         <v-content>
             <h1>Pozdravljeni v sistemu Scrummy!</h1>
 
-            <v-card class="ma-2 pa-3">
+            <v-card class="ma-2 pa-3 slide-up">
                 <v-layout>
                     <v-flex shrink mr-4>
                         <v-layout align-center>
@@ -26,7 +26,7 @@
                 <h2 class="section-title">Vaši projekti</h2>
             </v-layout>
             
-            <v-layout row>
+            <v-layout row class="slide-up">
                 <v-flex xs3 v-for="project in projectsForUser" :key="project._id">
                     <v-card class="dashboard-project-card ma-2">
                         <v-card-title primary-title>
@@ -49,13 +49,11 @@
 
 <script>
     import ButtonBase from "../../components/Generic/ButtonBase";
-    import ProjectCard from "../../components/Generic/ProjectCard";
     import { APICalls } from "../../utils/apiCalls";
 
     export default {
         name: 'UserDashboard',
         components: {
-            ProjectCard,
             ButtonBase
         },
         created() {

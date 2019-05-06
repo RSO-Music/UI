@@ -1,6 +1,6 @@
 <template>
     <div id="projectWrapper">
-        <v-card class="userProjectCard" v-if="!isAdmin" v-for="project in projectsList" :key="project._id">
+        <v-card class="userProjectCard slide-up" v-if="!isAdmin" v-for="project in projectsList" :key="project._id">
             <div class="pName">
                 <v-icon>developer_board</v-icon>
                 <h2 class="mb-1 black--text">{{project.name}}</h2>
@@ -8,14 +8,13 @@
             <ButtonBase v-if="!isAdmin" msg="Odpri" @clicked="goInsideProject(project)"></ButtonBase>
         </v-card>
         
-        <v-card class="adminProjectCard" v-if="isAdmin" v-for="project in projectsList" :key="project._id">
+        <v-card class="adminProjectCard slide-up" v-if="isAdmin" v-for="project in projectsList" :key="project._id">
             <div class="adminpName">
                 <h2 class="mb-1 black--text">{{project.name}}</h2>
                 <ButtonOutline msg="Uredi" @clicked="editSelectedProject(project)"></ButtonOutline>
             </div>
         </v-card>
     </div>
-
 </template>
 
 <script>

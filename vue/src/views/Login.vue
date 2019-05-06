@@ -3,7 +3,7 @@
         <div class="login-background"></div>
 
 
-        <v-card class="loginContainer">
+        <v-card class="loginContainer slide-up">
             <v-layout column>
                 <h1 class="login-application-name">Scrummy</h1>
 

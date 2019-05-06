@@ -1,6 +1,6 @@
 <template>
     <div id="projectWrapper">
-        <v-card class="adminProjectCard" v-for="user in usersList" :key="user._id">
+        <v-card class="adminProjectCard slide-up" v-for="user in usersList" :key="user._id">
             <div class="adminpName">
                 <h2 class="mb-1 black--text">{{`${user.firstName} ${user.lastName ? user.lastName : ''}`}}</h2>
                 <ButtonOutline msg="Uredi" @clicked="editUser(user)"></ButtonOutline>

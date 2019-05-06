@@ -1,5 +1,5 @@
 <template>
-    <v-card v-if="story" :class="{ 'user-story': true, 'user-story--selected': checked }">
+    <v-card v-if="story" :class="{ 'user-story': true, 'user-story--selected': checked, 'slide-up': true }">
         <v-layout>
             <v-flex>
                 <div class="user-story-priority" :style="getPriorityColor()"></div>

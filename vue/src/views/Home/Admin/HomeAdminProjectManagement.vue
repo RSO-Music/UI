@@ -1,6 +1,6 @@
 <template>
     <div class="contentWrapper list-wrapper">
-        <v-layout>
+        <v-layout class="slide-up">
             <v-flex xs4 list>
                 <h1 class="text-uppercase text-xs-center">Seznam projektov</h1>
 

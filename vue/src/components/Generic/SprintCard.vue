@@ -1,5 +1,5 @@
 <template>
-    <v-card class="adminProjectCard">
+    <v-card class="adminProjectCard slide-up">
         <div class="adminpName">
             <v-layout>
                 <v-flex xs9>
