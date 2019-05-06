@@ -21,12 +21,12 @@
                 </div>
             </v-flex>
             <v-flex xs3>
-                <v-btn v-if="!viewOnly && isCurrentUserDeveloper" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null"
+                <v-btn v-if="!viewOnly && isCurrentUserDeveloper" flat color="#1C69C1" v-on:click="assignToMe" :disabled="task.assignee != null || task.finished"
                        v-show="!isMyTask(task.assignee)">
                     Sprejmi nalogo
                 </v-btn>
 
-                <v-btn v-if="!viewOnly && isCurrentUserDeveloper" flat color="#1C69C1" v-on:click="unassign" :disabled="task.active" v-show="isMyTask(task.assignee)">
+                <v-btn v-if="!viewOnly && isCurrentUserDeveloper" flat color="#fb8c00" v-on:click="unassign" :disabled="task.active || task.finished" v-show="isMyTask(task.assignee)">
                     Opusti nalogo
                 </v-btn>
             </v-flex>
@@ -35,7 +35,7 @@
                     <v-btn flat icon color="#3093A0" v-on:click="editTask" :disabled="disabled">
                         <v-icon>edit</v-icon>
                     </v-btn>
-                    <v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled">
+                    <v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled || task.finished || task.assignee !== $store.getters.currentUser._id || task.active">
                         <v-icon>delete</v-icon>
                     </v-btn>
                 </v-layout>

@@ -262,8 +262,8 @@
 
                                             <v-flex shrink v-if="!viewOnly">
                                                 <ButtonOutline msg="Ustvari novo" @clicked="clearEdit"
-                                                            :isDisabled="!canEditTasks"
-                                                            classes="mr-0"></ButtonOutline>
+                                                               :isDisabled="!canEditTasks"
+                                                               classes="mr-0"></ButtonOutline>
                                             </v-flex>
                                         </v-layout>
                                         <v-layout mb-2 align-center v-else>
@@ -278,7 +278,7 @@
                                                         rows="1"
                                                         label="Opis naloge"
                                                         v-model="editTask.description"
-                                                        :disabled="!canEditTasks || viewOnly || editTask.active"
+                                                        :disabled="!canEditTasks || viewOnly || editTask.active || editTask.finished"
                                                 ></v-textarea>
                                             </v-flex>
                                         </v-layout>
@@ -293,7 +293,7 @@
                                                         label="Ocena časa"
                                                         type="number"
                                                         v-model="editTask.time"
-                                                        :disabled="!canEditTasks || viewOnly ||editTask.active"
+                                                        :disabled="!canEditTasks || viewOnly || editTask.active || editTask.finished"
                                                         min="1"
                                                         flat
                                                 ></v-text-field>
@@ -303,7 +303,7 @@
                                                         color="#3093A0"
                                                         prepend-icon="person"
                                                         v-model="editTask.assignee"
-                                                        :disabled="!canEditTasks || viewOnly || editTask.accepted"
+                                                        :disabled="!canEditTasks || viewOnly || editTask.accepted || editTask.finished"
                                                         label="Razvijalec"
                                                         :items="projectUsers"
                                                         :item-text="({ user }) => {
@@ -333,7 +333,8 @@
                                                 </v-flex>
                                             </v-layout>
 
-                                            <v-layout v-if="editTask.assignee && editTask.accepted">
+                                            <v-layout
+                                                    v-if="editTask.assignee && editTask.accepted && !editTask.finished">
                                                 <v-flex>
                                                     <v-icon class="green--text">check_circle_outline</v-icon>
                                                     <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
@@ -343,19 +344,34 @@
                                                     <ButtonBase
                                                             msg="Opusti nalogo"
                                                             @clicked="acceptOrRejectStory"
-                                                            :isDisabled="editTask.active"
-                                                            class="ml-3"
+                                                            :isDisabled="editTask.active || editTask.finished"
+                                                            class="ml-3 warning"
+                                                    />
+                                                </v-flex>
+                                                <v-flex v-if="editTask.assignee === $store.getters.currentUser._id">
+                                                    <ButtonBase
+                                                            msg="Zaključi nalogo"
+                                                            @clicked="finishTask"
+                                                            :isDisabled="editTask.active && editTask.activeHours < 1 || editTask.active || editTask.finished"
+                                                            class="ml-3 success"
+
                                                     />
                                                 </v-flex>
                                             </v-layout>
+                                            <v-layout v-if="editTask.finished">
+                                                <v-flex>
+                                                    <v-icon class="blue--text">check_circle_outline</v-icon>
+                                                    <span class="ml-2 blue--text">Naloga je zaključena</span>
+                                                </v-flex>
+                                            </v-layout>
                                         </v-layout>
-                                        
-                                        <template v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id.toString()">
+
+                                        <template>
                                             <v-divider class="mb-4"></v-divider>
-                                            
+
                                             <v-layout mb-4>
                                                 <v-flex>
-                                                    <p class="mb-2"><span class="grey--text">Število mojih ur:</span>
+                                                    <p v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id" class="mb-2"><span class="grey--text">Število mojih ur:</span>
                                                         {{editTask.activeHoursAssignee}}</p>
 
                                                     <p>
@@ -367,7 +383,7 @@
                                                     <ButtonBase
                                                             :msg="`${!editTask.active ? 'Prični delo' : 'Zaključi delo'}`"
                                                             @clicked="setTaskActiveStatus"
-                                                            :isDisabled="!canEditTasks"
+                                                            :isDisabled="!canEditTasks || editTask.finished"
                                                             class="ml-3"
                                                     >
                                                     </ButtonBase>
@@ -379,7 +395,7 @@
 
                                         <v-layout v-if="!viewOnly" align-center justify-end row>
                                             <ButtonBase msg="Shrani" @clicked="addTask(editTask)"
-                                                        :isDisabled="!isEditTaskValid || !canEditTasks || editTask.accepted && editTask.active"></ButtonBase>
+                                                        :isDisabled="!isEditTaskValid || !canEditTasks || editTask.accepted && editTask.active || editTask.finished"></ButtonBase>
                                         </v-layout>
                                     </v-flex>
                                 </v-layout>
@@ -683,6 +699,32 @@
                 this.clearEdit();
 
             },
+            finishTask(task) {
+                const vm = this;
+
+                vm.editTask.finished = true;
+
+                APICalls.updateUserTask({finished: vm.editTask.finished}, vm.editTask._id)
+                    .then((res) => {
+                        const updatedTask = res.data;
+
+                        vm.tasks = vm.tasks.map((task) => {
+                            if (task._id === updatedTask._id) {
+                                return updatedTask;
+                            }
+
+                            return task;
+                        });
+                    })
+                    .catch((ex) => {
+                        console.log(ex);
+
+                        vm.$toasted.error('Pri posodabljanju naloge je prišlo do napake', {
+                            duration: 3000,
+                            position: "bottom-center",
+                        });
+                    });
+            },
             resetForm() {
                 this.$refs.form.reset();
                 this.$refs.form.resetValidation();
@@ -781,7 +823,7 @@
                 //for now task is treated as assigned as soon as user is assigned - later user must accept task in order to be treated as assigned (add accepted flag)
                 if (this.tasks) {
                     return this.tasks.filter(function (task) {
-                        return task.assignee !== null && !task.active;
+                        return task.assignee !== null && !task.active && !task.finished;
                     })
                 }
             },
