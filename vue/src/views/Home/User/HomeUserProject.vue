@@ -20,7 +20,12 @@
                 </v-tab>
 
                 <v-tab id v-if="userProjectRole.includes('product_owner')" :key="5" ripple>
-                    Zaključi Sprinte
+                    <v-badge v-model="hasUnfinishedSprints" right color="transparent">
+                        <template v-slot:badge>
+                            <v-icon color="orange" dark small>notifications</v-icon>
+                        </template>
+                        <span>Zaključi Sprinte</span>
+                    </v-badge>
                 </v-tab>
 
                 <v-tab-item id
@@ -39,7 +44,9 @@
                 </v-tab-item>
 
                 <v-tab-item id v-if="userProjectRole.includes('product_owner')" :key="5">
-                    <FinishSprints @sprintFinished="onSprintFinished"/>
+                    <FinishSprints 
+                            @fetchedUnfinishedSprints="fetchedUnfinishedSprints"
+                    />
                 </v-tab-item>
             </v-tabs>
         </template>
@@ -86,7 +93,8 @@
             selectedProject: null,
             userProjectRole: '',
             currentSprint: null,
-            setTimeout: true
+            setTimeout: true,
+            hasUnfinishedSprints: false
         }),
         methods: {
             setGetCurrentSprintTimeout() {
@@ -169,8 +177,8 @@
                 this.getCurrentSprint();
             },
 
-            onSprintFinished() {
-                console.log('Finished a Sprint');
+            fetchedUnfinishedSprints(hasUnfinishedSprints) {
+                this.hasUnfinishedSprints = hasUnfinishedSprints;
             },
 
             getCurrentSprint() {

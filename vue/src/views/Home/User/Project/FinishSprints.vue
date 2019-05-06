@@ -64,6 +64,12 @@
                 APICalls.getUnfinishedSprints(vm.$route.params.projectId)
                     .then(
                         (res) => {
+                            if (!res.data || !res.data.length) {
+                                vm.$emit('fetchedUnfinishedSprints', false);
+                            } else {
+                                vm.$emit('fetchedUnfinishedSprints', true);
+                            }
+                            
                             vm.sprintsList = res.data;
                         },
                         (error) => {
