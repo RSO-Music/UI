@@ -35,7 +35,7 @@
                     <v-btn flat icon color="#3093A0" v-on:click="editTask" :disabled="disabled">
                         <v-icon>edit</v-icon>
                     </v-btn>
-                    <v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled || task.finished || task.assignee !== $store.getters.currentUser._id">
+                    <v-btn flat icon color="red" v-on:click="deleteTask" :disabled="disabled || task.finished || task.assignee !== $store.getters.currentUser._id || task.active">
                         <v-icon>delete</v-icon>
                     </v-btn>
                 </v-layout>

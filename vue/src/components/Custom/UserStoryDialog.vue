@@ -333,7 +333,8 @@
                                                 </v-flex>
                                             </v-layout>
 
-                                            <v-layout v-if="editTask.assignee && editTask.accepted">
+                                            <v-layout
+                                                    v-if="editTask.assignee && editTask.accepted && !editTask.finished">
                                                 <v-flex>
                                                     <v-icon class="green--text">check_circle_outline</v-icon>
                                                     <span class="ml-2 green--text">Razvijalec je sprejel nalogo</span>
@@ -357,15 +358,20 @@
                                                     />
                                                 </v-flex>
                                             </v-layout>
+                                            <v-layout v-if="editTask.finished">
+                                                <v-flex>
+                                                    <v-icon class="blue--text">check_circle_outline</v-icon>
+                                                    <span class="ml-2 blue--text">Naloga je zaključena</span>
+                                                </v-flex>
+                                            </v-layout>
                                         </v-layout>
 
-                                        <template
-                                                v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id.toString()">
+                                        <template>
                                             <v-divider class="mb-4"></v-divider>
 
                                             <v-layout mb-4>
                                                 <v-flex>
-                                                    <p class="mb-2"><span class="grey--text">Število mojih ur:</span>
+                                                    <p v-if="editTask.assignee && editTask.accepted && editTask.assignee === this.$store.getters.currentUser._id" class="mb-2"><span class="grey--text">Število mojih ur:</span>
                                                         {{editTask.activeHoursAssignee}}</p>
 
                                                     <p>
