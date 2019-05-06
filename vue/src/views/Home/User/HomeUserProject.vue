@@ -44,7 +44,7 @@
             </v-tabs>
         </template>
         <v-layout v-else column justify-center align-center>
-            <v-progress-linear class="mt-0" :indeterminate="true"></v-progress-linear>
+            <v-progress-linear class="mt-0" color="primary" :indeterminate="true"></v-progress-linear>
             
             <h1 class="mt-4">Nalagam projekt...</h1>
         </v-layout>

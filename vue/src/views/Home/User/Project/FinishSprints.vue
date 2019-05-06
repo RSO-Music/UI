@@ -4,7 +4,7 @@
             <v-flex xs4 list>
                 <h1 class="text-uppercase text-xs-center">Pretekli Sprinti</h1>
 
-                <SprintsList :sprints="sprintsList" :isLoaded="loaded.sprintsList" @editSprint="setSprintToEdit"/>
+                <SprintsList :sprints="sprintsList" :isLoaded="loaded.sprintsList" :isFinishedSprintsList="true" @editSprint="setSprintToEdit"/>
             </v-flex>
 
             <v-flex xs8 ml-4>

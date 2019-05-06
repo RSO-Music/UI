@@ -43,6 +43,7 @@
                     <v-flex xs12>
                         <SprintCard v-for="sprint in sprints" :key="sprint._id" :sprint="sprint"
                                     :editable="true"
+                                    :finished="isFinishedSprintsList"
                                     @editSprint="editSprint(sprint)"></SprintCard>
                     </v-flex>
                 </v-layout>
@@ -72,7 +73,8 @@
         props: {
             sprints: Array,
             isLoaded: Boolean,
-            categorize: Boolean
+            categorize: Boolean,
+            isFinishedSprintsList: Boolean
         },
         methods: {
             editSprint(sprint) {

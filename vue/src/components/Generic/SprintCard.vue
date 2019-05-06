@@ -9,7 +9,10 @@
 
                 <v-flex xs3>
                     <v-layout justify-end>
-                        <ButtonOutline v-if="editable" msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
+                        <template v-if="editable">
+                            <ButtonOutline v-if="finished" msg="Zaključi" @clicked="editSprint(sprint)"></ButtonOutline>
+                            <ButtonOutline v-else msg="Uredi" @clicked="editSprint(sprint)"></ButtonOutline>
+                        </template>
                         <ButtonOutline v-else msg="Preglej" @clicked="viewSprint(sprint)"></ButtonOutline>
                     </v-layout>
                 </v-flex>
@@ -28,7 +31,8 @@
         components: { ButtonOutline, ButtonBase },
         props: {
             sprint: Object,
-            editable: Boolean
+            editable: Boolean,
+            finished: Boolean
         },
         methods: {
             editSprint(sprint) {

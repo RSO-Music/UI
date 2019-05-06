@@ -5,7 +5,7 @@
             v-model="valid"
             lazy-validation
     >
-        <v-layout column>
+        <v-layout column mb-4>
             <h1 class="text-uppercase text-xs-center" v-if="isNew">Ustvari projekt</h1>
             <h1 class="text-uppercase text-xs-center" v-else="isNew">Uredi projekt</h1>
 
@@ -18,50 +18,55 @@
                     required
             ></v-text-field>
 
-            <h4>Projektni sodelavci</h4>
+            <h2 class="section-title">Osebe</h2>
 
-            <div id="formTop">
-                <v-card flat v-for="assignedUser in assignedUsersToProject" :key="assignedUser._id">
-                    <div id="assignedUsers">
-                        <div id="usersUser">
-                            <v-card-title primary-title>
-                                <p>{{`${assignedUser.user.firstName} ${assignedUser.user.lastName ?
-                                    assignedUser.user.lastName : ''}`}}
-                                </p>
-                            </v-card-title>
-                        </div>
-                        <div id="usersRole">
-                            <v-select
-                                    color="#3093A0"
-                                    prepend-icon="label"
-                                    v-model="assignedUser.role"
-                                    :items="$userProjectRoles"
-                                    :rules="[v => !!v || 'Izberite vlogo']"
-                                    label="Uporabniške vloge"
-                                    hide-details
-                                    required
-                                    flat
-                                    multiple
-                            ></v-select>
-                        </div>
-                        <div id="usersDelete">
-                            <ButtonOutline msg="X"
-                                           @clicked="removeUserFromProject(assignedUser.user._id)"></ButtonOutline>
-                        </div>
-                    </div>
-                </v-card>
-            </div>
-            <div id="formBottom">
-                <v-layout>
-                    <v-flex xs5>
+            <v-layout column class="users-wrapper">
+                <v-layout column class="users-list">
+                    <v-card class="user-card" flat v-for="assignedUser in assignedUsersToProject" :key="assignedUser._id">
+                        <v-layout pa-2>
+                            <v-flex xs5>
+                                <v-layout ml-2 align-center fill-height>
+                                    <p>{{`${assignedUser.user.firstName} ${assignedUser.user.lastName ?
+                                        assignedUser.user.lastName : ''}`}}
+                                    </p>
+                                </v-layout>
+                            </v-flex>
+
+                            <v-flex xs6>
+                                <v-select
+                                        color="#3093A0"
+                                        prepend-icon="label"
+                                        v-model="assignedUser.role"
+                                        :items="$userProjectRoles"
+                                        :rules="[v => !!v || 'Izberite vlogo']"
+                                        label="Uporabniške vloge"
+                                        hide-details
+                                        required
+                                        flat
+                                        multiple
+                                ></v-select>
+                            </v-flex>
+
+                            <v-flex xs1 mr-2>
+                                <v-layout align-center justify-end fill-height>
+                                    <ButtonOutline icon="clear"
+                                                   @clicked="removeUserFromProject(assignedUser.user._id)"></ButtonOutline>
+                                </v-layout>
+                            </v-flex>
+                        </v-layout>
+                    </v-card>
+                </v-layout>
+
+                <v-layout pa-2 mb-2>
+                    <v-flex xs5 mr-4>
                         <v-select
                                 color="#3093A0"
                                 prepend-icon="supervised_user_circle"
                                 v-model="selectedUser._id"
                                 :items="users"
                                 :item-text="(user) => {
-                                return `${user.firstName} ${user.lastName ? user.lastName : ''}`;
-                            }"
+                            return `${user.firstName} ${user.lastName ? user.lastName : ''}`;
+                        }"
                                 no-data-text="Ni najdenih uporabnikov"
                                 item-value="_id"
                                 label="Izberite uporabnika"
@@ -82,16 +87,16 @@
                                 flat
                         ></v-select>
                     </v-flex>
-                    
-                    <v-flex xs1>
-                        <v-layout align-end justify-center fill-height>
-                            <ButtonOutline msg="+" @clicked="addUserToProject"></ButtonOutline>
+
+                    <v-flex xs1 mr-2>
+                        <v-layout align-end justify-end fill-height>
+                            <ButtonOutline icon="add" @clicked="addUserToProject"></ButtonOutline>
                         </v-layout>
                     </v-flex>
                 </v-layout>
-            </div>
+            </v-layout>
         </v-layout>
-        
+
         <v-layout justify-end>
             <ButtonBase msg="Shrani" @clicked="addNewProject"></ButtonBase>
         </v-layout>
@@ -129,7 +134,7 @@
                 this.assignedUsersToProject = newVal;
             },
 
-            insertedUsers: function (newVal, oldVal) {
+            insertedUsers(newVal, oldVal) {
                 if (oldVal !== newVal) {
                     this.users = newVal;
                     if (this.users) {
@@ -242,56 +247,17 @@
 </script>
 
 <style scoped>
-    #formTop {
-        margin-bottom: 10px;
-        border: 1.5px solid #969DAA;
-        border-radius: 2px;
-        padding: 2px;
-        height: 230px;
+    .users-wrapper {
+        border: 1px solid #eeeeee;
+    }
+    
+    .user-card {
+        border-bottom: 1px solid #eeeeee;
+    }
+    
+    .users-list {
         overflow-y: scroll;
-        background-color: #F6F6F7;
-    }
-
-    #assignedUsers {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        padding: 5px 10px;
-    }
-
-    #usersUser {
-        flex-basis: 30%;
-        padding: 0;
-        margin: 0;
-    }
-
-    #usersUser > * {
-        padding: 0 0 5px 0;
-        font-size: 15px;
-        font-weight: bold;
-    }
-
-    #usersRole {
-        flex-basis: 55%;
-    }
-
-    #assignedUsers > button {
-        margin-bottom: 5px;
-    }
-
-    #formBottom {
-        padding: 20px 0;
-    }
-
-    #userSearch {
-        display: flex;
-        justify-content: space-between;
-        align-items: stretch;
-    }
-
-    #userSearch > button {
-        align-self: center;
-        margin-bottom: 5px;
-        margin-left: 10px;
+        height: 300px;
+        border-bottom: 1px solid #eeeeee;
     }
 </style>

@@ -95,41 +95,41 @@
                         @clicked="addSprint"
                 ></ButtonBase>
             </v-layout>
-        </v-form>
 
-        <template v-if="!isNew">
-            <v-layout mt-4>
-                <h2 class="section-title">Uporabniške zgodbe Sprinta</h2>
-            </v-layout>
-
-            <v-flex xs12 v-if="loaded.stories">
-                <template v-if="stories.length">
-                    <v-layout>
-                        <v-flex xs4 v-for="story of stories" :key="story._id">
-                            <div class="ma-2">
-                                <UserStoryCard :story="story"
-                                               :viewOnly="true"
-                                               :currentSprint="sprint"
-                                />
-                            </div>
-                        </v-flex>
-                    </v-layout>
-                </template>
-
-                <div v-else>
-                    <h2 class="backlog-empty-text text-xs-center grey--text">Sprint nima zgodb</h2>
-                </div>
-            </v-flex>
-            <v-flex xs12 v-else>
-                <v-layout justify-center>
-                    <v-progress-circular
-                            :size="50"
-                            color="primary"
-                            indeterminate
-                    ></v-progress-circular>
+            <template v-if="!isNew">
+                <v-layout mt-4>
+                    <h2 class="section-title">Uporabniške zgodbe Sprinta</h2>
                 </v-layout>
-            </v-flex>
-        </template>
+
+                <v-flex xs12 v-if="loaded.stories">
+                    <template v-if="stories.length">
+                        <v-layout>
+                            <v-flex xs4 v-for="story of stories" :key="story._id">
+                                <div class="ma-2">
+                                    <UserStoryCard :story="story"
+                                                   :viewOnly="true"
+                                                   :currentSprint="sprint"
+                                    />
+                                </div>
+                            </v-flex>
+                        </v-layout>
+                    </template>
+
+                    <div v-else>
+                        <h2 class="backlog-empty-text text-xs-center grey--text">Sprint nima zgodb</h2>
+                    </div>
+                </v-flex>
+                <v-flex xs12 v-else>
+                    <v-layout justify-center>
+                        <v-progress-circular
+                                :size="50"
+                                color="primary"
+                                indeterminate
+                        ></v-progress-circular>
+                    </v-layout>
+                </v-flex>
+            </template>
+        </v-form>
     </div>
 </template>
 

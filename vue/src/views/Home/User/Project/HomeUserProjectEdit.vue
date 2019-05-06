@@ -1,22 +1,22 @@
 <template>
-    <div class="contentWrapper">
-        <div class="formContainer">
+    <v-layout align-center class="contentWrapper">
+        <v-flex class="content-container">
             <ProjectForm
                     :projectId="projectId"
                     :insertedProjectName="projectName"
                     :insertedAssignedUsersToProject="insertedAssignedUsersToProject"
-                    :insertedUsers="formUsers" 
+                    :insertedUsers="formUsers"
                     :isNew="isNew"
                     @projectEdit="projectEditUpdate"
             />
-        </div>
-    </div>
+        </v-flex>
+    </v-layout>
 </template>
 
 <script>
     import HomeUserSprint from "./HomeUserSprint";
     import ProjectForm from "../../../../components/Custom/ProjectForm";
-    import {APICalls} from "../../../../utils/apiCalls";
+    import { APICalls } from "../../../../utils/apiCalls";
 
     export default {
         name: 'homeUserProjectEdit',

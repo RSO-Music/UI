@@ -7,7 +7,12 @@
             color="#3093A0"
             depressed
     >
-        {{msg}}
+        <v-icon v-if="icon">
+            {{icon}}
+        </v-icon>
+        <span v-else>
+            {{msg}}
+        </span>
     </v-btn>
 </template>
 
@@ -16,6 +21,7 @@
         name: "ButtonOutline",
         props: {
             msg: String,
+            icon: String,
             isDisabled: Boolean,
             classes: String
         },
