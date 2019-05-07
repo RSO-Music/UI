@@ -25,9 +25,38 @@
                     <p id="userName">{{displayName}}</p>
                     <p id="userRole">{{displayRole}}</p>
                 </div>
-                <ButtonBase id="logoutBtn" @clicked="logout" msg="ODJAVA"></ButtonBase>
+                <ButtonBase id="logoutBtn" @clicked="logoutModal = true" msg="ODJAVA"></ButtonBase>
             </div>
         </nav>
+
+        <v-dialog
+                v-model="logoutModal"
+                max-width="290"
+        >
+            <v-card>
+                <v-card-title class="headline">Odjava</v-card-title>
+
+                <v-card-text>
+                    Ste prepričani, da se želite odjaviti?
+                </v-card-text>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+
+                    <v-btn
+                            flat="flat"
+                            @click="logoutModal = false"
+                    >
+                        Prekliči
+                    </v-btn>
+                    
+                    <ButtonBase
+                            msg="Odjava"
+                            @clicked="logout()"
+                    />
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </header>
 </template>
 
@@ -44,12 +73,15 @@
 
         data() {
             return {
-                currentUser: this.$store.getters.currentUser
+                currentUser: this.$store.getters.currentUser,
+                logoutModal: false
             }
         },
 
         methods: {
             logout() {
+                this.logoutModal = false;
+                
                 this.$store.commit('logout');
             }
         },
