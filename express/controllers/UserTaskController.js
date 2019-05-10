@@ -78,8 +78,6 @@ module.exports = {
                 });
             }
         });
-
-
     },
 
     update(req, res) {
@@ -100,6 +98,8 @@ module.exports = {
                 });
             }
 
+            //Calculations for the total time of all users on this activity and the total time of the current assignee
+            //Required because of some edge cases
             try {
                 let totalTimeUser = 0;
                 let totalTime = 0;
@@ -108,10 +108,6 @@ module.exports = {
                     let activity = UserTask.activities[j];
 
                     totalTime += activity.activeHours;
-
-                    console.log("activity.activeHours", activity.activeHours);
-
-                    console.log("activity.user, currentTask.assignee", activity.user.toString(), UserTask.assignee.toString());
 
                     if (activity.user.toString() === UserTask.assignee.toString()) {
                         totalTimeUser += activity.activeHours;
@@ -122,10 +118,8 @@ module.exports = {
                 UserTask.activeHours = totalTime;
 
             } catch (e) {
-
+                console.log("ERROR", e);
             }
-
-
 
             return res.json(UserTask);
         });
@@ -137,7 +131,6 @@ module.exports = {
 
         UserTaskModel.findOneAndUpdate({_id: taskId, assignee: {$eq: null}},
             {$set: {assignee: task.assignee, accepted: true}}, {new: true}, function (err, UserTask) {
-                console.log(taskId, UserTask);
 
                 if (err) {
                     console.log("ERR: ", err);
@@ -152,6 +145,9 @@ module.exports = {
                     });
                 }
 
+                //Calculations for the total time of all users on this activity and the total time of the current
+                // assignee
+                //Required because of some edge cases
                 try {
                     let totalTimeUser = 0;
                     let totalTime = 0;
@@ -161,10 +157,6 @@ module.exports = {
 
                         totalTime += activity.activeHours;
 
-                        console.log("activity.activeHours", activity.activeHours);
-
-                        console.log("activity.user, currentTask.assignee", activity.user.toString(), UserTask.assignee.toString());
-
                         if (activity.user.toString() === UserTask.assignee.toString()) {
                             totalTimeUser += activity.activeHours;
                         }
@@ -172,6 +164,7 @@ module.exports = {
 
                     UserTask.activeHoursAssignee = totalTimeUser;
                     UserTask.activeHours = totalTime;
+
                 } catch (e) {
                     console.log("ERROR", e);
                 }
@@ -185,7 +178,6 @@ module.exports = {
 
         UserTaskModel.findOneAndUpdate({_id: taskId, assignee: {$ne: null}},
             {$set: {assignee: null, accepted: false, active: false}}, {new: true}, function (err, UserTask) {
-                console.log(taskId, UserTask);
 
                 if (err) {
                     console.log("ERR: ", err);
@@ -207,8 +199,6 @@ module.exports = {
     changeActiveStatus(req, res) {
         const taskId = req.params.taskId;
 
-        console.log(req.body);
-
         UserTaskModel.findOne({_id: taskId}, function (err, UserTask) {
             if (err) {
                 return res.status(500).json({
@@ -223,39 +213,27 @@ module.exports = {
                 });
             }
 
+            //Time calculations
             if (UserTask.active) {
                 let todaysDate = new Date();
-                console.log("todaysDate", todaysDate);
 
+                //Goes through all activities
                 for (let i = 0; i < UserTask.activities.length; i++) {
                     let dbDate = new Date(UserTask.activities[i].date.getTime());
-                    console.log("183 dbDate, UserTask.activities[i].date;", dbDate, UserTask.activities[i].date);
 
+                    //Checks whether the activity is of today and if it is of the user that's currently assigned
                     if (dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0) && UserTask.activities[i].user.toString() === UserTask.assignee.toString()) {
-                        console.log("i, todaysActivityFound = true;", i);
-                        console.log("187 dbDate", dbDate);
-
-
                         let timeDifference = new Date() - UserTask.activities[i].date;
                         let timeDifferenceHours = Math.ceil((timeDifference / 1000) / 60 / 60);
 
-                        /*
-                        timeToAdd.setHours(timeToAdd.getHours() + Math.round(timeToAdd.getMinutes()/60));
-                        timeToAdd.setMinutes(0);
-                         */
-                        console.log("UserTask.activities[i].date, new Date()", UserTask.activities[i].date, new Date());
-                        console.log("timeDifferenceHours", timeDifferenceHours);
-
                         UserTask.activities[i].activeHours += timeDifferenceHours;
-
-                        console.log("UserTask.activities[i].date___START", UserTask.activities[i].date);
                         UserTask.activities[i].date = null;
                         UserTask.activities[i].date = new Date();
-                        console.log("UserTask.activities[i].date___END", UserTask.activities[i].date);
                     }
                 }
             }
 
+            //Today's-activity-by-this-user-existence check
             if (UserTask.active) {
                 //Task is active, user requested a change
                 //Change status to inactive
@@ -266,25 +244,17 @@ module.exports = {
                 UserTask.active = true;
 
                 let todaysDate = new Date();
-                console.log("todaysDate", todaysDate);
                 let todaysActivityFound = false;
 
                 for (let i = 0; i < UserTask.activities.length; i++) {
                     let dbDate = new Date(UserTask.activities[i].date.getTime());
-                    console.log("UserTask.activities[i].date", UserTask.activities[i].date);
-                    console.log("UserTask.activities[i].user === UserTask.assignee", UserTask.activities[i].user.toString() === UserTask.assignee.toString());
-
-                    console.log("dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)", dbDate.setHours(0, 0, 0, 0), todaysDate.setHours(0, 0, 0, 0), dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0));
 
                     if (dbDate.setHours(0, 0, 0, 0) === todaysDate.setHours(0, 0, 0, 0)) {
                         if (UserTask.activities[i].user.toString() === UserTask.assignee.toString()) {
                             todaysActivityFound = true;
-                            console.log("i, todaysActivityFound = true;", i);
                         }
                     }
                 }
-
-                console.error("todaysActivityFound:", todaysActivityFound);
 
                 if (!todaysActivityFound) {
                     UserTask.activities.push({"user": UserTask.assignee, "date": new Date()})
@@ -292,6 +262,7 @@ module.exports = {
 
             }
 
+            //Calculations for the total time of all users on this activity and the total time of the current assignee
             let totalTimeUser = 0;
             let totalTime = 0;
 
@@ -300,24 +271,12 @@ module.exports = {
 
                 totalTime += activity.activeHours;
 
-                console.log("activity.activeHours", activity.activeHours);
-
-                console.log("activity.user, currentTask.assignee", activity.user.toString(), UserTask.assignee.toString());
-
                 if (activity.user.toString() === UserTask.assignee.toString()) {
                     totalTimeUser += activity.activeHours;
                 }
             }
-
-            console.log("totalTimeUser", totalTimeUser);
-            console.log("totalTime", totalTime);
-
             UserTask.activeHoursAssignee = totalTimeUser;
             UserTask.activeHours = totalTime;
-
-
-
-
 
             UserTask.save(function (err, UserTask) {
                 if (err) {
@@ -326,8 +285,6 @@ module.exports = {
                         error: err
                     });
                 }
-
-                //console.log(UserTask);
 
                 return res.json(UserTask);
             });
