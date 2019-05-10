@@ -778,32 +778,6 @@
                             return task;
                         });
 
-                        /*
-
-                        vm.$toasted.success(`${vm.editTask.active ? 'Naloga je sedaj aktivna' : 'Naloga je sedaj neaktivna'}`, {
-                            duration: 3000,
-                            position: "bottom-center",
-                        });
-
-                        */
-
-                        /*
-
-                        let totalTime = 0;
-
-                        for (let i = 0; i < res.data.activities.length; i++) {
-                            let activity = res.data.activities[i];
-                            if (activity.user.toString() === res.data.assignee.toString()) {
-                                totalTime += activity[i].activeHours;
-                            }
-                        }
-
-                        console.log("~705, total time", totalTime);
-
-                        vm.editTask.activeHours = totalTime;
-
-                        */
-
                         vm.editTask.activeHours = updatedTask.activeHours;
                         vm.editTask.activeHoursAssignee = updatedTask.activeHoursAssignee;
                     })
@@ -917,39 +891,6 @@
                     APICalls.getTasksInsideCurrentStory(this.story._id).then(
                         (rs) => {
                             this.tasks = rs.data;
-
-                            /*
-
-                            for (let i = 0; i < this.tasks.length; i++) {
-                                let currentTask = this.tasks[i];
-
-                                console.log("currentTask.activities", currentTask.activities);
-
-                                let totalTimeUser = 0;
-                                //let totalTime = 0;
-
-                                for (let j = 0; j < currentTask.activities.length; j++) {
-                                    let activity = currentTask.activities[j];
-
-                                    //totalTime += activity.activeHours;
-
-                                    console.log("activity.activeHours", activity.activeHours);
-
-                                    console.log("activity.user.toString(), currentTask.assignee.toString()", activity.user.toString(), currentTask.assignee.toString());
-
-                                    if (activity.user.toString() === this.$store.getters.currentUser._id.toString()) {
-                                        totalTimeUser += activity.activeHours;
-                                    }
-                                }
-
-                                console.log("~846, total time", totalTimeUser);
-
-                                this.tasks[i].activeHours = totalTimeUser;
-                                //this.tasks[i].activeHoursAll = totalTime;
-                            }
-
-                             */
-
                         },
                         (error) => {
                             console.log(error);
