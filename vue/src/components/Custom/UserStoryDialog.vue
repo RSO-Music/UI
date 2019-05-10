@@ -747,7 +747,6 @@
                 await APICalls.setActive(vm.editTask._id)
                     .then((res) => {
                         const task = res.data;
-                        console.log(task);
 
                         vm.editTask.active = task.active;
 
@@ -791,9 +790,6 @@
                             position: "bottom-center",
                         });
                     });
-
-                console.log("708, vm.editTask._id", vm.editTask._id);
-
             }
         },
         computed: {
