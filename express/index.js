@@ -7,9 +7,17 @@ const ProjectRoutes = require("./routes/ProjectRoutes");
 const sprintRoutes = require("./routes/SprintRoutes");
 const userTaskRoutes = require("./routes/UserTaskRoutes");
 
+//spodaj vnesite vaš db uri
+/*
 mongoose.connect(`mongodb+srv://admin:admin@smrpo-1diaf.mongodb.net/test?retryWrites=true`, {
     useNewUrlParser: true
 });
+*/
+
+mongoose.connect(``, {
+    useNewUrlParser: true
+});
+
 
 const port = process.env.PORT || 8080;
 
